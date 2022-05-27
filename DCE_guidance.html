@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-0.9.423">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Domenic Di Francesco">
+<meta name="dcterms.date" content="2022-05-01">
+
+<title>Data-Centric Engineering</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<script src="DCE_guidance_files/libs/clipboard/clipboard.min.js"></script>
+<script src="DCE_guidance_files/libs/quarto-html/quarto.js"></script>
+<script src="DCE_guidance_files/libs/quarto-html/popper.min.js"></script>
+<script src="DCE_guidance_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="DCE_guidance_files/libs/quarto-html/anchor.min.js"></script>
+<link href="DCE_guidance_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link id="quarto-text-highlighting-styles" href="DCE_guidance_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet">
+<script src="DCE_guidance_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="DCE_guidance_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="DCE_guidance_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
+
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+</head>
+
+<body>
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+<div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+  <nav id="TOC" role="doc-toc">
+    <h2 id="toc-title">Table of contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction"> <span class="header-section-number">1</span> Introduction</a>
+  <ul class="collapse">
+  <li><a href="#purpose-of-this-document" id="toc-purpose-of-this-document" class="nav-link" data-scroll-target="#purpose-of-this-document"> <span class="header-section-number">1.1</span> Purpose of this Document</a></li>
+  <li><a href="#how-to-use-this-document" id="toc-how-to-use-this-document" class="nav-link" data-scroll-target="#how-to-use-this-document"> <span class="header-section-number">1.2</span> How to use this document</a></li>
+  </ul></li>
+  <li><a href="#uncertainty-in-the-built-environment" id="toc-uncertainty-in-the-built-environment" class="nav-link" data-scroll-target="#uncertainty-in-the-built-environment"> <span class="header-section-number">2</span> Uncertainty in the Built Environment</a></li>
+  <li><a href="#quantifying-uncertainty" id="toc-quantifying-uncertainty" class="nav-link" data-scroll-target="#quantifying-uncertainty"> <span class="header-section-number">3</span> Quantifying Uncertainty</a>
+  <ul class="collapse">
+  <li><a href="#using-distributions-in-python-and-r" id="toc-using-distributions-in-python-and-r" class="nav-link" data-scroll-target="#using-distributions-in-python-and-r"> <span class="header-section-number">3.1</span> Using distributions in <code>Python</code> and <code>R</code></a>
+  <ul class="collapse">
+  <li><a href="#example-calculations" id="toc-example-calculations" class="nav-link" data-scroll-target="#example-calculations"> <span class="header-section-number">3.1.1</span> Example Calculations</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#probabilistic-programming" id="toc-probabilistic-programming" class="nav-link" data-scroll-target="#probabilistic-programming"> <span class="header-section-number">4</span> Probabilistic Programming</a>
+  <ul class="collapse">
+  <li><a href="#introduction-1" id="toc-introduction-1" class="nav-link" data-scroll-target="#introduction-1"> <span class="header-section-number">4.1</span> Introduction</a></li>
+  </ul></li>
+  <li><a href="#supporting-desicion-analysis" id="toc-supporting-desicion-analysis" class="nav-link" data-scroll-target="#supporting-desicion-analysis"> <span class="header-section-number">5</span> Supporting Desicion Analysis</a>
+  <ul class="collapse">
+  <li><a href="#existing-challenges" id="toc-existing-challenges" class="nav-link" data-scroll-target="#existing-challenges"> <span class="header-section-number">5.1</span> Existing Challenges</a></li>
+  <li><a href="#solutions" id="toc-solutions" class="nav-link" data-scroll-target="#solutions"> <span class="header-section-number">5.2</span> Solutions</a>
+  <ul class="collapse">
+  <li><a href="#decision-trees" id="toc-decision-trees" class="nav-link" data-scroll-target="#decision-trees"> <span class="header-section-number">5.2.1</span> Decision Trees</a></li>
+  <li><a href="#graphical-models-influence-diagrams" id="toc-graphical-models-influence-diagrams" class="nav-link" data-scroll-target="#graphical-models-influence-diagrams"> <span class="header-section-number">5.2.2</span> Graphical Models (Influence Diagrams)</a></li>
+  <li><a href="#example-calculations-1" id="toc-example-calculations-1" class="nav-link" data-scroll-target="#example-calculations-1"> <span class="header-section-number">5.2.3</span> Example Calculations</a></li>
+  </ul></li>
+  </ul></li>
+  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"> <span class="header-section-number">6</span> Discussion</a>
+  <ul class="collapse">
+  <li><a href="#probabilistic-models" id="toc-probabilistic-models" class="nav-link" data-scroll-target="#probabilistic-models"> <span class="header-section-number">6.1</span> Probabilistic Models</a></li>
+  <li><a href="#neural-networks" id="toc-neural-networks" class="nav-link" data-scroll-target="#neural-networks"> <span class="header-section-number">6.2</span> Neural Networks</a></li>
+  <li><a href="#engineering-judgement" id="toc-engineering-judgement" class="nav-link" data-scroll-target="#engineering-judgement"> <span class="header-section-number">6.3</span> Engineering Judgement</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</div>
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Data-Centric Engineering</h1>
+<p class="subtitle lead">Guidance on the Use of Probabilistic Methods for Identifying Data Requirements from Structural Systems</p>
+</div>
+
+
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Domenic Di Francesco </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">May 1, 2022</p>
+    </div>
+  </div>
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level1" data-number="1">
+<h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
+<section id="purpose-of-this-document" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="purpose-of-this-document"><span class="header-section-number">1.1</span> Purpose of this Document</h2>
+<p>Risk management of the built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring and scalable data analysis will allow for more sophisticated uncertainty quantification of damage and degradation. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.</p>
+<p>Understanding the required quantity and quality of data will continue to be a challenge to engineers. Should sensing systems be retrofit to existing structures? If so, how precise and how reliable do they need to be? Does a malfunctioning sensor require replacement? What supplementary inspection or testing data is required?</p>
+<p>Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</p>
+</section>
+<section id="how-to-use-this-document" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="how-to-use-this-document"><span class="header-section-number">1.2</span> How to use this document</h2>
+<p>This is a computational document that includes chunks of <code>Python</code> and <code>R</code> code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.</p>
+<p>The Python packages that have been used are loaded below.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Load Python Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Load R Packages</a></li></ul>
+<div class="tab-content">
+<div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cmdstanpy, numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<div id="tabset-1-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr); <span class="fu">library</span>(tidyverse); <span class="fu">library</span>(copula);</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(fitdistrplus); <span class="fu">library</span>(boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<p>In addition, some statistical models that have been written in the probabilistic programming language <code>Stan</code> have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this <a href="https://github.com/DomDF/DCE_guidance">public repository</a>.</p>
+</section>
+</section>
+<section id="uncertainty-in-the-built-environment" class="level1" data-number="2">
+<h1 data-number="2"><span class="header-section-number">2</span> Uncertainty in the Built Environment</h1>
+<p>Engineering data will often consist of some indirect measurements of a complex physical phenomena. Even sophisticated sensing technologies will only ever provide imperfect information. This data is then analysed in the context of some imperfect representation (a model) of the state of the complex systems that define it. This all leads to the presence of uncertainty in engineering analysis.</p>
+<p>Engineers are tasked with making recommendations about the safe and efficient operation of the built environment, accounting for the various uncertainties associated with the task. Historically, structural engineers have used deterministic approaches to perform conservative assessments. Here, uncertain quantities are assigned a value, for instance a strength may be assumed to be the minimum from a set of measurements, and these values are assumed to result in suitably conservative results. There are various challenges associated with this approach, including that of consistently allocating resources to maintain structures that are assessed with differing, implicit and unquantified safety factors. Quantification of uncertainty using probabilistic methods, see Section <span class="math inline">\(\ref{sect:probabilistic_uq}\)</span>, can be used to propagate models of uncertainty though engineering calculations. This can be used to quantify risk on an absolute scale, and produce coherent and consistent decisions.</p>
+<p>In any case, uncertainty can be reduced by collecting additional data. While data will generally always provide some value, provided it is relevant, it will not represent a good investment. There are various costs associated with collecting engineering data, including that associated with the risk of exposing inspection personnel to hazardous environments, or collection and storage costs of high-volume streaming data from structural health monitoring technologies.</p>
+<p>Value of information analysis, see Section <span class="math inline">\(\ref{sect:voi}\)</span>, allows for the quantification of the expected value that new data provides, in the context of solving a decision problem. This formal statistical procedure can be used to provide quantitative justification for investing (or not) in new data collection opportunities. Though in many cases there may be an intuitive solution to this problem , there may often be cases where engineering teams cannot agree on whether additional data is required. In such cases, a formal statistical procedure can provide quantitative (and replicable, auditable) justification for such actions.</p>
+</section>
+<section id="quantifying-uncertainty" class="level1" data-number="3">
+<h1 data-number="3"><span class="header-section-number">3</span> Quantifying Uncertainty</h1>
+<ul>
+<li>where do distributions come from?</li>
+<li>when are they optimal, or useful, or unhelpful in approximating variability?</li>
+</ul>
+<section id="using-distributions-in-python-and-r" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="using-distributions-in-python-and-r"><span class="header-section-number">3.1</span> Using distributions in <code>Python</code> and <code>R</code></h2>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Python (using SciPy.stats)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">R</a></li></ul>
+<div class="tab-content">
+<div id="tabset-2-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-2-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>array([-0.85493433, -0.78012733,  1.19541092, -1.1806013 , -0.14170264,
+       -1.08567669,  0.27912402, -1.40916093,  0.7052114 ,  0.53605536])</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-2-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-2-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1]  1.2410081 -0.1636596 -0.3582539  3.0900884 -1.0781837  0.4493835
+ [7] -0.9469003  0.8596052 -2.2765125  1.3761064</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<section id="example-calculations" class="level3" data-number="3.1.1">
+<h3 data-number="3.1.1" class="anchored" data-anchor-id="example-calculations"><span class="header-section-number">3.1.1</span> Example Calculations</h3>
+<section id="analysis-of-tensile-test-data-of-steel" class="level4" data-number="3.1.1.1">
+<h4 data-number="3.1.1.1" class="anchored" data-anchor-id="analysis-of-tensile-test-data-of-steel"><span class="header-section-number">3.1.1.1</span> Analysis of Tensile Test Data of Steel</h4>
+<p>In this example we will consider what information is contained in a set of measurements of yield and tensile strength. The data is presented in Table <span class="citation" data-cites="tab_strength_data">@tab_strength_data</span> and Figure <span class="citation" data-cites="fig_strength_data">@fig_strength_data</span>. This data can be downloaded using the below code.</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Python (using pandas)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">R (using readr, loaded as part of tidyverse)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv"</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>strength_df.head(n <span class="op">=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   id       yield     tensile
+0   1  415.394479  590.806283
+1   2  435.102535  680.617608
+2   3  374.046293  683.524267</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-3-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv"</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 3
+     id yield tensile
+  &lt;dbl&gt; &lt;dbl&gt;   &lt;dbl&gt;
+1     1  415.    591.
+2     2  435.    681.
+3     3  374.    684.</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:</p>
+<ul>
+<li><p><em>Material heterogeneity</em>. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.</p></li>
+<li><p><em>Imperfect measurement data</em>. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.</p></li>
+</ul>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>strength_mv_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> strength_df, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> yield, <span class="at">y =</span> tensile))<span class="sc">+</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">'Yield Strength, MPa'</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">600</span>))<span class="sc">+</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">'Ultimate Tensile Strength, MPa'</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">900</span>))<span class="sc">+</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  ggthemes<span class="sc">::</span><span class="fu">theme_base</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">'Atkinson Hyperlegible'</span>)<span class="sc">+</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="cn">NA</span>))</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>strength_mv_plot <span class="sc">|&gt;</span> ggExtra<span class="sc">::</span><span class="fu">ggMarginal</span>(<span class="at">type =</span> <span class="st">'histogram'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="DCE_guidance_files/figure-html/fig_strength_data-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption aria-hidden="true" class="figure-caption">Plot of Joint Measurements of Yield and Tensile Strength</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Shown here as a table, printed using the below <code>R</code> code:</p>
+<div class="cell" data-tab-cap="Tensile Test Data of Steel">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="st">'Test ID'</span> <span class="ot">=</span> <span class="st">'id'</span>, <span class="st">'Yield Strength, MPa'</span> <span class="ot">=</span> <span class="st">'yield'</span>, <span class="st">'Tensile Strength, MPa'</span> <span class="ot">=</span> <span class="st">'tensile'</span>) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output-display">
+<table class="table table-sm table-striped">
+<thead>
+<tr class="header">
+<th style="text-align: right;">Test ID</th>
+<th style="text-align: right;">Yield Strength, MPa</th>
+<th style="text-align: right;">Tensile Strength, MPa</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">415.3945</td>
+<td style="text-align: right;">590.8063</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">435.1025</td>
+<td style="text-align: right;">680.6176</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">374.0463</td>
+<td style="text-align: right;">683.5243</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">401.6319</td>
+<td style="text-align: right;">608.4174</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">365.7331</td>
+<td style="text-align: right;">504.0710</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">376.6799</td>
+<td style="text-align: right;">519.8186</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">365.3381</td>
+<td style="text-align: right;">624.4340</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">396.7396</td>
+<td style="text-align: right;">685.7945</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">376.4909</td>
+<td style="text-align: right;">514.6392</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">421.1487</td>
+<td style="text-align: right;">771.7754</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">425.8122</td>
+<td style="text-align: right;">568.4605</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">352.4668</td>
+<td style="text-align: right;">547.8975</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">13</td>
+<td style="text-align: right;">393.4283</td>
+<td style="text-align: right;">559.1092</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">431.9654</td>
+<td style="text-align: right;">647.9011</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">363.0708</td>
+<td style="text-align: right;">589.4842</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">16</td>
+<td style="text-align: right;">393.3109</td>
+<td style="text-align: right;">726.6864</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">17</td>
+<td style="text-align: right;">379.4241</td>
+<td style="text-align: right;">521.7981</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">413.7369</td>
+<td style="text-align: right;">600.7571</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">19</td>
+<td style="text-align: right;">388.8842</td>
+<td style="text-align: right;">546.4207</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">342.2702</td>
+<td style="text-align: right;">527.6821</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>This variability can be approximated using probability distributions. These should be considered to be a model</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Python (using SciPy )</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R (using fitdistrplus)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-4-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-4-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>stats.norm.fit(data <span class="op">=</span> strength_df[<span class="st">'yield'</span>].values, method <span class="op">=</span> <span class="st">'MLE'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>(390.63377067499994, 26.256897184774186)</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-4-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-4-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">fitdist</span>(<span class="at">data =</span> strength_df<span class="sc">$</span>yield, <span class="at">distr =</span> <span class="st">'norm'</span>, <span class="at">method =</span> <span class="st">'mle'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>Fitting of the distribution ' norm ' by maximum likelihood 
+Parameters:
+     estimate Std. Error
+mean 390.6338   5.871221
+sd    26.2569   4.151580</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>These distribution parameters represent those with the highest score (likelihood) of the range considered. However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the statistical uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it’s maximum likelihood estimates.</p>
+<p>For instance, with only two or three measurements of yield strength, it is important to reflect that a maximum likelihood probabilistic model will be unsure of the distribution parameters that it estimates. The single number (point estimate) result could change significantly after including just a few more tests. Describing the variability in cases like this can help distinguish a highly uncertain model with a highly informed model, and this distinction is important when they are being used for decision support.</p>
+<p>One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals…..</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R, using boot</a></li></ul>
+<div class="tab-content">
+<div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>est_norm_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, id) {<span class="fu">fitdist</span>(x[id], <span class="at">distr =</span> <span class="st">'norm'</span>)<span class="sc">$</span>estimate[<span class="dv">1</span>]}</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>bootstrap_est <span class="ot">&lt;-</span> strength_df<span class="sc">$</span>yield <span class="sc">|&gt;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot</span>(<span class="at">statistic =</span> est_norm_mean, <span class="at">R =</span> <span class="fl">1e3</span>) <span class="sc">|&gt;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot.ci</span>(<span class="at">conf =</span> <span class="fl">0.95</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>bootstrap_est<span class="sc">$</span>normal <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">lower_bound =</span> V2, <span class="at">upper_bound =</span> V3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 1 × 3
+   conf lower_bound upper_bound
+  &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
+1  0.95        380.        402.</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+</section>
+<section id="probabilistic-programming" class="level1" data-number="4">
+<h1 data-number="4"><span class="header-section-number">4</span> Probabilistic Programming</h1>
+<section id="introduction-1" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="introduction-1"><span class="header-section-number">4.1</span> Introduction</h2>
+<p>Sometimes known as probabilistic machine learning. We will…</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Python (using tensorflow probability)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">Python (using PyMC)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-3" role="tab" aria-controls="tabset-6-3" aria-selected="false">Python (using Stan)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-4-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-4" role="tab" aria-controls="tabset-6-4" aria-selected="false">R (using Stan)</a></li></ul>
+<div class="tab-content">
+<div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow_probability <span class="im">as</span> tfp</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>locations <span class="op">=</span> tfp.distributions.Normal(loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>).sample(sample_shape <span class="op">=</span> <span class="dv">10</span>, seed <span class="op">=</span> <span class="dv">2408</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> tfp.distributions.Bernoulli(logits <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> locations).sample()</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>Bayesian_logistic_model <span class="op">=</span> tfp.glm.Bernoulli()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<div id="tabset-6-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-2-tab">
+
+</div>
+<div id="tabset-6-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-3-tab">
+
+</div>
+<div id="tabset-6-4" class="tab-pane" role="tabpanel" aria-labelledby="tabset-6-4-tab">
+
+</div>
+</div>
+</div>
+<p>Fitting the model…</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>model_fit <span class="op">=</span> tfp.glm.fit(model_matrix <span class="op">=</span> locations[:, tf.newaxis], response <span class="op">=</span> tf.cast(data, dtype <span class="op">=</span> tf.float32), model <span class="op">=</span> Bayesian_logistic_model)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>model_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>[&lt;tf.Tensor: shape=(1,), dtype=float32, numpy=array([2.7389812], dtype=float32)&gt;, &lt;tf.Tensor: shape=(10,), dtype=float32, numpy=
+array([-0.44964364, -0.9043717 , -3.5951653 , -1.3966509 , -3.2259085 ,
+       -2.0310738 , -0.85014933, -2.030192  , -3.3711898 , -0.903042  ],
+      dtype=float32)&gt;, &lt;tf.Tensor: shape=(), dtype=bool, numpy=True&gt;, &lt;tf.Tensor: shape=(), dtype=int32, numpy=6&gt;]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="supporting-desicion-analysis" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Supporting Desicion Analysis</h1>
+<section id="existing-challenges" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="existing-challenges"><span class="header-section-number">5.1</span> Existing Challenges</h2>
+<p>Interpretting assessment results before arriving at decision</p>
+</section>
+<section id="solutions" class="level2" data-number="5.2">
+<h2 data-number="5.2" class="anchored" data-anchor-id="solutions"><span class="header-section-number">5.2</span> Solutions</h2>
+<section id="decision-trees" class="level3" data-number="5.2.1">
+<h3 data-number="5.2.1" class="anchored" data-anchor-id="decision-trees"><span class="header-section-number">5.2.1</span> Decision Trees</h3>
+</section>
+<section id="graphical-models-influence-diagrams" class="level3" data-number="5.2.2">
+<h3 data-number="5.2.2" class="anchored" data-anchor-id="graphical-models-influence-diagrams"><span class="header-section-number">5.2.2</span> Graphical Models (Influence Diagrams)</h3>
+</section>
+<section id="example-calculations-1" class="level3" data-number="5.2.3">
+<h3 data-number="5.2.3" class="anchored" data-anchor-id="example-calculations-1"><span class="header-section-number">5.2.3</span> Example Calculations</h3>
+<section id="repair-requirements" class="level4" data-number="5.2.3.1">
+<h4 data-number="5.2.3.1" class="anchored" data-anchor-id="repair-requirements"><span class="header-section-number">5.2.3.1</span> Repair Requirements</h4>
+</section>
+<section id="inspection-requirements" class="level4" data-number="5.2.3.2">
+<h4 data-number="5.2.3.2" class="anchored" data-anchor-id="inspection-requirements"><span class="header-section-number">5.2.3.2</span> Inspection Requirements</h4>
+</section>
+<section id="identifying-a-data-collection-plan" class="level4" data-number="5.2.3.3">
+<h4 data-number="5.2.3.3" class="anchored" data-anchor-id="identifying-a-data-collection-plan"><span class="header-section-number">5.2.3.3</span> Identifying a Data Collection Plan</h4>
+</section>
+</section>
+</section>
+</section>
+<section id="discussion" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Discussion</h1>
+<section id="probabilistic-models" class="level2" data-number="6.1">
+<h2 data-number="6.1" class="anchored" data-anchor-id="probabilistic-models"><span class="header-section-number">6.1</span> Probabilistic Models</h2>
+</section>
+<section id="neural-networks" class="level2" data-number="6.2">
+<h2 data-number="6.2" class="anchored" data-anchor-id="neural-networks"><span class="header-section-number">6.2</span> Neural Networks</h2>
+</section>
+<section id="engineering-judgement" class="level2" data-number="6.3">
+<h2 data-number="6.3" class="anchored" data-anchor-id="engineering-judgement"><span class="header-section-number">6.3</span> Engineering Judgement</h2>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      let href = ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

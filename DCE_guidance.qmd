@@ -1,0 +1,278 @@
+---
+title: "Data-Centric Engineering"
+subtitle: "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements from Structural Systems"
+author: "Domenic Di Francesco"
+date: "May 2022"
+format:
+  html:
+    theme: spacelab
+    html-math-mathod: mathjax
+    toc: true
+    toc-location: right
+    number-sections: true
+    code-copy: true
+    code-fold: true
+execute:
+  message: false
+  warning: false
+---
+
+# Introduction
+
+## Purpose of this Document
+
+Risk management of the built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring and scalable data analysis will allow for more sophisticated uncertainty quantification of damage and degradation. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.
+
+Understanding the required quantity and quality of data will continue to be a challenge to engineers. Should sensing systems be retrofit to existing structures? If so, how precise and how reliable do they need to be? Does a malfunctioning sensor require replacement? What supplementary inspection or testing data is required? 
+
+Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
+
+## How to use this document
+
+This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run. 
+
+The Python packages that have been used are loaded below.
+
+::: {.panel-tabset}
+
+## Load Python Packages
+
+```{python}
+#| label: load_Python_packages
+
+import cmdstanpy, numpy as np, pandas as pd
+from scipy import stats
+
+```
+
+## Load R Packages
+
+```{R}
+#| label: load_R_packages
+
+library(cmdstanr); library(tidyverse); library(copula);
+library(fitdistrplus); library(boot)
+
+```
+
+:::
+
+[comment]: <> (Add a comment on R and Python being widely used and having similar functionality. They can both interface the PPL below in the same way.)
+
+In addition, some statistical models that have been written in the probabilistic programming language `Stan` have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this [public repository](https://github.com/DomDF/DCE_guidance).
+
+# Uncertainty in the Built Environment
+
+Engineering data will often consist of some indirect measurements of a complex physical phenomena. Even sophisticated sensing technologies will only ever provide imperfect information. This data is then analysed in the context of some imperfect representation (a model) of the \emph{true} state of the complex systems that define it. This all leads to the presence of uncertainty in engineering analysis.
+
+Engineers are tasked with making recommendations about the safe and efficient operation of the built environment, accounting for the various uncertainties associated with the task. Historically, structural engineers have used deterministic approaches to perform conservative assessments. Here, uncertain quantities are assigned a \emph{safe} value, for instance a strength may be assumed to be the minimum from a set of measurements, and these values are assumed to result in suitably conservative results. There are various challenges associated with this approach, including that of consistently allocating resources to maintain structures that are assessed with differing, implicit and unquantified safety factors. Quantification of uncertainty using probabilistic methods, see Section \ref{sect:probabilistic_uq}, can be used to propagate models of uncertainty though engineering calculations. This can be used to quantify risk on an absolute scale, and produce coherent and consistent decisions.
+
+In any case, uncertainty can be reduced by collecting additional data. While data will generally always provide some value, provided it is relevant, it will not represent a good investment. There are various costs associated with collecting engineering data, including that associated with the risk of exposing inspection personnel to hazardous environments, or collection and storage costs of high-volume streaming data from structural health monitoring technologies.
+
+Value of information analysis, see Section \ref{sect:voi}, allows for the quantification of the expected value that new data provides, in the context of solving a decision problem. This formal statistical procedure can be used to provide quantitative justification for investing (or not) in new data collection opportunities. Though in many cases there may be an intuitive solution to this problem \footnote{For instance it not be worthwhile paying to deploy state of the art technologies to improve models of an asset that has no value. Conversely, high consequence decisions for structures whose safety are currently poorly understood (perhaps because they have just been purchased, or are proposed to be used in some new application) are likely to justify even expensive data collection activities.}, there may often be cases where engineering teams cannot agree on whether additional data is required. In such cases, a formal statistical procedure can provide quantitative (and replicable, auditable) justification for such actions.
+
+
+# Quantifying Uncertainty
+
+
+ - where do distributions come from?
+ - when are they optimal, or useful, or unhelpful in approximating variability?
+
+## Using distributions in `Python` and `R`
+
+::: {.panel-tabset}
+
+## Python (using SciPy.stats)
+
+```{python}
+stats.norm.rvs(size = 10, loc = 0, scale = 1)
+
+```
+
+## R
+
+```{R}
+rnorm(n = 10, mean = 0, sd = 1)
+
+```
+
+:::
+
+### Example Calculations
+
+#### Analysis of Tensile Test Data of Steel
+
+In this example we will consider what information is contained in a set of measurements of yield and tensile strength. The data is presented in Table @tab_strength_data and Figure @fig_strength_data. This data can be downloaded using the below code.
+
+::: {.panel-tabset}
+
+## Python (using pandas)
+
+```{python}
+strength_df = pd.read_csv(filepath_or_buffer = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv")
+
+strength_df.head(n = 3)
+
+```
+
+## R (using readr, loaded as part of tidyverse)
+
+```{R}
+strength_df <- read_csv(file = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv")
+
+strength_df |> head(n = 3)
+
+```
+
+:::
+
+The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:
+
+ * *Material heterogeneity*. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.
+ 
+ * *Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.
+
+```{R}
+#| label: fig_strength_data
+#| fig-cap: "Plot of Joint Measurements of Yield and Tensile Strength"
+
+strength_mv_plot <- ggplot(data = strength_df, mapping = aes(x = yield, y = tensile))+
+  geom_point(shape = 1, alpha = 1/2)+
+  scale_x_continuous(name = 'Yield Strength, MPa', limits = c(300, 600))+
+  scale_y_continuous(name = 'Ultimate Tensile Strength, MPa', limits = c(300, 900))+
+  geom_abline(lty = 2, alpha = 1/2)+
+  ggthemes::theme_base(base_size = 12, base_family = 'Atkinson Hyperlegible')+
+  theme(plot.background = element_rect(color = NA))
+
+strength_mv_plot |> ggExtra::ggMarginal(type = 'histogram')
+
+```
+
+Shown here as a table, printed using the below `R` code:
+
+
+```{R}
+#| label: tab_strength_data
+#| tab-cap: "Tensile Test Data of Steel"
+
+strength_df |> rename('Test ID' = 'id', 'Yield Strength, MPa' = 'yield', 'Tensile Strength, MPa' = 'tensile') |> knitr::kable()
+
+```
+
+This variability can be approximated using probability distributions. These should be considered to be a model
+
+::: {.panel-tabset}
+
+## Python (using SciPy )
+
+```{python}
+stats.norm.fit(data = strength_df['yield'].values, method = 'MLE')
+
+```
+
+## R (using fitdistrplus)
+
+```{R}
+fitdist(data = strength_df$yield, distr = 'norm', method = 'mle')
+
+```
+
+:::
+
+These distribution parameters represent those with the highest score (likelihood) of the range considered. However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the statistical uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.
+
+For instance, with only two or three measurements of yield strength, it is important to reflect that a maximum likelihood probabilistic model will be unsure of the distribution parameters that it estimates. The single number (point estimate) result could change significantly after including just a few more tests. Describing the variability in cases like this can help distinguish a highly uncertain model with a highly informed model, and this distinction is important when they are being used for decision support.
+
+One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals.....
+
+::: {.panel-tabset}
+
+# R, using boot
+
+```{R}
+est_norm_mean <- function(x, id) {fitdist(x[id], distr = 'norm')$estimate[1]}
+
+bootstrap_est <- strength_df$yield |>
+  boot(statistic = est_norm_mean, R = 1e3) |>
+  boot.ci(conf = 0.95)
+
+bootstrap_est$normal |> as_tibble() |> 
+  rename(lower_bound = V2, upper_bound = V3)
+
+```
+
+:::
+
+# Probabilistic Programming
+
+## Introduction
+
+Sometimes known as probabilistic machine learning. We will...
+
+::: {.panel-tabset}
+
+## Python (using tensorflow probability)
+
+```{python}
+
+import tensorflow as tf
+import tensorflow_probability as tfp
+
+locations = tfp.distributions.Normal(loc = 0, scale = 1).sample(sample_shape = 10, seed = 2408)
+data = tfp.distributions.Bernoulli(logits = 2 * locations).sample()
+
+Bayesian_logistic_model = tfp.glm.Bernoulli()
+
+```
+
+## Python (using PyMC)
+
+## Python (using Stan)
+
+## R (using Stan)
+
+:::
+
+Fitting the model...
+
+```{python}
+
+model_fit = tfp.glm.fit(model_matrix = locations[:, tf.newaxis], response = tf.cast(data, dtype = tf.float32), model = Bayesian_logistic_model)
+
+model_fit
+
+```
+
+# Supporting Desicion Analysis
+
+## Existing Challenges
+
+Interpretting assessment results before arriving at decision
+
+## Solutions
+
+### Decision Trees
+
+### Graphical Models (Influence Diagrams)
+
+### Example Calculations
+
+#### Repair Requirements
+
+#### Inspection Requirements
+
+#### Identifying a Data Collection Plan
+
+# Discussion
+
+## Probabilistic Models
+
+
+
+## Neural Networks
+
+
+
+## Engineering Judgement
+
+
