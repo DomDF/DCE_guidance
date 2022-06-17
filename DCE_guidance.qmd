@@ -1,8 +1,8 @@
 ---
 title: "Data-Centric Engineering"
 subtitle: "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements from Structural Systems"
-author: "Domenic Di Francesco"
-date: "May 2022"
+author: ""
+date: "June 2022"
 format:
   html:
     theme: spacelab
@@ -15,6 +15,7 @@ format:
 execute:
   message: false
   warning: false
+bibliography: references.bib
 ---
 
 # Introduction
@@ -23,18 +24,19 @@ execute:
 
 Risk management of the built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring and scalable data analysis will allow for more sophisticated uncertainty quantification of damage and degradation. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.
 
-Understanding the required quantity and quality of data will continue to be a challenge to engineers. Should sensing systems be retrofit to existing structures? If so, how precise and how reliable do they need to be? Does a malfunctioning sensor require replacement? What supplementary inspection or testing data is required? 
+Understanding the required quantity and quality of data will continue to be a challenge to engineers. Should sensing systems be retrofit to existing structures? If so, how precise and how reliable do they need to be? Does a malfunctioning sensor require replacement? What supplementary inspection or testing data is required?
 
 Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
 ## How to use this document
 
-This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run. 
+This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
 
-The Python packages that have been used are loaded below.
+The Python packages that have been used are loaded below, see @load_Python_packages. 
 
-::: {.panel-tabset}
+Example reference: \[@difrancesco2022\]
 
+::: {#chunk_load_packages .panel-tabset}
 ## Load Python Packages
 
 ```{python}
@@ -50,14 +52,18 @@ from scipy import stats
 ```{R}
 #| label: load_R_packages
 
-library(cmdstanr); library(tidyverse); library(copula);
-library(fitdistrplus); library(boot)
+library(tidyverse); library(fitdistrplus)
+library(cmdstanr); library(copula); library(boot)
 
 ```
-
 :::
 
-[comment]: <> (Add a comment on R and Python being widely used and having similar functionality. They can both interface the PPL below in the same way.)
+:::{.callout-tip}
+## Tip: Loading packages
+In `R` and `Python` packages first need to be installed. Guidance on installing packages can be found [here](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages) (for `R`) and [here](https://pypi.org/project/pip/) (for `Python`). 
+
+Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but such docume
+:::
 
 In addition, some statistical models that have been written in the probabilistic programming language `Stan` have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this [public repository](https://github.com/DomDF/DCE_guidance).
 
@@ -71,17 +77,14 @@ In any case, uncertainty can be reduced by collecting additional data. While dat
 
 Value of information analysis, see Section \ref{sect:voi}, allows for the quantification of the expected value that new data provides, in the context of solving a decision problem. This formal statistical procedure can be used to provide quantitative justification for investing (or not) in new data collection opportunities. Though in many cases there may be an intuitive solution to this problem \footnote{For instance it not be worthwhile paying to deploy state of the art technologies to improve models of an asset that has no value. Conversely, high consequence decisions for structures whose safety are currently poorly understood (perhaps because they have just been purchased, or are proposed to be used in some new application) are likely to justify even expensive data collection activities.}, there may often be cases where engineering teams cannot agree on whether additional data is required. In such cases, a formal statistical procedure can provide quantitative (and replicable, auditable) justification for such actions.
 
-
 # Quantifying Uncertainty
 
-
- - where do distributions come from?
- - when are they optimal, or useful, or unhelpful in approximating variability?
+-   where do distributions come from?
+-   when are they optimal, or useful, or unhelpful in approximating variability?
 
 ## Using distributions in `Python` and `R`
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Python (using SciPy.stats)
 
 ```{python}
@@ -95,7 +98,6 @@ stats.norm.rvs(size = 10, loc = 0, scale = 1)
 rnorm(n = 10, mean = 0, sd = 1)
 
 ```
-
 :::
 
 ### Example Calculations
@@ -104,33 +106,31 @@ rnorm(n = 10, mean = 0, sd = 1)
 
 In this example we will consider what information is contained in a set of measurements of yield and tensile strength. The data is presented in Table @tab_strength_data and Figure @fig_strength_data. This data can be downloaded using the below code.
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Python (using pandas)
 
 ```{python}
-strength_df = pd.read_csv(filepath_or_buffer = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv")
+strength_df = pd.read_csv(filepath_or_buffer = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv")
 
 strength_df.head(n = 3)
 
 ```
 
-## R (using readr, loaded as part of tidyverse)
+## R (using readr)
 
 ```{R}
-strength_df <- read_csv(file = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv")
+strength_df <- read_csv(file = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv")
 
 strength_df |> head(n = 3)
 
 ```
-
 :::
 
 The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:
 
- * *Material heterogeneity*. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.
- 
- * *Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.
+-   *Material heterogeneity*. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.
+
+-   *Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.
 
 ```{R}
 #| label: fig_strength_data
@@ -150,7 +150,6 @@ strength_mv_plot |> ggExtra::ggMarginal(type = 'histogram')
 
 Shown here as a table, printed using the below `R` code:
 
-
 ```{R}
 #| label: tab_strength_data
 #| tab-cap: "Tensile Test Data of Steel"
@@ -161,8 +160,7 @@ strength_df |> rename('Test ID' = 'id', 'Yield Strength, MPa' = 'yield', 'Tensil
 
 This variability can be approximated using probability distributions. These should be considered to be a model
 
-::: {.panel-tabset}
-
+::: panel-tabset
 ## Python (using SciPy )
 
 ```{python}
@@ -176,7 +174,6 @@ stats.norm.fit(data = strength_df['yield'].values, method = 'MLE')
 fitdist(data = strength_df$yield, distr = 'norm', method = 'mle')
 
 ```
-
 :::
 
 These distribution parameters represent those with the highest score (likelihood) of the range considered. However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the statistical uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.
@@ -185,8 +182,7 @@ For instance, with only two or three measurements of yield strength, it is impor
 
 One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals.....
 
-::: {.panel-tabset}
-
+::: panel-tabset
 # R, using boot
 
 ```{R}
@@ -200,7 +196,6 @@ bootstrap_est$normal |> as_tibble() |>
   rename(lower_bound = V2, upper_bound = V3)
 
 ```
-
 :::
 
 # Probabilistic Programming
@@ -209,28 +204,18 @@ bootstrap_est$normal |> as_tibble() |>
 
 Sometimes known as probabilistic machine learning. We will...
 
-::: {.panel-tabset}
 
-## Python (using tensorflow probability)
+
+::: panel-tabset
+## Python (using Stan)
 
 ```{python}
 
-import tensorflow as tf
-import tensorflow_probability as tfp
-
-locations = tfp.distributions.Normal(loc = 0, scale = 1).sample(sample_shape = 10, seed = 2408)
-data = tfp.distributions.Bernoulli(logits = 2 * locations).sample()
-
-Bayesian_logistic_model = tfp.glm.Bernoulli()
+stan_file = 
 
 ```
 
-## Python (using PyMC)
-
-## Python (using Stan)
-
 ## R (using Stan)
-
 :::
 
 Fitting the model...
@@ -267,12 +252,8 @@ Interpretting assessment results before arriving at decision
 
 ## Probabilistic Models
 
-
-
 ## Neural Networks
-
-
 
 ## Engineering Judgement
 
-
+#  {.illustration}

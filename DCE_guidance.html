@@ -237,8 +237,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([-0.85493433, -0.78012733,  1.19541092, -1.1806013 , -0.14170264,
-       -1.08567669,  0.27912402, -1.40916093,  0.7052114 ,  0.53605536])</code></pre>
+<pre><code>array([-0.82952004, -0.27043493, -1.04383418,  0.25331261, -0.01135127,
+        0.77785836,  1.06388937,  0.3227371 , -1.10932976, -1.93486259])</code></pre>
 </div>
 </div>
 </div>
@@ -249,8 +249,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1]  1.2410081 -0.1636596 -0.3582539  3.0900884 -1.0781837  0.4493835
- [7] -0.9469003  0.8596052 -2.2765125  1.3761064</code></pre>
+<pre><code> [1] -1.0156048 -0.4157760  1.9242609  0.3969346  0.5327091 -1.4490339
+ [7]  1.5974913 -0.4708422 -0.5791902  0.5238492</code></pre>
 </div>
 </div>
 </div>
@@ -268,7 +268,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>strength_df.head(n <span class="op">=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -284,7 +284,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/strength_data.csv"</span>)</span>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
@@ -502,7 +502,7 @@ sd    26.2569   4.151580</code></pre>
 <pre><code># A tibble: 1 × 3
    conf lower_bound upper_bound
   &lt;dbl&gt;       &lt;dbl&gt;       &lt;dbl&gt;
-1  0.95        380.        402.</code></pre>
+1  0.95        379.        402.</code></pre>
 </div>
 </div>
 </div>
@@ -556,10 +556,10 @@ sd    26.2569   4.151580</code></pre>
 <span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>model_fit</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>[&lt;tf.Tensor: shape=(1,), dtype=float32, numpy=array([2.7389812], dtype=float32)&gt;, &lt;tf.Tensor: shape=(10,), dtype=float32, numpy=
-array([-0.44964364, -0.9043717 , -3.5951653 , -1.3966509 , -3.2259085 ,
-       -2.0310738 , -0.85014933, -2.030192  , -3.3711898 , -0.903042  ],
-      dtype=float32)&gt;, &lt;tf.Tensor: shape=(), dtype=bool, numpy=True&gt;, &lt;tf.Tensor: shape=(), dtype=int32, numpy=6&gt;]</code></pre>
+<pre><code>[&lt;tf.Tensor: shape=(1,), dtype=float32, numpy=array([1.1169219], dtype=float32)&gt;, &lt;tf.Tensor: shape=(10,), dtype=float32, numpy=
+array([-0.183359  , -0.3687913 , -1.4660629 , -0.56953657, -1.3154848 ,
+       -0.82824624, -0.34668016, -0.8278866 , -1.3747286 , -0.36824912],
+      dtype=float32)&gt;, &lt;tf.Tensor: shape=(), dtype=bool, numpy=True&gt;, &lt;tf.Tensor: shape=(), dtype=int32, numpy=4&gt;]</code></pre>
 </div>
 </div>
 </section>
