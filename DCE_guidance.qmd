@@ -12,19 +12,26 @@ format:
     number-sections: true
     code-copy: true
     code-fold: true
+    code-tools: true
 execute:
   message: false
   warning: false
-bibliography: references.bib
+# bibliography: references.bib
 ---
 
 # Introduction
 
 ## Purpose of this Document
 
-Risk management of the built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring and scalable data analysis will allow for more sophisticated uncertainty quantification of damage and degradation. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.
+Engineering analysis for built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring, **energy targets/constraints**, and scalable data analysis will allow for more sophisticated uncertainty quantification. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.
 
-Understanding the required quantity and quality of data will continue to be a challenge to engineers. Should sensing systems be retrofit to existing structures? If so, how precise and how reliable do they need to be? Does a malfunctioning sensor require replacement? What supplementary inspection or testing data is required?
+Understanding the required quantity and quality of data will continue to be a challenge to engineers. For instance:
+
+ * Should sensing systems be retrofit to existing structures? 
+ * If so, how precise and how reliable do they need to be? 
+ * Does a malfunctioning sensor require replacement? 
+ * What supplementary inspection or testing data is required?
+ * **Add energy systems questions here too!**
 
 Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
@@ -32,17 +39,14 @@ Given the availability of free, open-source software tools for data analysis and
 
 This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
 
-The Python packages that have been used are loaded below, see @load_Python_packages. 
-
-Example reference: \[@difrancesco2022\]
-
 ::: {#chunk_load_packages .panel-tabset}
 ## Load Python Packages
 
 ```{python}
-#| label: load_Python_packages
+#|label: load_Python_packages
 
-import cmdstanpy, numpy as np, pandas as pd
+import cmdstanpy, requests, os, tempfile
+import numpy as np, pandas as pd
 from scipy import stats
 
 ```
@@ -57,6 +61,8 @@ library(cmdstanr); library(copula); library(boot)
 
 ```
 :::
+
+The `Python` packages that have been used are loaded below, see @chunk_load_packages, 
 
 :::{.callout-tip}
 ## Tip: Loading packages
@@ -210,23 +216,30 @@ Sometimes known as probabilistic machine learning. We will...
 ## Python (using Stan)
 
 ```{python}
+#| output: false
 
-stan_file = 
+url = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"
+
+new_file, filename = tempfile.mkstemp()
+filename = filename + ".stan"
+
+f = open(filename, "w"); f.write(requests.get(url).text)
+
+strength_model = cmdstanpy.CmdStanModel(stan_file = filename)
 
 ```
 
 ## R (using Stan)
-:::
 
-Fitting the model...
+```{R}
 
-```{python}
-
-model_fit = tfp.glm.fit(model_matrix = locations[:, tf.newaxis], response = tf.cast(data, dtype = tf.float32), model = Bayesian_logistic_model)
-
-model_fit
+strength_model <- url("https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan") |>
+  readLines() |>
+  cmdstanr::write_stan_file() |>
+  cmdstanr::cmdstan_model()
 
 ```
+:::
 
 # Supporting Desicion Analysis
 
