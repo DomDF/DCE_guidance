@@ -1,6 +1,6 @@
 ---
 title: "Data-Centric Engineering"
-subtitle: "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements from Structural Systems"
+subtitle: "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements"
 author: ""
 date: "June 2022"
 format:
@@ -13,27 +13,26 @@ format:
     code-copy: true
     code-fold: true
     code-tools: true
+    monofont: Fira Code
 execute:
   message: false
   warning: false
-# bibliography: references.bib
+bibliography: references.bib
 ---
 
 # Introduction
 
 ## Purpose of this Document
 
-Engineering analysis for built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring, **energy targets/constraints**, and scalable data analysis will allow for more sophisticated uncertainty quantification. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.
+The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in safety and efficiency of the built environment. However, understanding the quantity and quality required will continue to be a challenge to engineers. For instance:
 
-Understanding the required quantity and quality of data will continue to be a challenge to engineers. For instance:
-
- * Should sensing systems be retrofit to existing structures? 
+ * Should a sensing systems be retrofit to an existing structure? 
  * If so, how precise and how reliable do they need to be? 
  * Does a malfunctioning sensor require replacement? 
  * What supplementary inspection or testing data is required?
  * **Add energy systems questions here too!**
 
-Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
+Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
 ## How to use this document
 
@@ -43,8 +42,6 @@ This is a computational document that includes chunks of `Python` and `R` code n
 ## Load Python Packages
 
 ```{python}
-#|label: load_Python_packages
-
 import cmdstanpy, requests, os, tempfile
 import numpy as np, pandas as pd
 from scipy import stats
@@ -54,41 +51,66 @@ from scipy import stats
 ## Load R Packages
 
 ```{R}
-#| label: load_R_packages
-
-library(tidyverse); library(fitdistrplus)
-library(cmdstanr); library(copula); library(boot)
+library(tidyverse); library(fitdistrplus); library(boot)
+library(cmdstanr); library(copula); library(RHugin)
 
 ```
+
+## Load Julia Packages
+
+```{Julia}
+using CSV, HTTP, DataFrames
+
+```
+
 :::
 
-The `Python` packages that have been used are loaded below, see @chunk_load_packages, 
-
-:::{.callout-tip}
+:::{.callout-tip collapse="true"}
 ## Tip: Loading packages
 In `R` and `Python` packages first need to be installed. Guidance on installing packages can be found [here](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages) (for `R`) and [here](https://pypi.org/project/pip/) (for `Python`). 
 
-Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but such docume
+Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but those details can be found online, for example [here is the website for the `Python` pandas package](https://pandas.pydata.org).
 :::
 
-In addition, some statistical models that have been written in the probabilistic programming language `Stan` have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this [public repository](https://github.com/DomDF/DCE_guidance).
+In addition, some statistical models that have been written in the probabilistic programming language `Stan` have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this [public Github repository](https://github.com/DomDF/DCE_guidance).
 
 # Uncertainty in the Built Environment
 
-Engineering data will often consist of some indirect measurements of a complex physical phenomena. Even sophisticated sensing technologies will only ever provide imperfect information. This data is then analysed in the context of some imperfect representation (a model) of the \emph{true} state of the complex systems that define it. This all leads to the presence of uncertainty in engineering analysis.
+Engineering standards acknowledge the presence of variability in the quantities they are dealing with. Repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
 
-Engineers are tasked with making recommendations about the safe and efficient operation of the built environment, accounting for the various uncertainties associated with the task. Historically, structural engineers have used deterministic approaches to perform conservative assessments. Here, uncertain quantities are assigned a \emph{safe} value, for instance a strength may be assumed to be the minimum from a set of measurements, and these values are assumed to result in suitably conservative results. There are various challenges associated with this approach, including that of consistently allocating resources to maintain structures that are assessed with differing, implicit and unquantified safety factors. Quantification of uncertainty using probabilistic methods, see Section \ref{sect:probabilistic_uq}, can be used to propagate models of uncertainty though engineering calculations. This can be used to quantify risk on an absolute scale, and produce coherent and consistent decisions.
+Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a *safe* or *characteristic* value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.
 
-In any case, uncertainty can be reduced by collecting additional data. While data will generally always provide some value, provided it is relevant, it will not represent a good investment. There are various costs associated with collecting engineering data, including that associated with the risk of exposing inspection personnel to hazardous environments, or collection and storage costs of high-volume streaming data from structural health monitoring technologies.
+This can be achieved by using probability to formally quantify uncertainty, and various examples of this are presented in this document. Statistical models of variability can describe how many uncertain quantities can be dependent, how uncertainty can increase when making predictions over various time frames, and how uncertainty can decrease when new data becomes available. Uncertainty quantification therefore allows for many other types of analysis, such as identifying where, when and how additional data should be collected, which is the focus of this document.
 
-Value of information analysis, see Section \ref{sect:voi}, allows for the quantification of the expected value that new data provides, in the context of solving a decision problem. This formal statistical procedure can be used to provide quantitative justification for investing (or not) in new data collection opportunities. Though in many cases there may be an intuitive solution to this problem \footnote{For instance it not be worthwhile paying to deploy state of the art technologies to improve models of an asset that has no value. Conversely, high consequence decisions for structures whose safety are currently poorly understood (perhaps because they have just been purchased, or are proposed to be used in some new application) are likely to justify even expensive data collection activities.}, there may often be cases where engineering teams cannot agree on whether additional data is required. In such cases, a formal statistical procedure can provide quantitative (and replicable, auditable) justification for such actions.
+While data will generally always provide some value, provided that it is relevant, it will not always represent a good investment. There are various costs associated with collecting engineering data, including hiring/purchasing specialised measurement equipment, the storage costs of high-volume streaming data, and occasionally the risk associated with exposing personnel to hazardous environments to collect data. Justifying these costs require engineers to link data collection to the improved decision making that it facilitates. 
+
+Without formal methods of uncertainty quantification, engineers may differ in opinion about data collection strategy. Quantitative approaches will be preferable because they are auditable. As demonstrated in the examples in this document, these approaches do not remove engineering input from this process, but rather include expert knowledge in a formal way. Unless both available data, and subject matter expertise are used to inform decisions, then some information is not being taken advantage of.
 
 # Quantifying Uncertainty
 
--   where do distributions come from?
--   when are they optimal, or useful, or unhelpful in approximating variability?
+Some reasonable question regarding the use of probability distributions in engineering calculations, include:
 
-## Using distributions in `Python` and `R`
+-   Where do distributions come from?
+-   When are they useful, or unhelpful in describing variability in engineering quantities?
+
+Uniform distribution can occur in the most ways. Mathematically it can be shown to have the maximum entropy (where information entropy can broadly considered to be a measure of uncertainty) of all possible distributions to describe this problem [@Jaynes2003, @Jordaan2005].
+
+Other problems, with other features and constraints, have different maximum entropy solutions.
+
+A maximum entropy distribution is therefore the least committal (contains the fewest assumptions), and this may be a justifiable argument for approximating an uncertain quantity. However, engineers will generally have enough knowledge about their systems to 
+
+Prior predictive simulation...[@McElreath2019]
+
+:::{.callout-note collapse="true"}
+## Thought: Using Probabilities
+
+In this document, uncertainty is quantified using probability. There are many academic arguments for using this approach [@McElreath2019; @Gelman2014], but another compelling argument is that the practical meaning of probability is intuitive. It can be used to describe decision making under uncertainty, and the statistics presented in this document are with the intention of providing immediate, pragmatic guidance.
+
+:::
+
+## Working with Probability Distributions
+
+
 
 ::: panel-tabset
 ## Python (using SciPy.stats)
@@ -106,11 +128,13 @@ rnorm(n = 10, mean = 0, sd = 1)
 ```
 :::
 
-### Example Calculations
+## Sampling Outcome Variables
 
-#### Analysis of Tensile Test Data of Steel
 
-In this example we will consider what information is contained in a set of measurements of yield and tensile strength. The data is presented in Table @tab_strength_data and Figure @fig_strength_data. This data can be downloaded using the below code.
+
+### Example: Analysis of Tensile Test Data of Steel
+
+This example considers how to interpret a set of measurements of material strength. The data is presented in @tbl-strength_data. This data can be downloaded using the below code, which also shows the first few rows.
 
 ::: panel-tabset
 ## Python (using pandas)
@@ -130,6 +154,18 @@ strength_df <- read_csv(file = "https://raw.githubusercontent.com/DomDF/DCE_guid
 strength_df |> head(n = 3)
 
 ```
+## Julia (using CSV)
+
+```{Julia}
+strength_df = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv" |> 
+    x -> HTTP.get(x).body |>
+    x -> CSV.File(x) |>
+    x -> DataFrame(x)
+
+println(first(strength_df, 3))
+
+```
+
 :::
 
 The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:
@@ -138,33 +174,35 @@ The results indicate some variability even though each row presents the result o
 
 -   *Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.
 
+Shown here as a table:
+
 ```{R}
-#| label: fig_strength_data
-#| fig-cap: "Plot of Joint Measurements of Yield and Tensile Strength"
+#| echo: false
+#| label: tbl-strength_data
+#| tbl-cap: "Tensile Test Data of Steel"
 
-strength_mv_plot <- ggplot(data = strength_df, mapping = aes(x = yield, y = tensile))+
-  geom_point(shape = 1, alpha = 1/2)+
-  scale_x_continuous(name = 'Yield Strength, MPa', limits = c(300, 600))+
-  scale_y_continuous(name = 'Ultimate Tensile Strength, MPa', limits = c(300, 900))+
-  geom_abline(lty = 2, alpha = 1/2)+
-  ggthemes::theme_base(base_size = 12, base_family = 'Atkinson Hyperlegible')+
-  theme(plot.background = element_rect(color = NA))
-
-strength_mv_plot |> ggExtra::ggMarginal(type = 'histogram')
+strength_df |> 
+  rename('Test ID' = 'id', 'Yield Strength, MPa' = 'yield', 'Tensile Strength, MPa' = 'tensile') |> 
+  knitr::kable()
 
 ```
 
-Shown here as a table, printed using the below `R` code:
+There is a range of `r paste(signif(x = strength_df$yield |> max() - strength_df$yield |> min(), digits = 3), "MPa")`. There are many ways that this can be interpreted. Since no value was recorded less than `r paste(strength_df$yield |> min() |> floor(), "MPa")`, can it be assumed that lower yield strengths are not credible?
 
-```{R}
-#| label: tab_strength_data
-#| tab-cap: "Tensile Test Data of Steel"
+:::{.callout-note collapse="true"}
+## Thought: Dealing with variability
 
-strength_df |> rename('Test ID' = 'id', 'Yield Strength, MPa' = 'yield', 'Tensile Strength, MPa' = 'tensile') |> knitr::kable()
+Engineers need to...
 
-```
+nice to have a cut-off (threshold). then worst-case assessments are possible.
 
-This variability can be approximated using probability distributions. These should be considered to be a model
+assessing cracks in welded structures [@BSI2015]
+
+MOTE
+
+:::
+
+This variability can be approximated using probability distributions. These should be considered to be a model 
 
 ::: panel-tabset
 ## Python (using SciPy )
@@ -182,24 +220,53 @@ fitdist(data = strength_df$yield, distr = 'norm', method = 'mle')
 ```
 :::
 
-These distribution parameters represent those with the highest score (likelihood) of the range considered. However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the statistical uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.
+These distribution parameters represent those with the highest score (likelihood) of the range considered. If the standard deviation was any higher, the likelihood of any values near the mean would be reduced, and if it was any lower the likelihood of any data at the tails would be reduced. Similarly, if the mean was any higher, the likelihood of any lower values would be reduced. So there is a trade-off here, and maximum likelihood estimates will provide the values that maximise the product of the likelihoods (or the sum of the log-likelihoods) for the data that is being used to fit the distribution.
 
-For instance, with only two or three measurements of yield strength, it is important to reflect that a maximum likelihood probabilistic model will be unsure of the distribution parameters that it estimates. The single number (point estimate) result could change significantly after including just a few more tests. Describing the variability in cases like this can help distinguish a highly uncertain model with a highly informed model, and this distinction is important when they are being used for decision support.
+However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the *statistical* uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.
 
-One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals.....
+:::{.callout-note collapse="true"}
+## Thought: Collecting Data Reduces Uncertainty
+The reason engineers pay for material tests, inspection activities and sensing systems is because the data that they provide can be used to estimate some uncertain quantity of interest. In general, the more data that is available, the less uncertainty will be associated with the prediction. For instance, a linear model with a straight line that approximately goes through two or three points is much less compelling than a straight line that approximately goes through hundreds of points (when the errors are the same).
+
+The uncertainty that is associated with limited amounts of data is often referred to as *statistical* or *epistemic* uncertainty. It is distinct from *aleatory* uncertainty, which is the variability that is inherent in the problem, no matter how many measurements are available.
+
+Since statistical uncertainty can be reduced by collecting more data, there are ways to intelligently identify when it is expected to be worthwhile paying more data, and where the point of diminishing returns is. The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful.
+:::
+
+Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can mean ac and this distinction is important when they are being used for decision support. 
+
+One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals. Confidence intervals can be obtained by repeating the calculation many times using different samples of the data, and identifying the range within which some proportion of results are contained in. The below code finds the 95% confidence intervals for the maximum likelihood estimate of the mean yield strength, based on the tensile test data in @tbl-strength_data.
+
+Some further detail on confidence intervals can be found in [@Gelman2020], but essentially, the below result should be interpreted as: in repeated experiments, the mean yield strength will lie somewhere within this range 95% of the time. How that fact can be used to support decision making is not clear, so this document considers a more intuitive method of describing this uncertainty.
 
 ::: panel-tabset
-# R, using boot
+## Python (using SciPy )
+
+```{python}
+yield_data = (strength_df['yield'].values,)
+
+def get_MLE_mean(data):
+  return stats.norm.fit(data = data, method = 'MLE')[0]
+  
+bootstrap_mean = stats.bootstrap(data = yield_data, statistic = get_MLE_mean, vectorized = False, 
+confidence_level = 0.95, n_resamples = 1000, method = "basic")
+
+bootstrap_mean.confidence_interval
+
+```
+
+## R, using boot
 
 ```{R}
-est_norm_mean <- function(x, id) {fitdist(x[id], distr = 'norm')$estimate[1]}
+get_MLE_mean <- function(x, id) {fitdist(x[id], distr = 'norm')$estimate[1]}
 
-bootstrap_est <- strength_df$yield |>
-  boot(statistic = est_norm_mean, R = 1e3) |>
+bootstrap_mean <- strength_df$yield |>
+  boot(statistic = get_MLE_mean, R = 1000) |>
   boot.ci(conf = 0.95)
 
-bootstrap_est$normal |> as_tibble() |> 
-  rename(lower_bound = V2, upper_bound = V3)
+bootstrap_mean$basic |> as_tibble() |> 
+  dplyr::select(c(conf, V4, V5)) |>
+  rename(lower_bound = V4, upper_bound = V5)
 
 ```
 :::
@@ -208,65 +275,139 @@ bootstrap_est$normal |> as_tibble() |>
 
 ## Introduction
 
-Sometimes known as probabilistic machine learning. We will...
+Probabilistic programming is used to describe a statistical model, and then automate the inference (estimation of the unknown and uncertain parameters) [@Rainforth2017]. Sometimes known as probabilistic machine learning [@Ghahramani2015], inferring unknown parameters, while also accounting for the uncertainty, including statistical uncertainty, is a desirable characteristic of a calculation. One reason for this is because it can be used to demonstrate how additional data can reduce uncertainty, and this can be used as the basis for intelligently collecting data.
 
+There are now many probabilistic programming languages available to engineers, but the one that is used in the examples in this document is `Stan`. The primary justification for this is that it runs a state of the art sampling algorithm, and (unlike many alternatives) it can be used with many other langauges. In these examples, pre- and post-processing of data will be done in `R` and `Python`.
 
+The below functions will be used to load `Stan` files from the Github repository:
 
 ::: panel-tabset
-## Python (using Stan)
+## Python
 
 ```{python}
 #| output: false
 
-url = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"
-
-new_file, filename = tempfile.mkstemp()
-filename = filename + ".stan"
-
-f = open(filename, "w"); f.write(requests.get(url).text)
-
-strength_model = cmdstanpy.CmdStanModel(stan_file = filename)
+def get_stan_model(url):
+  new_file, filename = tempfile.mkstemp()
+  filename = filename + ".stan"
+  
+  f = open(filename, "w"); f.write(requests.get(url).text)
+  
+  return cmdstanpy.CmdStanModel(stan_file = filename)
 
 ```
 
-## R (using Stan)
+## R
 
 ```{R}
 
-strength_model <- url("https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan") |>
-  readLines() |>
-  cmdstanr::write_stan_file() |>
-  cmdstanr::cmdstan_model()
+get_stan_model <- function(url) {
+  url |> url() |>
+    readLines() |>
+    write_stan_file() |>
+    cmdstan_model()
+}
 
 ```
 :::
 
-# Supporting Desicion Analysis
+Firstly, loading the Stan model for quantifying uncertainty in material strength:
+
+::: panel-tabset
+## Python
+
+```{python}
+#| output: false
+
+strength_model = get_stan_model(url = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan")
+
+```
+
+## R
+
+```{R}
+
+strength_model <- get_stan_model(url = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan")
+
+```
+:::
+
+The data block in the `Stan` file indicates the data that it is expecting. In `Python` this data is provided to the `Stan` model in the form of a dictionary, and in `R` it is a list.
+
+
+:::{.callout-note collapse="true"}
+## Thought: Data vs. Information
+It is widely acknowledged that not all data are equally informative. Engineering data often consists of some indirect measurements of a complex physical phenomena, sometimes in challenging environments. As a result, it will always be associated with some precision, bias and reliability.
+
+It may be necessary to conduct some calibration experiments to quantify these properties, and one such example is provided later in this document. Higher quality (more precise, less biased, more reliable) data will always be at least as useful as lower quality data, and will sometimes be worth paying much more for.
+
+Risk based inspection standards (such as API 580) often acknowledge this difference in quality. A visual inspection is not considered as good as an ultrasonic inspection for damage, and is therefore recommended to be completed more frequently to manage risk. The calculations in this document account for data quality more accurately. Rather than relying on simple heuristics, statistical models are used to relate the information content to the raw data. 
+:::
+
+
+
+Posterior predictive: pr(S > some value of interest) - ref Pratt, Raiffa, Schlaiffer....
+Now we can start combining the results with decision making...
+
+# Supporting Decision Making
 
 ## Existing Challenges
 
-Interpretting assessment results before arriving at decision
+Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed seprately from the underlying decision problem, and by a different team.
+
+A consequence 
 
 ## Solutions
 
+Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benj Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger). 
+
+:::{.callout-note collapse="true"}
+## Thought: The Expected Value of Data ...*Before* Collecting it
+A key challenge in estimating the expected value of a prospective data collection activity, is that it is performed before the data is available to include in models - the purpose of the analysis is to help decide whether it is worth collecting.
+
+Instead, the method considers all of the information that will be available at the time of making this decision. Engineers will be able to predict, with some (and perhaps a lot of!) uncertainty, what they expect the value to be. They will also know, generally from the contractor, is the quality of data that will be provided. For instance, inspection technologies are calibrated by service providers before they are brought to market, and so along with a quotation, a performance specification can be provided explaining how precise the data will be.
+
+A value of information analysis uses all of this available information and, in the context of the decision problem that the data is intended to support, quantifies on a meaningful, monetary scale, the expected value of the data to the engineer.
+:::
+
+
 ### Decision Trees
+
+Linking analysis to decisions is not new : Ref Raiffa, [@Benjamin2014c, @Jordaan2005]...
+
+In these books, problems are presented as decision-event trees...
 
 ### Graphical Models (Influence Diagrams)
 
-### Example Calculations
+:::{.callout-note collapse="true"}
+## Thought: Drawing Upon Engineering Know-How
+Drawing a graphical model can be as simple as thinking about relationships between your parameters
+:::
 
-#### Repair Requirements
+## Example Calculations
 
-#### Inspection Requirements
+### Crop Sales Forecasting
 
-#### Identifying a Data Collection Plan
+### Temperatuere Calibration for Energy Systems
 
-# Discussion
+### Identifying a Data Collection Plan for a Bridge
+
+# Recommendations
 
 ## Probabilistic Models
 
 ## Neural Networks
 
+:::{.callout-note collapse="true"}
+## Thought: Learning a Model
+
+:::
+
 ## Engineering Judgement
 
-#  {.illustration}
+
+
+<!-- # References -->
+
+
+#

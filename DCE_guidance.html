@@ -79,6 +79,25 @@ code span.st { color: #4070a0; } /* String */
 code span.va { color: #19177c; } /* Variable */
 code span.vs { color: #4070a0; } /* VerbatimString */
 code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+}
+.hanging div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}
 </style>
 
 <script src="DCE_guidance_files/libs/clipboard/clipboard.min.js"></script>
@@ -92,7 +111,6 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <link href="DCE_guidance_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="DCE_guidance_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet">
 
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -112,26 +130,32 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   <li><a href="#uncertainty-in-the-built-environment" id="toc-uncertainty-in-the-built-environment" class="nav-link" data-scroll-target="#uncertainty-in-the-built-environment"> <span class="header-section-number">2</span> Uncertainty in the Built Environment</a></li>
   <li><a href="#quantifying-uncertainty" id="toc-quantifying-uncertainty" class="nav-link" data-scroll-target="#quantifying-uncertainty"> <span class="header-section-number">3</span> Quantifying Uncertainty</a>
   <ul class="collapse">
-  <li><a href="#using-distributions-in-python-and-r" id="toc-using-distributions-in-python-and-r" class="nav-link" data-scroll-target="#using-distributions-in-python-and-r"> <span class="header-section-number">3.1</span> Using distributions in <code>Python</code> and <code>R</code></a>
+  <li><a href="#working-with-probability-distributions" id="toc-working-with-probability-distributions" class="nav-link" data-scroll-target="#working-with-probability-distributions"> <span class="header-section-number">3.1</span> Working with Probability Distributions</a></li>
+  <li><a href="#sampling-outcome-variables" id="toc-sampling-outcome-variables" class="nav-link" data-scroll-target="#sampling-outcome-variables"> <span class="header-section-number">3.2</span> Sampling Outcome Variables</a>
   <ul class="collapse">
-  <li><a href="#example-calculations" id="toc-example-calculations" class="nav-link" data-scroll-target="#example-calculations"> <span class="header-section-number">3.1.1</span> Example Calculations</a></li>
+  <li><a href="#example-analysis-of-tensile-test-data-of-steel" id="toc-example-analysis-of-tensile-test-data-of-steel" class="nav-link" data-scroll-target="#example-analysis-of-tensile-test-data-of-steel"> <span class="header-section-number">3.2.1</span> Example: Analysis of Tensile Test Data of Steel</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#probabilistic-programming" id="toc-probabilistic-programming" class="nav-link" data-scroll-target="#probabilistic-programming"> <span class="header-section-number">4</span> Probabilistic Programming</a>
   <ul class="collapse">
   <li><a href="#introduction-1" id="toc-introduction-1" class="nav-link" data-scroll-target="#introduction-1"> <span class="header-section-number">4.1</span> Introduction</a></li>
   </ul></li>
-  <li><a href="#supporting-desicion-analysis" id="toc-supporting-desicion-analysis" class="nav-link" data-scroll-target="#supporting-desicion-analysis"> <span class="header-section-number">5</span> Supporting Desicion Analysis</a>
+  <li><a href="#supporting-decision-making" id="toc-supporting-decision-making" class="nav-link" data-scroll-target="#supporting-decision-making"> <span class="header-section-number">5</span> Supporting Decision Making</a>
   <ul class="collapse">
   <li><a href="#existing-challenges" id="toc-existing-challenges" class="nav-link" data-scroll-target="#existing-challenges"> <span class="header-section-number">5.1</span> Existing Challenges</a></li>
   <li><a href="#solutions" id="toc-solutions" class="nav-link" data-scroll-target="#solutions"> <span class="header-section-number">5.2</span> Solutions</a>
   <ul class="collapse">
   <li><a href="#decision-trees" id="toc-decision-trees" class="nav-link" data-scroll-target="#decision-trees"> <span class="header-section-number">5.2.1</span> Decision Trees</a></li>
   <li><a href="#graphical-models-influence-diagrams" id="toc-graphical-models-influence-diagrams" class="nav-link" data-scroll-target="#graphical-models-influence-diagrams"> <span class="header-section-number">5.2.2</span> Graphical Models (Influence Diagrams)</a></li>
-  <li><a href="#example-calculations-1" id="toc-example-calculations-1" class="nav-link" data-scroll-target="#example-calculations-1"> <span class="header-section-number">5.2.3</span> Example Calculations</a></li>
+  </ul></li>
+  <li><a href="#example-calculations" id="toc-example-calculations" class="nav-link" data-scroll-target="#example-calculations"> <span class="header-section-number">5.3</span> Example Calculations</a>
+  <ul class="collapse">
+  <li><a href="#crop-sales-forecasting" id="toc-crop-sales-forecasting" class="nav-link" data-scroll-target="#crop-sales-forecasting"> <span class="header-section-number">5.3.1</span> Crop Sales Forecasting</a></li>
+  <li><a href="#temperatuere-calibration-for-energy-systems" id="toc-temperatuere-calibration-for-energy-systems" class="nav-link" data-scroll-target="#temperatuere-calibration-for-energy-systems"> <span class="header-section-number">5.3.2</span> Temperatuere Calibration for Energy Systems</a></li>
+  <li><a href="#identifying-a-data-collection-plan-for-a-bridge" id="toc-identifying-a-data-collection-plan-for-a-bridge" class="nav-link" data-scroll-target="#identifying-a-data-collection-plan-for-a-bridge"> <span class="header-section-number">5.3.3</span> Identifying a Data Collection Plan for a Bridge</a></li>
   </ul></li>
   </ul></li>
-  <li><a href="#discussion" id="toc-discussion" class="nav-link" data-scroll-target="#discussion"> <span class="header-section-number">6</span> Discussion</a>
+  <li><a href="#recommendations" id="toc-recommendations" class="nav-link" data-scroll-target="#recommendations"> <span class="header-section-number">6</span> Recommendations</a>
   <ul class="collapse">
   <li><a href="#probabilistic-models" id="toc-probabilistic-models" class="nav-link" data-scroll-target="#probabilistic-models"> <span class="header-section-number">6.1</span> Probabilistic Models</a></li>
   <li><a href="#neural-networks" id="toc-neural-networks" class="nav-link" data-scroll-target="#neural-networks"> <span class="header-section-number">6.2</span> Neural Networks</a></li>
@@ -146,7 +170,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <div class="quarto-title-block"><div><h1 class="title">Data-Centric Engineering</h1><button type="button" class="btn code-tools-button dropdown-toggle" id="quarto-code-tools-menu" data-bs-toggle="dropdown" aria-expanded="false"><i class="bi"></i> Code</button><ul class="dropdown-menu dropdown-menu-end" aria-labelelledby="quarto-code-tools-menu"><li><a id="quarto-show-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Show All Code</a></li><li><a id="quarto-hide-all-code" class="dropdown-item" href="javascript:void(0)" role="button">Hide All Code</a></li><li><hr class="dropdown-divider"></li><li><a id="quarto-view-source" class="dropdown-item" href="javascript:void(0)" role="button">View Source</a></li></ul></div></div>
-<p class="subtitle lead">Guidance on the Use of Probabilistic Methods for Identifying Data Requirements from Structural Systems</p>
+<p class="subtitle lead">Guidance on the Use of Probabilistic Methods for Identifying Data Requirements</p>
 </div>
 
 
@@ -172,32 +196,29 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
 <section id="purpose-of-this-document" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="purpose-of-this-document"><span class="header-section-number">1.1</span> Purpose of this Document</h2>
-<p>Engineering analysis for built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring, <strong>energy targets/constraints</strong>, and scalable data analysis will allow for more sophisticated uncertainty quantification. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.</p>
-<p>Understanding the required quantity and quality of data will continue to be a challenge to engineers. For instance:</p>
+<p>The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in safety and efficiency of the built environment. However, understanding the quantity and quality required will continue to be a challenge to engineers. For instance:</p>
 <ul>
-<li>Should sensing systems be retrofit to existing structures?</li>
+<li>Should a sensing systems be retrofit to an existing structure?</li>
 <li>If so, how precise and how reliable do they need to be?</li>
 <li>Does a malfunctioning sensor require replacement?</li>
 <li>What supplementary inspection or testing data is required?</li>
 <li><strong>Add energy systems questions here too!</strong></li>
 </ul>
-<p>Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</p>
+<p>Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</p>
 </section>
 <section id="how-to-use-this-document" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="how-to-use-this-document"><span class="header-section-number">1.2</span> How to use this document</h2>
 <p>This is a computational document that includes chunks of <code>Python</code> and <code>R</code> code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Load Python Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Load R Packages</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true">Load Python Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false">Load R Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false">Load Julia Packages</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
 <div id="tabset-1-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-1-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#|label: load_Python_packages</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cmdstanpy, requests, os, tempfile</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cmdstanpy, requests, os, tempfile</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </div>
@@ -205,46 +226,78 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(fitdistrplus)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr); <span class="fu">library</span>(copula); <span class="fu">library</span>(boot)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(fitdistrplus); <span class="fu">library</span>(boot)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr); <span class="fu">library</span>(copula); <span class="fu">library</span>(RHugin)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<div id="tabset-1-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-1-3-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">using</span> <span class="bu">CSV</span>, <span class="bu">HTTP</span>, <span class="bu">DataFrames</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </div>
 </div>
 </div>
-<p>The <code>Python</code> packages that have been used are loaded below, see <span class="citation" data-cites="chunk_load_packages">@chunk_load_packages</span>,</p>
 <div class="callout-tip callout callout-style-default callout-captioned">
-<div class="callout-header d-flex align-content-center">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-1-contents" aria-controls="callout-1" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
 <i class="callout-icon"></i>
 </div>
 <div class="callout-caption-container flex-fill">
 Tip: Loading packages
 </div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
 </div>
+<div id="callout-1" class="callout-1-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>In <code>R</code> and <code>Python</code> packages first need to be installed. Guidance on installing packages can be found <a href="https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages">here</a> (for <code>R</code>) and <a href="https://pypi.org/project/pip/">here</a> (for <code>Python</code>).</p>
-<p>Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but such docume</p>
+<p>Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but those details can be found online, for example <a href="https://pandas.pydata.org">here is the website for the <code>Python</code> pandas package</a>.</p>
 </div>
 </div>
-<p>In addition, some statistical models that have been written in the probabilistic programming language <code>Stan</code> have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this <a href="https://github.com/DomDF/DCE_guidance">public repository</a>.</p>
+</div>
+<p>In addition, some statistical models that have been written in the probabilistic programming language <code>Stan</code> have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this <a href="https://github.com/DomDF/DCE_guidance">public Github repository</a>.</p>
 </section>
 </section>
 <section id="uncertainty-in-the-built-environment" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Uncertainty in the Built Environment</h1>
-<p>Engineering data will often consist of some indirect measurements of a complex physical phenomena. Even sophisticated sensing technologies will only ever provide imperfect information. This data is then analysed in the context of some imperfect representation (a model) of the state of the complex systems that define it. This all leads to the presence of uncertainty in engineering analysis.</p>
-<p>Engineers are tasked with making recommendations about the safe and efficient operation of the built environment, accounting for the various uncertainties associated with the task. Historically, structural engineers have used deterministic approaches to perform conservative assessments. Here, uncertain quantities are assigned a value, for instance a strength may be assumed to be the minimum from a set of measurements, and these values are assumed to result in suitably conservative results. There are various challenges associated with this approach, including that of consistently allocating resources to maintain structures that are assessed with differing, implicit and unquantified safety factors. Quantification of uncertainty using probabilistic methods, see Section <span class="math inline">\(\ref{sect:probabilistic_uq}\)</span>, can be used to propagate models of uncertainty though engineering calculations. This can be used to quantify risk on an absolute scale, and produce coherent and consistent decisions.</p>
-<p>In any case, uncertainty can be reduced by collecting additional data. While data will generally always provide some value, provided it is relevant, it will not represent a good investment. There are various costs associated with collecting engineering data, including that associated with the risk of exposing inspection personnel to hazardous environments, or collection and storage costs of high-volume streaming data from structural health monitoring technologies.</p>
-<p>Value of information analysis, see Section <span class="math inline">\(\ref{sect:voi}\)</span>, allows for the quantification of the expected value that new data provides, in the context of solving a decision problem. This formal statistical procedure can be used to provide quantitative justification for investing (or not) in new data collection opportunities. Though in many cases there may be an intuitive solution to this problem , there may often be cases where engineering teams cannot agree on whether additional data is required. In such cases, a formal statistical procedure can provide quantitative (and replicable, auditable) justification for such actions.</p>
+<p>Engineering standards acknowledge the presence of variability in the quantities they are dealing with. Repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.</p>
+<p>Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a <em>safe</em> or <em>characteristic</em> value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.</p>
+<p>This can be achieved by using probability to formally quantify uncertainty, and various examples of this are presented in this document. Statistical models of variability can describe how many uncertain quantities can be dependent, how uncertainty can increase when making predictions over various time frames, and how uncertainty can decrease when new data becomes available. Uncertainty quantification therefore allows for many other types of analysis, such as identifying where, when and how additional data should be collected, which is the focus of this document.</p>
+<p>While data will generally always provide some value, provided that it is relevant, it will not always represent a good investment. There are various costs associated with collecting engineering data, including hiring/purchasing specialised measurement equipment, the storage costs of high-volume streaming data, and occasionally the risk associated with exposing personnel to hazardous environments to collect data. Justifying these costs require engineers to link data collection to the improved decision making that it facilitates.</p>
+<p>Without formal methods of uncertainty quantification, engineers may differ in opinion about data collection strategy. Quantitative approaches will be preferable because they are auditable. As demonstrated in the examples in this document, these approaches do not remove engineering input from this process, but rather include expert knowledge in a formal way. Unless both available data, and subject matter expertise are used to inform decisions, then some information is not being taken advantage of.</p>
 </section>
 <section id="quantifying-uncertainty" class="level1" data-number="3">
 <h1 data-number="3"><span class="header-section-number">3</span> Quantifying Uncertainty</h1>
+<p>Some reasonable question regarding the use of probability distributions in engineering calculations, include:</p>
 <ul>
-<li>where do distributions come from?</li>
-<li>when are they optimal, or useful, or unhelpful in approximating variability?</li>
+<li>Where do distributions come from?</li>
+<li>When are they useful, or unhelpful in describing variability in engineering quantities?</li>
 </ul>
-<section id="using-distributions-in-python-and-r" class="level2" data-number="3.1">
-<h2 data-number="3.1" class="anchored" data-anchor-id="using-distributions-in-python-and-r"><span class="header-section-number">3.1</span> Using distributions in <code>Python</code> and <code>R</code></h2>
+<p>Uniform distribution can occur in the most ways. Mathematically it can be shown to have the maximum entropy (where information entropy can broadly considered to be a measure of uncertainty) of all possible distributions to describe this problem <span class="citation" data-cites="Jaynes2003">Jordaan (<a href="#ref-Jordaan2005" role="doc-biblioref">2005</a>)</span>.</p>
+<p>Other problems, with other features and constraints, have different maximum entropy solutions.</p>
+<p>A maximum entropy distribution is therefore the least committal (contains the fewest assumptions), and this may be a justifiable argument for approximating an uncertain quantity. However, engineers will generally have enough knowledge about their systems to</p>
+<p>Prior predictive simulation…<span class="citation" data-cites="McElreath2019">(<a href="#ref-McElreath2019" role="doc-biblioref">McElreath 2020</a>)</span></p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-2-contents" aria-controls="callout-2" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: Using Probabilities
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-2" class="callout-2-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>In this document, uncertainty is quantified using probability. There are many academic arguments for using this approach <span class="citation" data-cites="McElreath2019 Gelman2014">(<a href="#ref-McElreath2019" role="doc-biblioref">McElreath 2020</a>; <a href="#ref-Gelman2014" role="doc-biblioref">Gelman et al. 2014</a>)</span>, but another compelling argument is that the practical meaning of probability is intuitive. It can be used to describe decision making under uncertainty, and the statistics presented in this document are with the intention of providing immediate, pragmatic guidance.</p>
+</div>
+</div>
+</div>
+<section id="working-with-probability-distributions" class="level2" data-number="3.1">
+<h2 data-number="3.1" class="anchored" data-anchor-id="working-with-probability-distributions"><span class="header-section-number">3.1</span> Working with Probability Distributions</h2>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-2-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-1" role="tab" aria-controls="tabset-2-1" aria-selected="true">Python (using SciPy.stats)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-2-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-2-2" role="tab" aria-controls="tabset-2-2" aria-selected="false">R</a></li></ul>
 <div class="tab-content">
@@ -252,11 +305,11 @@ Tip: Loading packages
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([ 0.10749907, -1.14485817,  0.28027322,  0.90731982, -0.00300591,
-        0.36865848,  1.66115705, -1.19053854,  2.31509529,  0.46789481])</code></pre>
+<pre><code>array([-1.09159272, -1.47862381, -0.45060271, -0.13817263,  1.18248938,
+       -0.47855905, -1.35037462, -0.76540889, -0.15233623, -0.03831223])</code></pre>
 </div>
 </div>
 </div>
@@ -264,31 +317,32 @@ Tip: Loading packages
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -1.28346048  0.83796647  0.72967042 -0.05055898 -0.01017328  0.01894014
- [7] -1.03689623 -0.13413069  0.77122748 -1.72578410</code></pre>
+<pre><code> [1] -0.5395787  0.3131102 -1.1812392  0.9808659 -0.7817048  0.7061593
+ [7]  1.0329764  0.2140548  0.1356624 -0.5946880</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-<section id="example-calculations" class="level3" data-number="3.1.1">
-<h3 data-number="3.1.1" class="anchored" data-anchor-id="example-calculations"><span class="header-section-number">3.1.1</span> Example Calculations</h3>
-<section id="analysis-of-tensile-test-data-of-steel" class="level4" data-number="3.1.1.1">
-<h4 data-number="3.1.1.1" class="anchored" data-anchor-id="analysis-of-tensile-test-data-of-steel"><span class="header-section-number">3.1.1.1</span> Analysis of Tensile Test Data of Steel</h4>
-<p>In this example we will consider what information is contained in a set of measurements of yield and tensile strength. The data is presented in Table <span class="citation" data-cites="tab_strength_data">@tab_strength_data</span> and Figure <span class="citation" data-cites="fig_strength_data">@fig_strength_data</span>. This data can be downloaded using the below code.</p>
+</section>
+<section id="sampling-outcome-variables" class="level2" data-number="3.2">
+<h2 data-number="3.2" class="anchored" data-anchor-id="sampling-outcome-variables"><span class="header-section-number">3.2</span> Sampling Outcome Variables</h2>
+<section id="example-analysis-of-tensile-test-data-of-steel" class="level3" data-number="3.2.1">
+<h3 data-number="3.2.1" class="anchored" data-anchor-id="example-analysis-of-tensile-test-data-of-steel"><span class="header-section-number">3.2.1</span> Example: Analysis of Tensile Test Data of Steel</h3>
+<p>This example considers how to interpret a set of measurements of material strength. The data is presented in <a href="#tbl-strength_data">Table&nbsp;1</a>. This data can be downloaded using the below code, which also shows the first few rows.</p>
 <div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Python (using pandas)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">R (using readr)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-3-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-1" role="tab" aria-controls="tabset-3-1" aria-selected="true">Python (using pandas)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-2" role="tab" aria-controls="tabset-3-2" aria-selected="false">R (using readr)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-3-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-3-3" role="tab" aria-controls="tabset-3-3" aria-selected="false">Julia (using CSV)</a></li></ul>
 <div class="tab-content">
 <div id="tabset-3-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-3-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>strength_df.head(n <span class="op">=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>strength_df.head(n <span class="op">=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>   id       yield     tensile
@@ -302,9 +356,9 @@ Tip: Loading packages
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 3 × 3
@@ -316,6 +370,19 @@ Tip: Loading packages
 </div>
 </div>
 </div>
+<div id="tabset-3-3" class="tab-pane" role="tabpanel" aria-labelledby="tabset-3-3-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span> <span class="op">|&gt;</span> </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> HTTP.<span class="fu">get</span>(x).body <span class="op">|&gt;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> CSV.<span class="fu">File</span>(x) <span class="op">|&gt;</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">DataFrame</span>(x)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a><span class="fu">println</span>(<span class="fu">first</span>(strength_df, <span class="fl">3</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
 </div>
 </div>
 <p>The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:</p>
@@ -323,36 +390,12 @@ Tip: Loading packages
 <li><p><em>Material heterogeneity</em>. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.</p></li>
 <li><p><em>Imperfect measurement data</em>. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.</p></li>
 </ul>
+<p>Shown here as a table:</p>
 <div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>strength_mv_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> strength_df, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> yield, <span class="at">y =</span> tensile))<span class="sc">+</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">'Yield Strength, MPa'</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">600</span>))<span class="sc">+</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">'Ultimate Tensile Strength, MPa'</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">900</span>))<span class="sc">+</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  ggthemes<span class="sc">::</span><span class="fu">theme_base</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">'Atkinson Hyperlegible'</span>)<span class="sc">+</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="cn">NA</span>))</span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>strength_mv_plot <span class="sc">|&gt;</span> ggExtra<span class="sc">::</span><span class="fu">ggMarginal</span>(<span class="at">type =</span> <span class="st">'histogram'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
 <div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="DCE_guidance_files/figure-html/fig_strength_data-1.png" class="img-fluid figure-img" width="672"></p>
-<p></p><figcaption aria-hidden="true" class="figure-caption">Plot of Joint Measurements of Yield and Tensile Strength</figcaption><p></p>
-</figure>
-</div>
-</div>
-</div>
-<p>Shown here as a table, printed using the below <code>R</code> code:</p>
-<div class="cell" data-tab-cap="Tensile Test Data of Steel">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="st">'Test ID'</span> <span class="ot">=</span> <span class="st">'id'</span>, <span class="st">'Yield Strength, MPa'</span> <span class="ot">=</span> <span class="st">'yield'</span>, <span class="st">'Tensile Strength, MPa'</span> <span class="ot">=</span> <span class="st">'tensile'</span>) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<div class="cell-output-display">
+<div id="tbl-strength_data" class="anchored">
 <table class="table table-sm table-striped">
+<caption>Table 1: Tensile Test Data of Steel</caption>
 <thead>
 <tr class="header">
 <th style="text-align: right;">Test ID</th>
@@ -465,6 +508,27 @@ Tip: Loading packages
 </table>
 </div>
 </div>
+</div>
+<p>There is a range of 92.8 MPa. There are many ways that this can be interpreted. Since no value was recorded less than 342 MPa, can it be assumed that lower yield strengths are not credible?</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-3-contents" aria-controls="callout-3" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: Dealing with variability
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-3" class="callout-3-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Engineers need to…</p>
+<p>nice to have a cut-off (threshold). then worst-case assessments are possible.</p>
+<p>assessing cracks in welded structures <span class="citation" data-cites="BSI2015">(<a href="#ref-BSI2015" role="doc-biblioref"><strong>BSI2015?</strong></a>)</span></p>
+<p>MOTE</p>
+</div>
+</div>
+</div>
 <p>This variability can be approximated using probability distributions. These should be considered to be a model</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-4-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-1" role="tab" aria-controls="tabset-4-1" aria-selected="true">Python (using SciPy )</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-4-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-4-2" role="tab" aria-controls="tabset-4-2" aria-selected="false">R (using fitdistrplus)</a></li></ul>
@@ -497,24 +561,64 @@ sd    26.2569   4.151580</code></pre>
 </div>
 </div>
 </div>
-<p>These distribution parameters represent those with the highest score (likelihood) of the range considered. However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the statistical uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it’s maximum likelihood estimates.</p>
-<p>For instance, with only two or three measurements of yield strength, it is important to reflect that a maximum likelihood probabilistic model will be unsure of the distribution parameters that it estimates. The single number (point estimate) result could change significantly after including just a few more tests. Describing the variability in cases like this can help distinguish a highly uncertain model with a highly informed model, and this distinction is important when they are being used for decision support.</p>
-<p>One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals…..</p>
+<p>These distribution parameters represent those with the highest score (likelihood) of the range considered. If the standard deviation was any higher, the likelihood of any values near the mean would be reduced, and if it was any lower the likelihood of any data at the tails would be reduced. Similarly, if the mean was any higher, the likelihood of any lower values would be reduced. So there is a trade-off here, and maximum likelihood estimates will provide the values that maximise the product of the likelihoods (or the sum of the log-likelihoods) for the data that is being used to fit the distribution.</p>
+<p>However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the <em>statistical</em> uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it’s maximum likelihood estimates.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-4-contents" aria-controls="callout-4" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: Collecting Data Reduces Uncertainty
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-4" class="callout-4-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>The reason engineers pay for material tests, inspection activities and sensing systems is because the data that they provide can be used to estimate some uncertain quantity of interest. In general, the more data that is available, the less uncertainty will be associated with the prediction. For instance, a linear model with a straight line that approximately goes through two or three points is much less compelling than a straight line that approximately goes through hundreds of points (when the errors are the same).</p>
+<p>The uncertainty that is associated with limited amounts of data is often referred to as <em>statistical</em> or <em>epistemic</em> uncertainty. It is distinct from <em>aleatory</em> uncertainty, which is the variability that is inherent in the problem, no matter how many measurements are available.</p>
+<p>Since statistical uncertainty can be reduced by collecting more data, there are ways to intelligently identify when it is expected to be worthwhile paying more data, and where the point of diminishing returns is. The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful.</p>
+</div>
+</div>
+</div>
+<p>Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can mean ac and this distinction is important when they are being used for decision support.</p>
+<p>One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals. Confidence intervals can be obtained by repeating the calculation many times using different samples of the data, and identifying the range within which some proportion of results are contained in. The below code finds the 95% confidence intervals for the maximum likelihood estimate of the mean yield strength, based on the tensile test data in <a href="#tbl-strength_data">Table&nbsp;1</a>.</p>
+<p>Some further detail on confidence intervals can be found in <span class="citation" data-cites="Gelman2020">(<a href="#ref-Gelman2020" role="doc-biblioref">Gelman, Hill, and Vehtari 2020</a>)</span>, but essentially, the below result should be interpreted as: in repeated experiments, the mean yield strength will lie somewhere within this range 95% of the time. How that fact can be used to support decision making is not clear, so this document considers a more intuitive method of describing this uncertainty.</p>
 <div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">R, using boot</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-5-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-1" role="tab" aria-controls="tabset-5-1" aria-selected="true">Python (using SciPy )</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-5-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-5-2" role="tab" aria-controls="tabset-5-2" aria-selected="false">R, using boot</a></li></ul>
 <div class="tab-content">
 <div id="tabset-5-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-5-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>est_norm_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, id) {<span class="fu">fitdist</span>(x[id], <span class="at">distr =</span> <span class="st">'norm'</span>)<span class="sc">$</span>estimate[<span class="dv">1</span>]}</span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>yield_data <span class="op">=</span> (strength_df[<span class="st">'yield'</span>].values,)</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>bootstrap_est <span class="ot">&lt;-</span> strength_df<span class="sc">$</span>yield <span class="sc">|&gt;</span></span>
-<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot</span>(<span class="at">statistic =</span> est_norm_mean, <span class="at">R =</span> <span class="fl">1e3</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot.ci</span>(<span class="at">conf =</span> <span class="fl">0.95</span>)</span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>bootstrap_est<span class="sc">$</span>normal <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">lower_bound =</span> V2, <span class="at">upper_bound =</span> V3)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_MLE_mean(data):</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> stats.norm.fit(data <span class="op">=</span> data, method <span class="op">=</span> <span class="st">'MLE'</span>)[<span class="dv">0</span>]</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>bootstrap_mean <span class="op">=</span> stats.bootstrap(data <span class="op">=</span> yield_data, statistic <span class="op">=</span> get_MLE_mean, vectorized <span class="op">=</span> <span class="va">False</span>, </span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>confidence_level <span class="op">=</span> <span class="fl">0.95</span>, n_resamples <span class="op">=</span> <span class="dv">1000</span>, method <span class="op">=</span> <span class="st">"basic"</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>ConfidenceInterval(low=379.06741820737494, high=401.9275980574999)</code></pre>
+</div>
+</div>
+</div>
+<div id="tabset-5-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-5-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>get_MLE_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, id) {<span class="fu">fitdist</span>(x[id], <span class="at">distr =</span> <span class="st">'norm'</span>)<span class="sc">$</span>estimate[<span class="dv">1</span>]}</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>bootstrap_mean <span class="ot">&lt;-</span> strength_df<span class="sc">$</span>yield <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot</span>(<span class="at">statistic =</span> get_MLE_mean, <span class="at">R =</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot.ci</span>(<span class="at">conf =</span> <span class="fl">0.95</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>bootstrap_mean<span class="sc">$</span>basic <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(conf, V4, V5)) <span class="sc">|&gt;</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">lower_bound =</span> V4, <span class="at">upper_bound =</span> V5)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code># A tibble: 1 × 3
@@ -529,29 +633,27 @@ sd    26.2569   4.151580</code></pre>
 </section>
 </section>
 </section>
-</section>
 <section id="probabilistic-programming" class="level1" data-number="4">
 <h1 data-number="4"><span class="header-section-number">4</span> Probabilistic Programming</h1>
 <section id="introduction-1" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="introduction-1"><span class="header-section-number">4.1</span> Introduction</h2>
-<p>Sometimes known as probabilistic machine learning. We will…</p>
+<p>Probabilistic programming is used to describe a statistical model, and then automate the inference (estimation of the unknown and uncertain parameters) <span class="citation" data-cites="Rainforth2017">(<a href="#ref-Rainforth2017" role="doc-biblioref">Rainforth 2017</a>)</span>. Sometimes known as probabilistic machine learning <span class="citation" data-cites="Ghahramani2015">(<a href="#ref-Ghahramani2015" role="doc-biblioref">Ghahramani 2015</a>)</span>, inferring unknown parameters, while also accounting for the uncertainty, including statistical uncertainty, is a desirable characteristic of a calculation. One reason for this is because it can be used to demonstrate how additional data can reduce uncertainty, and this can be used as the basis for intelligently collecting data.</p>
+<p>There are now many probabilistic programming languages available to engineers, but the one that is used in the examples in this document is <code>Stan</code>. The primary justification for this is that it runs a state of the art sampling algorithm, and (unlike many alternatives) it can be used with many other langauges. In these examples, pre- and post-processing of data will be done in <code>R</code> and <code>Python</code>.</p>
+<p>The below functions will be used to load <code>Stan</code> files from the Github repository:</p>
 <div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Python (using Stan)</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">R (using Stan)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-6-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-1" role="tab" aria-controls="tabset-6-1" aria-selected="true">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-6-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-6-2" role="tab" aria-controls="tabset-6-2" aria-selected="false">R</a></li></ul>
 <div class="tab-content">
 <div id="tabset-6-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-6-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>new_file, filename <span class="op">=</span> tempfile.mkstemp()</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>filename <span class="op">=</span> filename <span class="op">+</span> <span class="st">".stan"</span></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(filename, <span class="st">"w"</span>)<span class="op">;</span> f.write(requests.get(url).text)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>strength_model <span class="op">=</span> cmdstanpy.CmdStanModel(stan_file <span class="op">=</span> filename)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_stan_model(url):</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  new_file, filename <span class="op">=</span> tempfile.mkstemp()</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  filename <span class="op">=</span> filename <span class="op">+</span> <span class="st">".stan"</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>  f <span class="op">=</span> <span class="bu">open</span>(filename, <span class="st">"w"</span>)<span class="op">;</span> f.write(requests.get(url).text)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> cmdstanpy.CmdStanModel(stan_file <span class="op">=</span> filename)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </div>
@@ -559,64 +661,189 @@ sd    26.2569   4.151580</code></pre>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>strength_model <span class="ot">&lt;-</span> <span class="fu">url</span>(<span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">readLines</span>() <span class="sc">|&gt;</span></span>
-<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  cmdstanr<span class="sc">::</span><span class="fu">write_stan_file</span>() <span class="sc">|&gt;</span></span>
-<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>  cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>get_stan_model <span class="ot">&lt;-</span> <span class="cf">function</span>(url) {</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  url <span class="sc">|&gt;</span> <span class="fu">url</span>() <span class="sc">|&gt;</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">readLines</span>() <span class="sc">|&gt;</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_stan_file</span>() <span class="sc">|&gt;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cmdstan_model</span>()</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </div>
 </div>
 </div>
+<p>Firstly, loading the Stan model for quantifying uncertainty in material strength:</p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-7-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-1" role="tab" aria-controls="tabset-7-1" aria-selected="true">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-7-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-7-2" role="tab" aria-controls="tabset-7-2" aria-selected="false">R</a></li></ul>
+<div class="tab-content">
+<div id="tabset-7-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-7-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>strength_model <span class="op">=</span> get_stan_model(url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+<div id="tabset-7-2" class="tab-pane" role="tabpanel" aria-labelledby="tabset-7-2-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>strength_model <span class="ot">&lt;-</span> <span class="fu">get_stan_model</span>(<span class="at">url =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<p>The data block in the <code>Stan</code> file indicates the data that it is expecting. In <code>Python</code> this data is provided to the <code>Stan</code> model in the form of a dictionary, and in <code>R</code> it is a list.</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-5-contents" aria-controls="callout-5" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: Data vs.&nbsp;Information
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-5" class="callout-5-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>It is widely acknowledged that not all data are equally informative. Engineering data often consists of some indirect measurements of a complex physical phenomena, sometimes in challenging environments. As a result, it will always be associated with some precision, bias and reliability.</p>
+<p>It may be necessary to conduct some calibration experiments to quantify these properties, and one such example is provided later in this document. Higher quality (more precise, less biased, more reliable) data will always be at least as useful as lower quality data, and will sometimes be worth paying much more for.</p>
+<p>Risk based inspection standards (such as API 580) often acknowledge this difference in quality. A visual inspection is not considered as good as an ultrasonic inspection for damage, and is therefore recommended to be completed more frequently to manage risk. The calculations in this document account for data quality more accurately. Rather than relying on simple heuristics, statistical models are used to relate the information content to the raw data.</p>
+</div>
+</div>
+</div>
+<p>Posterior predictive: pr(S &gt; some value of interest) - ref Pratt, Raiffa, Schlaiffer…. Now we can start combining the results with decision making…</p>
 </section>
 </section>
-<section id="supporting-desicion-analysis" class="level1" data-number="5">
-<h1 data-number="5"><span class="header-section-number">5</span> Supporting Desicion Analysis</h1>
+<section id="supporting-decision-making" class="level1" data-number="5">
+<h1 data-number="5"><span class="header-section-number">5</span> Supporting Decision Making</h1>
 <section id="existing-challenges" class="level2" data-number="5.1">
 <h2 data-number="5.1" class="anchored" data-anchor-id="existing-challenges"><span class="header-section-number">5.1</span> Existing Challenges</h2>
-<p>Interpretting assessment results before arriving at decision</p>
+<p>Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed seprately from the underlying decision problem, and by a different team.</p>
+<p>A consequence</p>
 </section>
 <section id="solutions" class="level2" data-number="5.2">
 <h2 data-number="5.2" class="anchored" data-anchor-id="solutions"><span class="header-section-number">5.2</span> Solutions</h2>
+<p>Value of information analysis is often referred to as <em>pre-posterior</em> analysis in engineering textbooks (Benj Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger).</p>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: The Expected Value of Data …<em>Before</em> Collecting it
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-6" class="callout-6-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>A key challenge in estimating the expected value of a prospective data collection activity, is that it is performed before the data is available to include in models - the purpose of the analysis is to help decide whether it is worth collecting.</p>
+<p>Instead, the method considers all of the information that will be available at the time of making this decision. Engineers will be able to predict, with some (and perhaps a lot of!) uncertainty, what they expect the value to be. They will also know, generally from the contractor, is the quality of data that will be provided. For instance, inspection technologies are calibrated by service providers before they are brought to market, and so along with a quotation, a performance specification can be provided explaining how precise the data will be.</p>
+<p>A value of information analysis uses all of this available information and, in the context of the decision problem that the data is intended to support, quantifies on a meaningful, monetary scale, the expected value of the data to the engineer.</p>
+</div>
+</div>
+</div>
 <section id="decision-trees" class="level3" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="decision-trees"><span class="header-section-number">5.2.1</span> Decision Trees</h3>
+<p>Linking analysis to decisions is not new : Ref Raiffa, <span class="citation" data-cites="Benjamin2014c">Jordaan (<a href="#ref-Jordaan2005" role="doc-biblioref">2005</a>)</span>…</p>
+<p>In these books, problems are presented as decision-event trees…</p>
 </section>
 <section id="graphical-models-influence-diagrams" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="graphical-models-influence-diagrams"><span class="header-section-number">5.2.2</span> Graphical Models (Influence Diagrams)</h3>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: Drawing Upon Engineering Know-How
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-7" class="callout-7-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+<p>Drawing a graphical model can be as simple as thinking about relationships between your parameters</p>
+</div>
+</div>
+</div>
 </section>
-<section id="example-calculations-1" class="level3" data-number="5.2.3">
-<h3 data-number="5.2.3" class="anchored" data-anchor-id="example-calculations-1"><span class="header-section-number">5.2.3</span> Example Calculations</h3>
-<section id="repair-requirements" class="level4" data-number="5.2.3.1">
-<h4 data-number="5.2.3.1" class="anchored" data-anchor-id="repair-requirements"><span class="header-section-number">5.2.3.1</span> Repair Requirements</h4>
 </section>
-<section id="inspection-requirements" class="level4" data-number="5.2.3.2">
-<h4 data-number="5.2.3.2" class="anchored" data-anchor-id="inspection-requirements"><span class="header-section-number">5.2.3.2</span> Inspection Requirements</h4>
+<section id="example-calculations" class="level2" data-number="5.3">
+<h2 data-number="5.3" class="anchored" data-anchor-id="example-calculations"><span class="header-section-number">5.3</span> Example Calculations</h2>
+<section id="crop-sales-forecasting" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="crop-sales-forecasting"><span class="header-section-number">5.3.1</span> Crop Sales Forecasting</h3>
 </section>
-<section id="identifying-a-data-collection-plan" class="level4" data-number="5.2.3.3">
-<h4 data-number="5.2.3.3" class="anchored" data-anchor-id="identifying-a-data-collection-plan"><span class="header-section-number">5.2.3.3</span> Identifying a Data Collection Plan</h4>
+<section id="temperatuere-calibration-for-energy-systems" class="level3" data-number="5.3.2">
+<h3 data-number="5.3.2" class="anchored" data-anchor-id="temperatuere-calibration-for-energy-systems"><span class="header-section-number">5.3.2</span> Temperatuere Calibration for Energy Systems</h3>
+</section>
+<section id="identifying-a-data-collection-plan-for-a-bridge" class="level3" data-number="5.3.3">
+<h3 data-number="5.3.3" class="anchored" data-anchor-id="identifying-a-data-collection-plan-for-a-bridge"><span class="header-section-number">5.3.3</span> Identifying a Data Collection Plan for a Bridge</h3>
 </section>
 </section>
 </section>
-</section>
-<section id="discussion" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> Discussion</h1>
+<section id="recommendations" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> Recommendations</h1>
 <section id="probabilistic-models" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="probabilistic-models"><span class="header-section-number">6.1</span> Probabilistic Models</h2>
 </section>
 <section id="neural-networks" class="level2" data-number="6.2">
 <h2 data-number="6.2" class="anchored" data-anchor-id="neural-networks"><span class="header-section-number">6.2</span> Neural Networks</h2>
+<div class="callout-note callout callout-style-default callout-captioned">
+<div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-8-contents" aria-controls="callout-8" aria-expanded="false" aria-label="Toggle callout">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-caption-container flex-fill">
+Thought: Learning a Model
+</div>
+<div class="callout-btn-toggle d-inline-block border-0 py-1 ps-1 pe-0 float-end"><i class="callout-toggle"></i></div>
+</div>
+<div id="callout-8" class="callout-8-contents callout-collapse collapse">
+<div class="callout-body-container callout-body">
+
+</div>
+</div>
+</div>
 </section>
 <section id="engineering-judgement" class="level2" data-number="6.3">
 <h2 data-number="6.3" class="anchored" data-anchor-id="engineering-judgement"><span class="header-section-number">6.3</span> Engineering Judgement</h2>
+<!-- # References -->
 </section>
 </section>
-<section id="section" class="level1 illustration" data-number="7">
-<h1 class="illustration" data-number="7"><span class="header-section-number">7</span> </h1>
+<section id="section" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> </h1>
 <!-- -->
 
+
 </section>
 
-</main>
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
+<div id="ref-Benjamin2014c" class="csl-entry" role="doc-biblioentry">
+Benjamin, Jack R., and C. Allin Cornell. 2014. <em><span class="nocase">Probability, Statistics and Decision for Civil Engineers</span></em>. Dover. Mineola, New York: Dover Publications, Inc.
+</div>
+<div id="ref-Gelman2014" class="csl-entry" role="doc-biblioentry">
+Gelman, Andrew, John B B Carlin, Hal S S Stern, and Donald B B Rubin. 2014. <em><span>Bayesian Data Analysis</span></em>. Edited by Francesca Dominici, Julian J. Faraway, Martin Tanner, and Jim Zidek. 3rd ed. Chapman &amp; Hall / CRC. <a href="https://doi.org/10.1007/s13398-014-0173-7.2">https://doi.org/10.1007/s13398-014-0173-7.2</a>.
+</div>
+<div id="ref-Gelman2020" class="csl-entry" role="doc-biblioentry">
+Gelman, Andrew, Jennifer Hill, and Aki Vehtari. 2020. <em><span class="nocase">Regression and Other Stories</span></em>. Edited by R. Michael Alvarez, Nathaniel L. Beck, Stephen L. Morgan, and Lawrence L. Wu. First. Cambridge University Press. <a href="https://doi.org/10.1017/9781139161879">https://doi.org/10.1017/9781139161879</a>.
+</div>
+<div id="ref-Ghahramani2015" class="csl-entry" role="doc-biblioentry">
+Ghahramani, Zoubin. 2015. <span>“<span class="nocase">Probabilistic machine learning and artificial intelligence</span>.”</span> <em>Nature</em> 521 (7553): 452–59. <a href="https://doi.org/10.1038/nature14541">https://doi.org/10.1038/nature14541</a>.
+</div>
+<div id="ref-Jaynes2003" class="csl-entry" role="doc-biblioentry">
+Jaynes, Edwin T. 2003. <em><span class="nocase">Probability Theory: The Logic of Science</span></em>. First. New York: Cambridge University Press.
+</div>
+<div id="ref-Jordaan2005" class="csl-entry" role="doc-biblioentry">
+Jordaan, Ian. 2005. <em><span class="nocase">Decisions under Uncertainty</span></em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511804861">https://doi.org/10.1017/CBO9780511804861</a>.
+</div>
+<div id="ref-McElreath2019" class="csl-entry" role="doc-biblioentry">
+McElreath, Richard. 2020. <em><span class="nocase">Statistical Rethinking : A Bayesian Course with Examples in R and Stan</span></em>. 2nd ed. Chapman &amp; Hall / CRC. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a>.
+</div>
+<div id="ref-Rainforth2017" class="csl-entry" role="doc-biblioentry">
+Rainforth, Tom. 2017. <span>“<span class="nocase">Automating Inference, Learning, and Design using Probabilistic Programming</span>.”</span> PhD thesis, University of Oxford. <a href="http://www.robots.ox.ac.uk/$\sim$twgr/assets/pdf/rainforth2017thesis.pdf">http://www.robots.ox.ac.uk/$\sim$twgr/assets/pdf/rainforth2017thesis.pdf</a>.
+</div>
+</div></section></div></main>
 <!-- /main column -->
 <script id="quarto-html-after-body" type="application/javascript">
 window.document.addEventListener("DOMContentLoaded", function (event) {
@@ -748,277 +975,417 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   }
 });
 </script><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Source Code</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb22" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Data-Centric Engineering"</span></span>
-<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements from Structural Systems"</span></span>
-<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> ""</span></span>
-<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "June 2022"</span></span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
-<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
-<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: spacelab</span></span>
-<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="co">    html-math-mathod: mathjax</span></span>
-<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
-<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
-<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-copy: true</span></span>
-<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
-<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
-<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
-<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
-<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
-<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="co"># bibliography: references.bib</span></span>
-<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
-<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
-<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="fu">## Purpose of this Document</span></span>
-<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a>Engineering analysis for built environment is transitioning towards methods of data-centric engineering. The emergence of structural health monitoring, **energy targets/constraints**, and scalable data analysis will allow for more sophisticated uncertainty quantification. This information could then inform digital twin representations of structural systems, with the intention of improving decision support to engineers.</span>
-<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a>Understanding the required quantity and quality of data will continue to be a challenge to engineers. For instance:</span>
-<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>Should sensing systems be retrofit to existing structures? </span>
-<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>If so, how precise and how reliable do they need to be? </span>
-<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>Does a malfunctioning sensor require replacement? </span>
-<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>What supplementary inspection or testing data is required?</span>
-<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>**Add energy systems questions here too!**</span>
-<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a>Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented (with reference to Eurocodes, Standards and Material Specifications) alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</span>
-<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to use this document</span></span>
-<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a>This is a computational document that includes chunks of <span class="in">`Python`</span> and <span class="in">`R`</span> code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.</span>
-<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a>::: {#chunk_load_packages .panel-tabset}</span>
-<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load Python Packages</span></span>
-<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="co">#|label: load_Python_packages</span></span>
-<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cmdstanpy, requests, os, tempfile</span>
-<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
-<span id="cb22-52"><a href="#cb22-52" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
-<span id="cb22-53"><a href="#cb22-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-54"><a href="#cb22-54" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-55"><a href="#cb22-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-56"><a href="#cb22-56" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load R Packages</span></span>
-<span id="cb22-57"><a href="#cb22-57" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-60"><a href="#cb22-60" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-61"><a href="#cb22-61" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: load_R_packages</span></span>
-<span id="cb22-62"><a href="#cb22-62" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-63"><a href="#cb22-63" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(fitdistrplus)</span>
-<span id="cb22-64"><a href="#cb22-64" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr); <span class="fu">library</span>(copula); <span class="fu">library</span>(boot)</span>
-<span id="cb22-65"><a href="#cb22-65" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-66"><a href="#cb22-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-67"><a href="#cb22-67" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-68"><a href="#cb22-68" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-69"><a href="#cb22-69" aria-hidden="true" tabindex="-1"></a>The <span class="in">`Python`</span> packages that have been used are loaded below, see @chunk_load_packages, </span>
-<span id="cb22-70"><a href="#cb22-70" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-71"><a href="#cb22-71" aria-hidden="true" tabindex="-1"></a>:::{.callout-tip}</span>
-<span id="cb22-72"><a href="#cb22-72" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tip: Loading packages</span></span>
-<span id="cb22-73"><a href="#cb22-73" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span> and <span class="in">`Python`</span> packages first need to be installed. Guidance on installing packages can be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages)</span> (for <span class="in">`R`</span>) and <span class="co">[</span><span class="ot">here</span><span class="co">](https://pypi.org/project/pip/)</span> (for <span class="in">`Python`</span>). </span>
-<span id="cb22-74"><a href="#cb22-74" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-75"><a href="#cb22-75" aria-hidden="true" tabindex="-1"></a>Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but such docume</span>
-<span id="cb22-76"><a href="#cb22-76" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-77"><a href="#cb22-77" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-78"><a href="#cb22-78" aria-hidden="true" tabindex="-1"></a>In addition, some statistical models that have been written in the probabilistic programming language <span class="in">`Stan`</span> have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this <span class="co">[</span><span class="ot">public repository</span><span class="co">](https://github.com/DomDF/DCE_guidance)</span>.</span>
-<span id="cb22-79"><a href="#cb22-79" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-80"><a href="#cb22-80" aria-hidden="true" tabindex="-1"></a><span class="fu"># Uncertainty in the Built Environment</span></span>
-<span id="cb22-81"><a href="#cb22-81" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-82"><a href="#cb22-82" aria-hidden="true" tabindex="-1"></a>Engineering data will often consist of some indirect measurements of a complex physical phenomena. Even sophisticated sensing technologies will only ever provide imperfect information. This data is then analysed in the context of some imperfect representation (a model) of the \emph{true} state of the complex systems that define it. This all leads to the presence of uncertainty in engineering analysis.</span>
-<span id="cb22-83"><a href="#cb22-83" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-84"><a href="#cb22-84" aria-hidden="true" tabindex="-1"></a>Engineers are tasked with making recommendations about the safe and efficient operation of the built environment, accounting for the various uncertainties associated with the task. Historically, structural engineers have used deterministic approaches to perform conservative assessments. Here, uncertain quantities are assigned a \emph{safe} value, for instance a strength may be assumed to be the minimum from a set of measurements, and these values are assumed to result in suitably conservative results. There are various challenges associated with this approach, including that of consistently allocating resources to maintain structures that are assessed with differing, implicit and unquantified safety factors. Quantification of uncertainty using probabilistic methods, see Section \ref{sect:probabilistic_uq}, can be used to propagate models of uncertainty though engineering calculations. This can be used to quantify risk on an absolute scale, and produce coherent and consistent decisions.</span>
-<span id="cb22-85"><a href="#cb22-85" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-86"><a href="#cb22-86" aria-hidden="true" tabindex="-1"></a>In any case, uncertainty can be reduced by collecting additional data. While data will generally always provide some value, provided it is relevant, it will not represent a good investment. There are various costs associated with collecting engineering data, including that associated with the risk of exposing inspection personnel to hazardous environments, or collection and storage costs of high-volume streaming data from structural health monitoring technologies.</span>
-<span id="cb22-87"><a href="#cb22-87" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-88"><a href="#cb22-88" aria-hidden="true" tabindex="-1"></a>Value of information analysis, see Section \ref{sect:voi}, allows for the quantification of the expected value that new data provides, in the context of solving a decision problem. This formal statistical procedure can be used to provide quantitative justification for investing (or not) in new data collection opportunities. Though in many cases there may be an intuitive solution to this problem \footnote{For instance it not be worthwhile paying to deploy state of the art technologies to improve models of an asset that has no value. Conversely, high consequence decisions for structures whose safety are currently poorly understood (perhaps because they have just been purchased, or are proposed to be used in some new application) are likely to justify even expensive data collection activities.}, there may often be cases where engineering teams cannot agree on whether additional data is required. In such cases, a formal statistical procedure can provide quantitative (and replicable, auditable) justification for such actions.</span>
-<span id="cb22-89"><a href="#cb22-89" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-90"><a href="#cb22-90" aria-hidden="true" tabindex="-1"></a><span class="fu"># Quantifying Uncertainty</span></span>
-<span id="cb22-91"><a href="#cb22-91" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-92"><a href="#cb22-92" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>where do distributions come from?</span>
-<span id="cb22-93"><a href="#cb22-93" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>when are they optimal, or useful, or unhelpful in approximating variability?</span>
-<span id="cb22-94"><a href="#cb22-94" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-95"><a href="#cb22-95" aria-hidden="true" tabindex="-1"></a><span class="fu">## Using distributions in `Python` and `R`</span></span>
-<span id="cb22-96"><a href="#cb22-96" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-97"><a href="#cb22-97" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb22-98"><a href="#cb22-98" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using SciPy.stats)</span></span>
-<span id="cb22-99"><a href="#cb22-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-102"><a href="#cb22-102" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-103"><a href="#cb22-103" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span>
-<span id="cb22-104"><a href="#cb22-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-105"><a href="#cb22-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-106"><a href="#cb22-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-107"><a href="#cb22-107" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
-<span id="cb22-108"><a href="#cb22-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-111"><a href="#cb22-111" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-112"><a href="#cb22-112" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
-<span id="cb22-113"><a href="#cb22-113" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-114"><a href="#cb22-114" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-115"><a href="#cb22-115" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-116"><a href="#cb22-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-117"><a href="#cb22-117" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example Calculations</span></span>
-<span id="cb22-118"><a href="#cb22-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-119"><a href="#cb22-119" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Analysis of Tensile Test Data of Steel</span></span>
-<span id="cb22-120"><a href="#cb22-120" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-121"><a href="#cb22-121" aria-hidden="true" tabindex="-1"></a>In this example we will consider what information is contained in a set of measurements of yield and tensile strength. The data is presented in Table @tab_strength_data and Figure @fig_strength_data. This data can be downloaded using the below code.</span>
-<span id="cb22-122"><a href="#cb22-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-123"><a href="#cb22-123" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb22-124"><a href="#cb22-124" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using pandas)</span></span>
-<span id="cb22-125"><a href="#cb22-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-128"><a href="#cb22-128" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-129"><a href="#cb22-129" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
-<span id="cb22-130"><a href="#cb22-130" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-131"><a href="#cb22-131" aria-hidden="true" tabindex="-1"></a>strength_df.head(n <span class="op">=</span> <span class="dv">3</span>)</span>
-<span id="cb22-132"><a href="#cb22-132" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-133"><a href="#cb22-133" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-134"><a href="#cb22-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-135"><a href="#cb22-135" aria-hidden="true" tabindex="-1"></a><span class="fu">## R (using readr)</span></span>
-<span id="cb22-136"><a href="#cb22-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-139"><a href="#cb22-139" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-140"><a href="#cb22-140" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
-<span id="cb22-141"><a href="#cb22-141" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-142"><a href="#cb22-142" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
-<span id="cb22-143"><a href="#cb22-143" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-144"><a href="#cb22-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-145"><a href="#cb22-145" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-146"><a href="#cb22-146" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-147"><a href="#cb22-147" aria-hidden="true" tabindex="-1"></a>The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:</span>
-<span id="cb22-148"><a href="#cb22-148" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-149"><a href="#cb22-149" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>*Material heterogeneity*. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.</span>
-<span id="cb22-150"><a href="#cb22-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-151"><a href="#cb22-151" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>*Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.</span>
-<span id="cb22-152"><a href="#cb22-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-155"><a href="#cb22-155" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-156"><a href="#cb22-156" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig_strength_data</span></span>
-<span id="cb22-157"><a href="#cb22-157" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: "Plot of Joint Measurements of Yield and Tensile Strength"</span></span>
-<span id="cb22-158"><a href="#cb22-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-159"><a href="#cb22-159" aria-hidden="true" tabindex="-1"></a>strength_mv_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> strength_df, <span class="at">mapping =</span> <span class="fu">aes</span>(<span class="at">x =</span> yield, <span class="at">y =</span> tensile))<span class="sc">+</span></span>
-<span id="cb22-160"><a href="#cb22-160" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">shape =</span> <span class="dv">1</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb22-161"><a href="#cb22-161" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">name =</span> <span class="st">'Yield Strength, MPa'</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">600</span>))<span class="sc">+</span></span>
-<span id="cb22-162"><a href="#cb22-162" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">name =</span> <span class="st">'Ultimate Tensile Strength, MPa'</span>, <span class="at">limits =</span> <span class="fu">c</span>(<span class="dv">300</span>, <span class="dv">900</span>))<span class="sc">+</span></span>
-<span id="cb22-163"><a href="#cb22-163" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">lty =</span> <span class="dv">2</span>, <span class="at">alpha =</span> <span class="dv">1</span><span class="sc">/</span><span class="dv">2</span>)<span class="sc">+</span></span>
-<span id="cb22-164"><a href="#cb22-164" aria-hidden="true" tabindex="-1"></a>  ggthemes<span class="sc">::</span><span class="fu">theme_base</span>(<span class="at">base_size =</span> <span class="dv">12</span>, <span class="at">base_family =</span> <span class="st">'Atkinson Hyperlegible'</span>)<span class="sc">+</span></span>
-<span id="cb22-165"><a href="#cb22-165" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">plot.background =</span> <span class="fu">element_rect</span>(<span class="at">color =</span> <span class="cn">NA</span>))</span>
-<span id="cb22-166"><a href="#cb22-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-167"><a href="#cb22-167" aria-hidden="true" tabindex="-1"></a>strength_mv_plot <span class="sc">|&gt;</span> ggExtra<span class="sc">::</span><span class="fu">ggMarginal</span>(<span class="at">type =</span> <span class="st">'histogram'</span>)</span>
-<span id="cb22-168"><a href="#cb22-168" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-169"><a href="#cb22-169" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-170"><a href="#cb22-170" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-171"><a href="#cb22-171" aria-hidden="true" tabindex="-1"></a>Shown here as a table, printed using the below <span class="in">`R`</span> code:</span>
-<span id="cb22-172"><a href="#cb22-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-175"><a href="#cb22-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-176"><a href="#cb22-176" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tab_strength_data</span></span>
-<span id="cb22-177"><a href="#cb22-177" aria-hidden="true" tabindex="-1"></a><span class="co">#| tab-cap: "Tensile Test Data of Steel"</span></span>
-<span id="cb22-178"><a href="#cb22-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-179"><a href="#cb22-179" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">rename</span>(<span class="st">'Test ID'</span> <span class="ot">=</span> <span class="st">'id'</span>, <span class="st">'Yield Strength, MPa'</span> <span class="ot">=</span> <span class="st">'yield'</span>, <span class="st">'Tensile Strength, MPa'</span> <span class="ot">=</span> <span class="st">'tensile'</span>) <span class="sc">|&gt;</span> knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
-<span id="cb22-180"><a href="#cb22-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-181"><a href="#cb22-181" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-182"><a href="#cb22-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-183"><a href="#cb22-183" aria-hidden="true" tabindex="-1"></a>This variability can be approximated using probability distributions. These should be considered to be a model</span>
-<span id="cb22-184"><a href="#cb22-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-185"><a href="#cb22-185" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb22-186"><a href="#cb22-186" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using SciPy )</span></span>
-<span id="cb22-187"><a href="#cb22-187" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-190"><a href="#cb22-190" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-191"><a href="#cb22-191" aria-hidden="true" tabindex="-1"></a>stats.norm.fit(data <span class="op">=</span> strength_df[<span class="st">'yield'</span>].values, method <span class="op">=</span> <span class="st">'MLE'</span>)</span>
-<span id="cb22-192"><a href="#cb22-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-193"><a href="#cb22-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-194"><a href="#cb22-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-195"><a href="#cb22-195" aria-hidden="true" tabindex="-1"></a><span class="fu">## R (using fitdistrplus)</span></span>
-<span id="cb22-196"><a href="#cb22-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-199"><a href="#cb22-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-200"><a href="#cb22-200" aria-hidden="true" tabindex="-1"></a><span class="fu">fitdist</span>(<span class="at">data =</span> strength_df<span class="sc">$</span>yield, <span class="at">distr =</span> <span class="st">'norm'</span>, <span class="at">method =</span> <span class="st">'mle'</span>)</span>
-<span id="cb22-201"><a href="#cb22-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-202"><a href="#cb22-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-203"><a href="#cb22-203" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-204"><a href="#cb22-204" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-205"><a href="#cb22-205" aria-hidden="true" tabindex="-1"></a>These distribution parameters represent those with the highest score (likelihood) of the range considered. However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the statistical uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.</span>
-<span id="cb22-206"><a href="#cb22-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-207"><a href="#cb22-207" aria-hidden="true" tabindex="-1"></a>For instance, with only two or three measurements of yield strength, it is important to reflect that a maximum likelihood probabilistic model will be unsure of the distribution parameters that it estimates. The single number (point estimate) result could change significantly after including just a few more tests. Describing the variability in cases like this can help distinguish a highly uncertain model with a highly informed model, and this distinction is important when they are being used for decision support.</span>
-<span id="cb22-208"><a href="#cb22-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-209"><a href="#cb22-209" aria-hidden="true" tabindex="-1"></a>One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals.....</span>
-<span id="cb22-210"><a href="#cb22-210" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-211"><a href="#cb22-211" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb22-212"><a href="#cb22-212" aria-hidden="true" tabindex="-1"></a><span class="fu"># R, using boot</span></span>
-<span id="cb22-213"><a href="#cb22-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-216"><a href="#cb22-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-217"><a href="#cb22-217" aria-hidden="true" tabindex="-1"></a>est_norm_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, id) {<span class="fu">fitdist</span>(x[id], <span class="at">distr =</span> <span class="st">'norm'</span>)<span class="sc">$</span>estimate[<span class="dv">1</span>]}</span>
-<span id="cb22-218"><a href="#cb22-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-219"><a href="#cb22-219" aria-hidden="true" tabindex="-1"></a>bootstrap_est <span class="ot">&lt;-</span> strength_df<span class="sc">$</span>yield <span class="sc">|&gt;</span></span>
-<span id="cb22-220"><a href="#cb22-220" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot</span>(<span class="at">statistic =</span> est_norm_mean, <span class="at">R =</span> <span class="fl">1e3</span>) <span class="sc">|&gt;</span></span>
-<span id="cb22-221"><a href="#cb22-221" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot.ci</span>(<span class="at">conf =</span> <span class="fl">0.95</span>)</span>
-<span id="cb22-222"><a href="#cb22-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-223"><a href="#cb22-223" aria-hidden="true" tabindex="-1"></a>bootstrap_est<span class="sc">$</span>normal <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb22-224"><a href="#cb22-224" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">lower_bound =</span> V2, <span class="at">upper_bound =</span> V3)</span>
-<span id="cb22-225"><a href="#cb22-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-226"><a href="#cb22-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-227"><a href="#cb22-227" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-228"><a href="#cb22-228" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-229"><a href="#cb22-229" aria-hidden="true" tabindex="-1"></a><span class="fu"># Probabilistic Programming</span></span>
-<span id="cb22-230"><a href="#cb22-230" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-231"><a href="#cb22-231" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
-<span id="cb22-232"><a href="#cb22-232" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-233"><a href="#cb22-233" aria-hidden="true" tabindex="-1"></a>Sometimes known as probabilistic machine learning. We will...</span>
-<span id="cb22-234"><a href="#cb22-234" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-235"><a href="#cb22-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-236"><a href="#cb22-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-237"><a href="#cb22-237" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
-<span id="cb22-238"><a href="#cb22-238" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using Stan)</span></span>
-<span id="cb22-239"><a href="#cb22-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-242"><a href="#cb22-242" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb22-243"><a href="#cb22-243" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
-<span id="cb22-244"><a href="#cb22-244" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-245"><a href="#cb22-245" aria-hidden="true" tabindex="-1"></a>url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span></span>
-<span id="cb22-246"><a href="#cb22-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-247"><a href="#cb22-247" aria-hidden="true" tabindex="-1"></a>new_file, filename <span class="op">=</span> tempfile.mkstemp()</span>
-<span id="cb22-248"><a href="#cb22-248" aria-hidden="true" tabindex="-1"></a>filename <span class="op">=</span> filename <span class="op">+</span> <span class="st">".stan"</span></span>
-<span id="cb22-249"><a href="#cb22-249" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-250"><a href="#cb22-250" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> <span class="bu">open</span>(filename, <span class="st">"w"</span>)<span class="op">;</span> f.write(requests.get(url).text)</span>
-<span id="cb22-251"><a href="#cb22-251" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-252"><a href="#cb22-252" aria-hidden="true" tabindex="-1"></a>strength_model <span class="op">=</span> cmdstanpy.CmdStanModel(stan_file <span class="op">=</span> filename)</span>
-<span id="cb22-253"><a href="#cb22-253" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-254"><a href="#cb22-254" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-255"><a href="#cb22-255" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-256"><a href="#cb22-256" aria-hidden="true" tabindex="-1"></a><span class="fu">## R (using Stan)</span></span>
-<span id="cb22-257"><a href="#cb22-257" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-260"><a href="#cb22-260" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
-<span id="cb22-261"><a href="#cb22-261" aria-hidden="true" tabindex="-1"></a>strength_model <span class="ot">&lt;-</span> <span class="fu">url</span>(<span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb22-262"><a href="#cb22-262" aria-hidden="true" tabindex="-1"></a>  <span class="fu">readLines</span>() <span class="sc">|&gt;</span></span>
-<span id="cb22-263"><a href="#cb22-263" aria-hidden="true" tabindex="-1"></a>  cmdstanr<span class="sc">::</span><span class="fu">write_stan_file</span>() <span class="sc">|&gt;</span></span>
-<span id="cb22-264"><a href="#cb22-264" aria-hidden="true" tabindex="-1"></a>  cmdstanr<span class="sc">::</span><span class="fu">cmdstan_model</span>()</span>
-<span id="cb22-265"><a href="#cb22-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-266"><a href="#cb22-266" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb22-267"><a href="#cb22-267" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb22-268"><a href="#cb22-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-269"><a href="#cb22-269" aria-hidden="true" tabindex="-1"></a><span class="fu"># Supporting Desicion Analysis</span></span>
-<span id="cb22-270"><a href="#cb22-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-271"><a href="#cb22-271" aria-hidden="true" tabindex="-1"></a><span class="fu">## Existing Challenges</span></span>
-<span id="cb22-272"><a href="#cb22-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-273"><a href="#cb22-273" aria-hidden="true" tabindex="-1"></a>Interpretting assessment results before arriving at decision</span>
-<span id="cb22-274"><a href="#cb22-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-275"><a href="#cb22-275" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solutions</span></span>
-<span id="cb22-276"><a href="#cb22-276" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-277"><a href="#cb22-277" aria-hidden="true" tabindex="-1"></a><span class="fu">### Decision Trees</span></span>
-<span id="cb22-278"><a href="#cb22-278" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-279"><a href="#cb22-279" aria-hidden="true" tabindex="-1"></a><span class="fu">### Graphical Models (Influence Diagrams)</span></span>
-<span id="cb22-280"><a href="#cb22-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-281"><a href="#cb22-281" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example Calculations</span></span>
-<span id="cb22-282"><a href="#cb22-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-283"><a href="#cb22-283" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Repair Requirements</span></span>
-<span id="cb22-284"><a href="#cb22-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-285"><a href="#cb22-285" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Inspection Requirements</span></span>
-<span id="cb22-286"><a href="#cb22-286" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-287"><a href="#cb22-287" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Identifying a Data Collection Plan</span></span>
-<span id="cb22-288"><a href="#cb22-288" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-289"><a href="#cb22-289" aria-hidden="true" tabindex="-1"></a><span class="fu"># Discussion</span></span>
-<span id="cb22-290"><a href="#cb22-290" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-291"><a href="#cb22-291" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probabilistic Models</span></span>
-<span id="cb22-292"><a href="#cb22-292" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-293"><a href="#cb22-293" aria-hidden="true" tabindex="-1"></a><span class="fu">## Neural Networks</span></span>
-<span id="cb22-294"><a href="#cb22-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-295"><a href="#cb22-295" aria-hidden="true" tabindex="-1"></a><span class="fu">## Engineering Judgement</span></span>
-<span id="cb22-296"><a href="#cb22-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb22-297"><a href="#cb22-297" aria-hidden="true" tabindex="-1"></a><span class="fu">#  {.illustration}</span></span>
+<div class="sourceCode" id="cb25" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="an">title:</span><span class="co"> "Data-Centric Engineering"</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a><span class="an">subtitle:</span><span class="co"> "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements"</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="an">author:</span><span class="co"> ""</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="an">date:</span><span class="co"> "June 2022"</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a><span class="an">format:</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a><span class="co">  html:</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a><span class="co">    theme: spacelab</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a><span class="co">    html-math-mathod: mathjax</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a><span class="co">    toc: true</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a><span class="co">    toc-location: right</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a><span class="co">    number-sections: true</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a><span class="co">    code-copy: true</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a><span class="co">    code-fold: true</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a><span class="co">    code-tools: true</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="co">    monofont: Fira Code</span></span>
+<span id="cb25-17"><a href="#cb25-17" aria-hidden="true" tabindex="-1"></a><span class="an">execute:</span></span>
+<span id="cb25-18"><a href="#cb25-18" aria-hidden="true" tabindex="-1"></a><span class="co">  message: false</span></span>
+<span id="cb25-19"><a href="#cb25-19" aria-hidden="true" tabindex="-1"></a><span class="co">  warning: false</span></span>
+<span id="cb25-20"><a href="#cb25-20" aria-hidden="true" tabindex="-1"></a><span class="an">bibliography:</span><span class="co"> references.bib</span></span>
+<span id="cb25-21"><a href="#cb25-21" aria-hidden="true" tabindex="-1"></a><span class="co">---</span></span>
+<span id="cb25-22"><a href="#cb25-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-23"><a href="#cb25-23" aria-hidden="true" tabindex="-1"></a><span class="fu"># Introduction</span></span>
+<span id="cb25-24"><a href="#cb25-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-25"><a href="#cb25-25" aria-hidden="true" tabindex="-1"></a><span class="fu">## Purpose of this Document</span></span>
+<span id="cb25-26"><a href="#cb25-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-27"><a href="#cb25-27" aria-hidden="true" tabindex="-1"></a>The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in safety and efficiency of the built environment. However, understanding the quantity and quality required will continue to be a challenge to engineers. For instance:</span>
+<span id="cb25-28"><a href="#cb25-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-29"><a href="#cb25-29" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>Should a sensing systems be retrofit to an existing structure? </span>
+<span id="cb25-30"><a href="#cb25-30" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>If so, how precise and how reliable do they need to be? </span>
+<span id="cb25-31"><a href="#cb25-31" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>Does a malfunctioning sensor require replacement? </span>
+<span id="cb25-32"><a href="#cb25-32" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>What supplementary inspection or testing data is required?</span>
+<span id="cb25-33"><a href="#cb25-33" aria-hidden="true" tabindex="-1"></a><span class="ss"> * </span>**Add energy systems questions here too!**</span>
+<span id="cb25-34"><a href="#cb25-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-35"><a href="#cb25-35" aria-hidden="true" tabindex="-1"></a>Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented <span class="in">`r #(with reference to Eurocodes, Standards and Material Specifications)`</span> alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</span>
+<span id="cb25-36"><a href="#cb25-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-37"><a href="#cb25-37" aria-hidden="true" tabindex="-1"></a><span class="fu">## How to use this document</span></span>
+<span id="cb25-38"><a href="#cb25-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-39"><a href="#cb25-39" aria-hidden="true" tabindex="-1"></a>This is a computational document that includes chunks of <span class="in">`Python`</span> and <span class="in">`R`</span> code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.</span>
+<span id="cb25-40"><a href="#cb25-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-41"><a href="#cb25-41" aria-hidden="true" tabindex="-1"></a>::: {#chunk_load_packages .panel-tabset}</span>
+<span id="cb25-42"><a href="#cb25-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load Python Packages</span></span>
+<span id="cb25-43"><a href="#cb25-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-46"><a href="#cb25-46" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-47"><a href="#cb25-47" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> cmdstanpy, requests, os, tempfile</span>
+<span id="cb25-48"><a href="#cb25-48" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np, pandas <span class="im">as</span> pd</span>
+<span id="cb25-49"><a href="#cb25-49" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> stats</span>
+<span id="cb25-50"><a href="#cb25-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-51"><a href="#cb25-51" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-52"><a href="#cb25-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-53"><a href="#cb25-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load R Packages</span></span>
+<span id="cb25-54"><a href="#cb25-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-57"><a href="#cb25-57" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-58"><a href="#cb25-58" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse); <span class="fu">library</span>(fitdistrplus); <span class="fu">library</span>(boot)</span>
+<span id="cb25-59"><a href="#cb25-59" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(cmdstanr); <span class="fu">library</span>(copula); <span class="fu">library</span>(RHugin)</span>
+<span id="cb25-60"><a href="#cb25-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-61"><a href="#cb25-61" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-62"><a href="#cb25-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-63"><a href="#cb25-63" aria-hidden="true" tabindex="-1"></a><span class="fu">## Load Julia Packages</span></span>
+<span id="cb25-64"><a href="#cb25-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-67"><a href="#cb25-67" aria-hidden="true" tabindex="-1"></a><span class="in">```{Julia}</span></span>
+<span id="cb25-68"><a href="#cb25-68" aria-hidden="true" tabindex="-1"></a>using CSV, HTTP, DataFrames</span>
+<span id="cb25-69"><a href="#cb25-69" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-70"><a href="#cb25-70" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-71"><a href="#cb25-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-72"><a href="#cb25-72" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-73"><a href="#cb25-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-74"><a href="#cb25-74" aria-hidden="true" tabindex="-1"></a>:::{.callout-tip collapse="true"}</span>
+<span id="cb25-75"><a href="#cb25-75" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tip: Loading packages</span></span>
+<span id="cb25-76"><a href="#cb25-76" aria-hidden="true" tabindex="-1"></a>In <span class="in">`R`</span> and <span class="in">`Python`</span> packages first need to be installed. Guidance on installing packages can be found <span class="co">[</span><span class="ot">here</span><span class="co">](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages)</span> (for <span class="in">`R`</span>) and <span class="co">[</span><span class="ot">here</span><span class="co">](https://pypi.org/project/pip/)</span> (for <span class="in">`Python`</span>). </span>
+<span id="cb25-77"><a href="#cb25-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-78"><a href="#cb25-78" aria-hidden="true" tabindex="-1"></a>Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but those details can be found online, for example <span class="co">[</span><span class="ot">here is the website for the `Python` pandas package</span><span class="co">](https://pandas.pydata.org)</span>.</span>
+<span id="cb25-79"><a href="#cb25-79" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-80"><a href="#cb25-80" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-81"><a href="#cb25-81" aria-hidden="true" tabindex="-1"></a>In addition, some statistical models that have been written in the probabilistic programming language <span class="in">`Stan`</span> have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this <span class="co">[</span><span class="ot">public Github repository</span><span class="co">](https://github.com/DomDF/DCE_guidance)</span>.</span>
+<span id="cb25-82"><a href="#cb25-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-83"><a href="#cb25-83" aria-hidden="true" tabindex="-1"></a><span class="fu"># Uncertainty in the Built Environment</span></span>
+<span id="cb25-84"><a href="#cb25-84" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-85"><a href="#cb25-85" aria-hidden="true" tabindex="-1"></a>Engineering standards acknowledge the presence of variability in the quantities they are dealing with. Repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.</span>
+<span id="cb25-86"><a href="#cb25-86" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-87"><a href="#cb25-87" aria-hidden="true" tabindex="-1"></a>Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a *safe* or *characteristic* value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.</span>
+<span id="cb25-88"><a href="#cb25-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-89"><a href="#cb25-89" aria-hidden="true" tabindex="-1"></a>This can be achieved by using probability to formally quantify uncertainty, and various examples of this are presented in this document. Statistical models of variability can describe how many uncertain quantities can be dependent, how uncertainty can increase when making predictions over various time frames, and how uncertainty can decrease when new data becomes available. Uncertainty quantification therefore allows for many other types of analysis, such as identifying where, when and how additional data should be collected, which is the focus of this document.</span>
+<span id="cb25-90"><a href="#cb25-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-91"><a href="#cb25-91" aria-hidden="true" tabindex="-1"></a>While data will generally always provide some value, provided that it is relevant, it will not always represent a good investment. There are various costs associated with collecting engineering data, including hiring/purchasing specialised measurement equipment, the storage costs of high-volume streaming data, and occasionally the risk associated with exposing personnel to hazardous environments to collect data. Justifying these costs require engineers to link data collection to the improved decision making that it facilitates. </span>
+<span id="cb25-92"><a href="#cb25-92" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-93"><a href="#cb25-93" aria-hidden="true" tabindex="-1"></a>Without formal methods of uncertainty quantification, engineers may differ in opinion about data collection strategy. Quantitative approaches will be preferable because they are auditable. As demonstrated in the examples in this document, these approaches do not remove engineering input from this process, but rather include expert knowledge in a formal way. Unless both available data, and subject matter expertise are used to inform decisions, then some information is not being taken advantage of.</span>
+<span id="cb25-94"><a href="#cb25-94" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-95"><a href="#cb25-95" aria-hidden="true" tabindex="-1"></a><span class="fu"># Quantifying Uncertainty</span></span>
+<span id="cb25-96"><a href="#cb25-96" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-97"><a href="#cb25-97" aria-hidden="true" tabindex="-1"></a>Some reasonable question regarding the use of probability distributions in engineering calculations, include:</span>
+<span id="cb25-98"><a href="#cb25-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-99"><a href="#cb25-99" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>Where do distributions come from?</span>
+<span id="cb25-100"><a href="#cb25-100" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>When are they useful, or unhelpful in describing variability in engineering quantities?</span>
+<span id="cb25-101"><a href="#cb25-101" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-102"><a href="#cb25-102" aria-hidden="true" tabindex="-1"></a>Uniform distribution can occur in the most ways. Mathematically it can be shown to have the maximum entropy (where information entropy can broadly considered to be a measure of uncertainty) of all possible distributions to describe this problem <span class="co">[</span><span class="ot">@Jaynes2003, @Jordaan2005</span><span class="co">]</span>.</span>
+<span id="cb25-103"><a href="#cb25-103" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-104"><a href="#cb25-104" aria-hidden="true" tabindex="-1"></a>Other problems, with other features and constraints, have different maximum entropy solutions.</span>
+<span id="cb25-105"><a href="#cb25-105" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-106"><a href="#cb25-106" aria-hidden="true" tabindex="-1"></a>A maximum entropy distribution is therefore the least committal (contains the fewest assumptions), and this may be a justifiable argument for approximating an uncertain quantity. However, engineers will generally have enough knowledge about their systems to </span>
+<span id="cb25-107"><a href="#cb25-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-108"><a href="#cb25-108" aria-hidden="true" tabindex="-1"></a>Prior predictive simulation...<span class="co">[</span><span class="ot">@McElreath2019</span><span class="co">]</span></span>
+<span id="cb25-109"><a href="#cb25-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-110"><a href="#cb25-110" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-111"><a href="#cb25-111" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: Using Probabilities</span></span>
+<span id="cb25-112"><a href="#cb25-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-113"><a href="#cb25-113" aria-hidden="true" tabindex="-1"></a>In this document, uncertainty is quantified using probability. There are many academic arguments for using this approach <span class="co">[</span><span class="ot">@McElreath2019; @Gelman2014</span><span class="co">]</span>, but another compelling argument is that the practical meaning of probability is intuitive. It can be used to describe decision making under uncertainty, and the statistics presented in this document are with the intention of providing immediate, pragmatic guidance.</span>
+<span id="cb25-114"><a href="#cb25-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-115"><a href="#cb25-115" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-116"><a href="#cb25-116" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-117"><a href="#cb25-117" aria-hidden="true" tabindex="-1"></a><span class="fu">## Working with Probability Distributions</span></span>
+<span id="cb25-118"><a href="#cb25-118" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-119"><a href="#cb25-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-120"><a href="#cb25-120" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-121"><a href="#cb25-121" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-122"><a href="#cb25-122" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using SciPy.stats)</span></span>
+<span id="cb25-123"><a href="#cb25-123" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-126"><a href="#cb25-126" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-127"><a href="#cb25-127" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span>
+<span id="cb25-128"><a href="#cb25-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-129"><a href="#cb25-129" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-130"><a href="#cb25-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-131"><a href="#cb25-131" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
+<span id="cb25-132"><a href="#cb25-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-135"><a href="#cb25-135" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-136"><a href="#cb25-136" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span>
+<span id="cb25-137"><a href="#cb25-137" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-138"><a href="#cb25-138" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-139"><a href="#cb25-139" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-140"><a href="#cb25-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-141"><a href="#cb25-141" aria-hidden="true" tabindex="-1"></a><span class="fu">## Sampling Outcome Variables</span></span>
+<span id="cb25-142"><a href="#cb25-142" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-143"><a href="#cb25-143" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-144"><a href="#cb25-144" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-145"><a href="#cb25-145" aria-hidden="true" tabindex="-1"></a><span class="fu">### Example: Analysis of Tensile Test Data of Steel</span></span>
+<span id="cb25-146"><a href="#cb25-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-147"><a href="#cb25-147" aria-hidden="true" tabindex="-1"></a>This example considers how to interpret a set of measurements of material strength. The data is presented in @tbl-strength_data. This data can be downloaded using the below code, which also shows the first few rows.</span>
+<span id="cb25-148"><a href="#cb25-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-149"><a href="#cb25-149" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-150"><a href="#cb25-150" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using pandas)</span></span>
+<span id="cb25-151"><a href="#cb25-151" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-154"><a href="#cb25-154" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-155"><a href="#cb25-155" aria-hidden="true" tabindex="-1"></a>strength_df <span class="op">=</span> pd.read_csv(filepath_or_buffer <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
+<span id="cb25-156"><a href="#cb25-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-157"><a href="#cb25-157" aria-hidden="true" tabindex="-1"></a>strength_df.head(n <span class="op">=</span> <span class="dv">3</span>)</span>
+<span id="cb25-158"><a href="#cb25-158" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-159"><a href="#cb25-159" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-160"><a href="#cb25-160" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-161"><a href="#cb25-161" aria-hidden="true" tabindex="-1"></a><span class="fu">## R (using readr)</span></span>
+<span id="cb25-162"><a href="#cb25-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-165"><a href="#cb25-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-166"><a href="#cb25-166" aria-hidden="true" tabindex="-1"></a>strength_df <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="at">file =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"</span>)</span>
+<span id="cb25-167"><a href="#cb25-167" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-168"><a href="#cb25-168" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> <span class="fu">head</span>(<span class="at">n =</span> <span class="dv">3</span>)</span>
+<span id="cb25-169"><a href="#cb25-169" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-170"><a href="#cb25-170" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-171"><a href="#cb25-171" aria-hidden="true" tabindex="-1"></a><span class="fu">## Julia (using CSV)</span></span>
+<span id="cb25-172"><a href="#cb25-172" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-175"><a href="#cb25-175" aria-hidden="true" tabindex="-1"></a><span class="in">```{Julia}</span></span>
+<span id="cb25-176"><a href="#cb25-176" aria-hidden="true" tabindex="-1"></a>strength_df = <span class="ot">"</span><span class="st">https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv</span><span class="ot">"</span> |&gt; </span>
+<span id="cb25-177"><a href="#cb25-177" aria-hidden="true" tabindex="-1"></a>    x -&gt; HTTP.get(x).body |&gt;</span>
+<span id="cb25-178"><a href="#cb25-178" aria-hidden="true" tabindex="-1"></a>    x -&gt; CSV.File(x) |&gt;</span>
+<span id="cb25-179"><a href="#cb25-179" aria-hidden="true" tabindex="-1"></a>    x -&gt; DataFrame(x)</span>
+<span id="cb25-180"><a href="#cb25-180" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-181"><a href="#cb25-181" aria-hidden="true" tabindex="-1"></a>println(first(strength_df, <span class="dv">3</span>))</span>
+<span id="cb25-182"><a href="#cb25-182" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-183"><a href="#cb25-183" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-184"><a href="#cb25-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-185"><a href="#cb25-185" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-186"><a href="#cb25-186" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-187"><a href="#cb25-187" aria-hidden="true" tabindex="-1"></a>The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:</span>
+<span id="cb25-188"><a href="#cb25-188" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-189"><a href="#cb25-189" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>*Material heterogeneity*. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.</span>
+<span id="cb25-190"><a href="#cb25-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-191"><a href="#cb25-191" aria-hidden="true" tabindex="-1"></a><span class="ss">-   </span>*Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.</span>
+<span id="cb25-192"><a href="#cb25-192" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-193"><a href="#cb25-193" aria-hidden="true" tabindex="-1"></a>Shown here as a table:</span>
+<span id="cb25-194"><a href="#cb25-194" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-197"><a href="#cb25-197" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-198"><a href="#cb25-198" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb25-199"><a href="#cb25-199" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: tbl-strength_data</span></span>
+<span id="cb25-200"><a href="#cb25-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| tbl-cap: "Tensile Test Data of Steel"</span></span>
+<span id="cb25-201"><a href="#cb25-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-202"><a href="#cb25-202" aria-hidden="true" tabindex="-1"></a>strength_df <span class="sc">|&gt;</span> </span>
+<span id="cb25-203"><a href="#cb25-203" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="st">'Test ID'</span> <span class="ot">=</span> <span class="st">'id'</span>, <span class="st">'Yield Strength, MPa'</span> <span class="ot">=</span> <span class="st">'yield'</span>, <span class="st">'Tensile Strength, MPa'</span> <span class="ot">=</span> <span class="st">'tensile'</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb25-204"><a href="#cb25-204" aria-hidden="true" tabindex="-1"></a>  knitr<span class="sc">::</span><span class="fu">kable</span>()</span>
+<span id="cb25-205"><a href="#cb25-205" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-206"><a href="#cb25-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-207"><a href="#cb25-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-208"><a href="#cb25-208" aria-hidden="true" tabindex="-1"></a>There is a range of <span class="in">`r paste(signif(x = strength_df$yield |&gt; max() - strength_df$yield |&gt; min(), digits = 3), "MPa")`</span>. There are many ways that this can be interpreted. Since no value was recorded less than <span class="in">`r paste(strength_df$yield |&gt; min() |&gt; floor(), "MPa")`</span>, can it be assumed that lower yield strengths are not credible?</span>
+<span id="cb25-209"><a href="#cb25-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-210"><a href="#cb25-210" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-211"><a href="#cb25-211" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: Dealing with variability</span></span>
+<span id="cb25-212"><a href="#cb25-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-213"><a href="#cb25-213" aria-hidden="true" tabindex="-1"></a>Engineers need to...</span>
+<span id="cb25-214"><a href="#cb25-214" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-215"><a href="#cb25-215" aria-hidden="true" tabindex="-1"></a>nice to have a cut-off (threshold). then worst-case assessments are possible.</span>
+<span id="cb25-216"><a href="#cb25-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-217"><a href="#cb25-217" aria-hidden="true" tabindex="-1"></a>assessing cracks in welded structures <span class="co">[</span><span class="ot">@BSI2015</span><span class="co">]</span></span>
+<span id="cb25-218"><a href="#cb25-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-219"><a href="#cb25-219" aria-hidden="true" tabindex="-1"></a>MOTE</span>
+<span id="cb25-220"><a href="#cb25-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-221"><a href="#cb25-221" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-222"><a href="#cb25-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-223"><a href="#cb25-223" aria-hidden="true" tabindex="-1"></a>This variability can be approximated using probability distributions. These should be considered to be a model </span>
+<span id="cb25-224"><a href="#cb25-224" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-225"><a href="#cb25-225" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-226"><a href="#cb25-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using SciPy )</span></span>
+<span id="cb25-227"><a href="#cb25-227" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-230"><a href="#cb25-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-231"><a href="#cb25-231" aria-hidden="true" tabindex="-1"></a>stats.norm.fit(data <span class="op">=</span> strength_df[<span class="st">'yield'</span>].values, method <span class="op">=</span> <span class="st">'MLE'</span>)</span>
+<span id="cb25-232"><a href="#cb25-232" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-233"><a href="#cb25-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-234"><a href="#cb25-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-235"><a href="#cb25-235" aria-hidden="true" tabindex="-1"></a><span class="fu">## R (using fitdistrplus)</span></span>
+<span id="cb25-236"><a href="#cb25-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-239"><a href="#cb25-239" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-240"><a href="#cb25-240" aria-hidden="true" tabindex="-1"></a><span class="fu">fitdist</span>(<span class="at">data =</span> strength_df<span class="sc">$</span>yield, <span class="at">distr =</span> <span class="st">'norm'</span>, <span class="at">method =</span> <span class="st">'mle'</span>)</span>
+<span id="cb25-241"><a href="#cb25-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-242"><a href="#cb25-242" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-243"><a href="#cb25-243" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-244"><a href="#cb25-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-245"><a href="#cb25-245" aria-hidden="true" tabindex="-1"></a>These distribution parameters represent those with the highest score (likelihood) of the range considered. If the standard deviation was any higher, the likelihood of any values near the mean would be reduced, and if it was any lower the likelihood of any data at the tails would be reduced. Similarly, if the mean was any higher, the likelihood of any lower values would be reduced. So there is a trade-off here, and maximum likelihood estimates will provide the values that maximise the product of the likelihoods (or the sum of the log-likelihoods) for the data that is being used to fit the distribution.</span>
+<span id="cb25-246"><a href="#cb25-246" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-247"><a href="#cb25-247" aria-hidden="true" tabindex="-1"></a>However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the *statistical* uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.</span>
+<span id="cb25-248"><a href="#cb25-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-249"><a href="#cb25-249" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-250"><a href="#cb25-250" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: Collecting Data Reduces Uncertainty</span></span>
+<span id="cb25-251"><a href="#cb25-251" aria-hidden="true" tabindex="-1"></a>The reason engineers pay for material tests, inspection activities and sensing systems is because the data that they provide can be used to estimate some uncertain quantity of interest. In general, the more data that is available, the less uncertainty will be associated with the prediction. For instance, a linear model with a straight line that approximately goes through two or three points is much less compelling than a straight line that approximately goes through hundreds of points (when the errors are the same).</span>
+<span id="cb25-252"><a href="#cb25-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-253"><a href="#cb25-253" aria-hidden="true" tabindex="-1"></a>The uncertainty that is associated with limited amounts of data is often referred to as *statistical* or *epistemic* uncertainty. It is distinct from *aleatory* uncertainty, which is the variability that is inherent in the problem, no matter how many measurements are available.</span>
+<span id="cb25-254"><a href="#cb25-254" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-255"><a href="#cb25-255" aria-hidden="true" tabindex="-1"></a>Since statistical uncertainty can be reduced by collecting more data, there are ways to intelligently identify when it is expected to be worthwhile paying more data, and where the point of diminishing returns is. The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful.</span>
+<span id="cb25-256"><a href="#cb25-256" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-257"><a href="#cb25-257" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-258"><a href="#cb25-258" aria-hidden="true" tabindex="-1"></a>Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can mean ac and this distinction is important when they are being used for decision support. </span>
+<span id="cb25-259"><a href="#cb25-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-260"><a href="#cb25-260" aria-hidden="true" tabindex="-1"></a>One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals. Confidence intervals can be obtained by repeating the calculation many times using different samples of the data, and identifying the range within which some proportion of results are contained in. The below code finds the 95% confidence intervals for the maximum likelihood estimate of the mean yield strength, based on the tensile test data in @tbl-strength_data.</span>
+<span id="cb25-261"><a href="#cb25-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-262"><a href="#cb25-262" aria-hidden="true" tabindex="-1"></a>Some further detail on confidence intervals can be found in <span class="co">[</span><span class="ot">@Gelman2020</span><span class="co">]</span>, but essentially, the below result should be interpreted as: in repeated experiments, the mean yield strength will lie somewhere within this range 95% of the time. How that fact can be used to support decision making is not clear, so this document considers a more intuitive method of describing this uncertainty.</span>
+<span id="cb25-263"><a href="#cb25-263" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-264"><a href="#cb25-264" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-265"><a href="#cb25-265" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python (using SciPy )</span></span>
+<span id="cb25-266"><a href="#cb25-266" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-269"><a href="#cb25-269" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-270"><a href="#cb25-270" aria-hidden="true" tabindex="-1"></a>yield_data <span class="op">=</span> (strength_df[<span class="st">'yield'</span>].values,)</span>
+<span id="cb25-271"><a href="#cb25-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-272"><a href="#cb25-272" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_MLE_mean(data):</span>
+<span id="cb25-273"><a href="#cb25-273" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> stats.norm.fit(data <span class="op">=</span> data, method <span class="op">=</span> <span class="st">'MLE'</span>)[<span class="dv">0</span>]</span>
+<span id="cb25-274"><a href="#cb25-274" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-275"><a href="#cb25-275" aria-hidden="true" tabindex="-1"></a>bootstrap_mean <span class="op">=</span> stats.bootstrap(data <span class="op">=</span> yield_data, statistic <span class="op">=</span> get_MLE_mean, vectorized <span class="op">=</span> <span class="va">False</span>, </span>
+<span id="cb25-276"><a href="#cb25-276" aria-hidden="true" tabindex="-1"></a>confidence_level <span class="op">=</span> <span class="fl">0.95</span>, n_resamples <span class="op">=</span> <span class="dv">1000</span>, method <span class="op">=</span> <span class="st">"basic"</span>)</span>
+<span id="cb25-277"><a href="#cb25-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-278"><a href="#cb25-278" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span>
+<span id="cb25-279"><a href="#cb25-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-280"><a href="#cb25-280" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-281"><a href="#cb25-281" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-282"><a href="#cb25-282" aria-hidden="true" tabindex="-1"></a><span class="fu">## R, using boot</span></span>
+<span id="cb25-283"><a href="#cb25-283" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-286"><a href="#cb25-286" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-287"><a href="#cb25-287" aria-hidden="true" tabindex="-1"></a>get_MLE_mean <span class="ot">&lt;-</span> <span class="cf">function</span>(x, id) {<span class="fu">fitdist</span>(x[id], <span class="at">distr =</span> <span class="st">'norm'</span>)<span class="sc">$</span>estimate[<span class="dv">1</span>]}</span>
+<span id="cb25-288"><a href="#cb25-288" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-289"><a href="#cb25-289" aria-hidden="true" tabindex="-1"></a>bootstrap_mean <span class="ot">&lt;-</span> strength_df<span class="sc">$</span>yield <span class="sc">|&gt;</span></span>
+<span id="cb25-290"><a href="#cb25-290" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot</span>(<span class="at">statistic =</span> get_MLE_mean, <span class="at">R =</span> <span class="dv">1000</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-291"><a href="#cb25-291" aria-hidden="true" tabindex="-1"></a>  <span class="fu">boot.ci</span>(<span class="at">conf =</span> <span class="fl">0.95</span>)</span>
+<span id="cb25-292"><a href="#cb25-292" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-293"><a href="#cb25-293" aria-hidden="true" tabindex="-1"></a>bootstrap_mean<span class="sc">$</span>basic <span class="sc">|&gt;</span> <span class="fu">as_tibble</span>() <span class="sc">|&gt;</span> </span>
+<span id="cb25-294"><a href="#cb25-294" aria-hidden="true" tabindex="-1"></a>  dplyr<span class="sc">::</span><span class="fu">select</span>(<span class="fu">c</span>(conf, V4, V5)) <span class="sc">|&gt;</span></span>
+<span id="cb25-295"><a href="#cb25-295" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">lower_bound =</span> V4, <span class="at">upper_bound =</span> V5)</span>
+<span id="cb25-296"><a href="#cb25-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-297"><a href="#cb25-297" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-298"><a href="#cb25-298" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-299"><a href="#cb25-299" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-300"><a href="#cb25-300" aria-hidden="true" tabindex="-1"></a><span class="fu"># Probabilistic Programming</span></span>
+<span id="cb25-301"><a href="#cb25-301" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-302"><a href="#cb25-302" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introduction</span></span>
+<span id="cb25-303"><a href="#cb25-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-304"><a href="#cb25-304" aria-hidden="true" tabindex="-1"></a>Probabilistic programming is used to describe a statistical model, and then automate the inference (estimation of the unknown and uncertain parameters) <span class="co">[</span><span class="ot">@Rainforth2017</span><span class="co">]</span>. Sometimes known as probabilistic machine learning <span class="co">[</span><span class="ot">@Ghahramani2015</span><span class="co">]</span>, inferring unknown parameters, while also accounting for the uncertainty, including statistical uncertainty, is a desirable characteristic of a calculation. One reason for this is because it can be used to demonstrate how additional data can reduce uncertainty, and this can be used as the basis for intelligently collecting data.</span>
+<span id="cb25-305"><a href="#cb25-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-306"><a href="#cb25-306" aria-hidden="true" tabindex="-1"></a>There are now many probabilistic programming languages available to engineers, but the one that is used in the examples in this document is <span class="in">`Stan`</span>. The primary justification for this is that it runs a state of the art sampling algorithm, and (unlike many alternatives) it can be used with many other langauges. In these examples, pre- and post-processing of data will be done in <span class="in">`R`</span> and <span class="in">`Python`</span>.</span>
+<span id="cb25-307"><a href="#cb25-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-308"><a href="#cb25-308" aria-hidden="true" tabindex="-1"></a>The below functions will be used to load <span class="in">`Stan`</span> files from the Github repository:</span>
+<span id="cb25-309"><a href="#cb25-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-310"><a href="#cb25-310" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-311"><a href="#cb25-311" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python</span></span>
+<span id="cb25-312"><a href="#cb25-312" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-315"><a href="#cb25-315" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-316"><a href="#cb25-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb25-317"><a href="#cb25-317" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-318"><a href="#cb25-318" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_stan_model(url):</span>
+<span id="cb25-319"><a href="#cb25-319" aria-hidden="true" tabindex="-1"></a>  new_file, filename <span class="op">=</span> tempfile.mkstemp()</span>
+<span id="cb25-320"><a href="#cb25-320" aria-hidden="true" tabindex="-1"></a>  filename <span class="op">=</span> filename <span class="op">+</span> <span class="st">".stan"</span></span>
+<span id="cb25-321"><a href="#cb25-321" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-322"><a href="#cb25-322" aria-hidden="true" tabindex="-1"></a>  f <span class="op">=</span> <span class="bu">open</span>(filename, <span class="st">"w"</span>)<span class="op">;</span> f.write(requests.get(url).text)</span>
+<span id="cb25-323"><a href="#cb25-323" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb25-324"><a href="#cb25-324" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> cmdstanpy.CmdStanModel(stan_file <span class="op">=</span> filename)</span>
+<span id="cb25-325"><a href="#cb25-325" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-326"><a href="#cb25-326" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-327"><a href="#cb25-327" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-328"><a href="#cb25-328" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
+<span id="cb25-329"><a href="#cb25-329" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-332"><a href="#cb25-332" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-333"><a href="#cb25-333" aria-hidden="true" tabindex="-1"></a>get_stan_model <span class="ot">&lt;-</span> <span class="cf">function</span>(url) {</span>
+<span id="cb25-334"><a href="#cb25-334" aria-hidden="true" tabindex="-1"></a>  url <span class="sc">|&gt;</span> <span class="fu">url</span>() <span class="sc">|&gt;</span></span>
+<span id="cb25-335"><a href="#cb25-335" aria-hidden="true" tabindex="-1"></a>    <span class="fu">readLines</span>() <span class="sc">|&gt;</span></span>
+<span id="cb25-336"><a href="#cb25-336" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_stan_file</span>() <span class="sc">|&gt;</span></span>
+<span id="cb25-337"><a href="#cb25-337" aria-hidden="true" tabindex="-1"></a>    <span class="fu">cmdstan_model</span>()</span>
+<span id="cb25-338"><a href="#cb25-338" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb25-339"><a href="#cb25-339" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-340"><a href="#cb25-340" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-341"><a href="#cb25-341" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-342"><a href="#cb25-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-343"><a href="#cb25-343" aria-hidden="true" tabindex="-1"></a>Firstly, loading the Stan model for quantifying uncertainty in material strength:</span>
+<span id="cb25-344"><a href="#cb25-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-345"><a href="#cb25-345" aria-hidden="true" tabindex="-1"></a>::: panel-tabset</span>
+<span id="cb25-346"><a href="#cb25-346" aria-hidden="true" tabindex="-1"></a><span class="fu">## Python</span></span>
+<span id="cb25-347"><a href="#cb25-347" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-350"><a href="#cb25-350" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb25-351"><a href="#cb25-351" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb25-352"><a href="#cb25-352" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-353"><a href="#cb25-353" aria-hidden="true" tabindex="-1"></a>strength_model <span class="op">=</span> get_stan_model(url <span class="op">=</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span>)</span>
+<span id="cb25-354"><a href="#cb25-354" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-355"><a href="#cb25-355" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-356"><a href="#cb25-356" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-357"><a href="#cb25-357" aria-hidden="true" tabindex="-1"></a><span class="fu">## R</span></span>
+<span id="cb25-358"><a href="#cb25-358" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-361"><a href="#cb25-361" aria-hidden="true" tabindex="-1"></a><span class="in">```{R}</span></span>
+<span id="cb25-362"><a href="#cb25-362" aria-hidden="true" tabindex="-1"></a>strength_model <span class="ot">&lt;-</span> <span class="fu">get_stan_model</span>(<span class="at">url =</span> <span class="st">"https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan"</span>)</span>
+<span id="cb25-363"><a href="#cb25-363" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-364"><a href="#cb25-364" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb25-365"><a href="#cb25-365" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-366"><a href="#cb25-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-367"><a href="#cb25-367" aria-hidden="true" tabindex="-1"></a>The data block in the <span class="in">`Stan`</span> file indicates the data that it is expecting. In <span class="in">`Python`</span> this data is provided to the <span class="in">`Stan`</span> model in the form of a dictionary, and in <span class="in">`R`</span> it is a list.</span>
+<span id="cb25-368"><a href="#cb25-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-369"><a href="#cb25-369" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-370"><a href="#cb25-370" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-371"><a href="#cb25-371" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: Data vs. Information</span></span>
+<span id="cb25-372"><a href="#cb25-372" aria-hidden="true" tabindex="-1"></a>It is widely acknowledged that not all data are equally informative. Engineering data often consists of some indirect measurements of a complex physical phenomena, sometimes in challenging environments. As a result, it will always be associated with some precision, bias and reliability.</span>
+<span id="cb25-373"><a href="#cb25-373" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-374"><a href="#cb25-374" aria-hidden="true" tabindex="-1"></a>It may be necessary to conduct some calibration experiments to quantify these properties, and one such example is provided later in this document. Higher quality (more precise, less biased, more reliable) data will always be at least as useful as lower quality data, and will sometimes be worth paying much more for.</span>
+<span id="cb25-375"><a href="#cb25-375" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-376"><a href="#cb25-376" aria-hidden="true" tabindex="-1"></a>Risk based inspection standards (such as API 580) often acknowledge this difference in quality. A visual inspection is not considered as good as an ultrasonic inspection for damage, and is therefore recommended to be completed more frequently to manage risk. The calculations in this document account for data quality more accurately. Rather than relying on simple heuristics, statistical models are used to relate the information content to the raw data. </span>
+<span id="cb25-377"><a href="#cb25-377" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-378"><a href="#cb25-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-379"><a href="#cb25-379" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-380"><a href="#cb25-380" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-381"><a href="#cb25-381" aria-hidden="true" tabindex="-1"></a>Posterior predictive: pr(S &gt; some value of interest) - ref Pratt, Raiffa, Schlaiffer....</span>
+<span id="cb25-382"><a href="#cb25-382" aria-hidden="true" tabindex="-1"></a>Now we can start combining the results with decision making...</span>
+<span id="cb25-383"><a href="#cb25-383" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-384"><a href="#cb25-384" aria-hidden="true" tabindex="-1"></a><span class="fu"># Supporting Decision Making</span></span>
+<span id="cb25-385"><a href="#cb25-385" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-386"><a href="#cb25-386" aria-hidden="true" tabindex="-1"></a><span class="fu">## Existing Challenges</span></span>
+<span id="cb25-387"><a href="#cb25-387" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-388"><a href="#cb25-388" aria-hidden="true" tabindex="-1"></a>Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed seprately from the underlying decision problem, and by a different team.</span>
+<span id="cb25-389"><a href="#cb25-389" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-390"><a href="#cb25-390" aria-hidden="true" tabindex="-1"></a>A consequence </span>
+<span id="cb25-391"><a href="#cb25-391" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-392"><a href="#cb25-392" aria-hidden="true" tabindex="-1"></a><span class="fu">## Solutions</span></span>
+<span id="cb25-393"><a href="#cb25-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-394"><a href="#cb25-394" aria-hidden="true" tabindex="-1"></a>Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benj Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger). </span>
+<span id="cb25-395"><a href="#cb25-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-396"><a href="#cb25-396" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-397"><a href="#cb25-397" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: The Expected Value of Data ...*Before* Collecting it</span></span>
+<span id="cb25-398"><a href="#cb25-398" aria-hidden="true" tabindex="-1"></a>A key challenge in estimating the expected value of a prospective data collection activity, is that it is performed before the data is available to include in models - the purpose of the analysis is to help decide whether it is worth collecting.</span>
+<span id="cb25-399"><a href="#cb25-399" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-400"><a href="#cb25-400" aria-hidden="true" tabindex="-1"></a>Instead, the method considers all of the information that will be available at the time of making this decision. Engineers will be able to predict, with some (and perhaps a lot of!) uncertainty, what they expect the value to be. They will also know, generally from the contractor, is the quality of data that will be provided. For instance, inspection technologies are calibrated by service providers before they are brought to market, and so along with a quotation, a performance specification can be provided explaining how precise the data will be.</span>
+<span id="cb25-401"><a href="#cb25-401" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-402"><a href="#cb25-402" aria-hidden="true" tabindex="-1"></a>A value of information analysis uses all of this available information and, in the context of the decision problem that the data is intended to support, quantifies on a meaningful, monetary scale, the expected value of the data to the engineer.</span>
+<span id="cb25-403"><a href="#cb25-403" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-404"><a href="#cb25-404" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-405"><a href="#cb25-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-406"><a href="#cb25-406" aria-hidden="true" tabindex="-1"></a><span class="fu">### Decision Trees</span></span>
+<span id="cb25-407"><a href="#cb25-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-408"><a href="#cb25-408" aria-hidden="true" tabindex="-1"></a>Linking analysis to decisions is not new : Ref Raiffa, <span class="co">[</span><span class="ot">@Benjamin2014c, @Jordaan2005</span><span class="co">]</span>...</span>
+<span id="cb25-409"><a href="#cb25-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-410"><a href="#cb25-410" aria-hidden="true" tabindex="-1"></a>In these books, problems are presented as decision-event trees...</span>
+<span id="cb25-411"><a href="#cb25-411" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-412"><a href="#cb25-412" aria-hidden="true" tabindex="-1"></a><span class="fu">### Graphical Models (Influence Diagrams)</span></span>
+<span id="cb25-413"><a href="#cb25-413" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-414"><a href="#cb25-414" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-415"><a href="#cb25-415" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: Drawing Upon Engineering Know-How</span></span>
+<span id="cb25-416"><a href="#cb25-416" aria-hidden="true" tabindex="-1"></a>Drawing a graphical model can be as simple as thinking about relationships between your parameters</span>
+<span id="cb25-417"><a href="#cb25-417" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-418"><a href="#cb25-418" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-419"><a href="#cb25-419" aria-hidden="true" tabindex="-1"></a><span class="fu">## Example Calculations</span></span>
+<span id="cb25-420"><a href="#cb25-420" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-421"><a href="#cb25-421" aria-hidden="true" tabindex="-1"></a><span class="fu">### Crop Sales Forecasting</span></span>
+<span id="cb25-422"><a href="#cb25-422" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-423"><a href="#cb25-423" aria-hidden="true" tabindex="-1"></a><span class="fu">### Temperatuere Calibration for Energy Systems</span></span>
+<span id="cb25-424"><a href="#cb25-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-425"><a href="#cb25-425" aria-hidden="true" tabindex="-1"></a><span class="fu">### Identifying a Data Collection Plan for a Bridge</span></span>
+<span id="cb25-426"><a href="#cb25-426" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-427"><a href="#cb25-427" aria-hidden="true" tabindex="-1"></a><span class="fu"># Recommendations</span></span>
+<span id="cb25-428"><a href="#cb25-428" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-429"><a href="#cb25-429" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probabilistic Models</span></span>
+<span id="cb25-430"><a href="#cb25-430" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-431"><a href="#cb25-431" aria-hidden="true" tabindex="-1"></a><span class="fu">## Neural Networks</span></span>
+<span id="cb25-432"><a href="#cb25-432" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-433"><a href="#cb25-433" aria-hidden="true" tabindex="-1"></a>:::{.callout-note collapse="true"}</span>
+<span id="cb25-434"><a href="#cb25-434" aria-hidden="true" tabindex="-1"></a><span class="fu">## Thought: Learning a Model</span></span>
+<span id="cb25-435"><a href="#cb25-435" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-436"><a href="#cb25-436" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb25-437"><a href="#cb25-437" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-438"><a href="#cb25-438" aria-hidden="true" tabindex="-1"></a><span class="fu">## Engineering Judgement</span></span>
+<span id="cb25-439"><a href="#cb25-439" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-440"><a href="#cb25-440" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-441"><a href="#cb25-441" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-442"><a href="#cb25-442" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- # References --&gt;</span></span>
+<span id="cb25-443"><a href="#cb25-443" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-444"><a href="#cb25-444" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-445"><a href="#cb25-445" aria-hidden="true" tabindex="-1"></a>#</span>
 </code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
