@@ -1,7 +1,7 @@
 ---
 title: "Data-Centric Engineering"
 subtitle: "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements"
-author: ""
+author: "Domenic Di Francesco, PhD, CEng"
 date: "June 2022"
 format:
   html:
@@ -13,7 +13,9 @@ format:
     code-copy: true
     code-fold: true
     code-tools: true
+    code-overflow: wrap
     monofont: Fira Code
+    mermaid-format: js
 execute:
   message: false
   warning: false
@@ -28,11 +30,10 @@ The various new methods of collecting and analysing data that are increasingly a
 
  * Should a sensing systems be retrofit to an existing structure? 
  * If so, how precise and how reliable do they need to be? 
- * Does a malfunctioning sensor require replacement? 
- * What supplementary inspection or testing data is required?
- * **Add energy systems questions here too!**
+ * How can we value data from smart meters? 
+ * Which combinations of available data collection options can best support decision making?
 
-Given the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
+The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the current availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
 ## How to use this document
 
@@ -58,8 +59,8 @@ library(cmdstanr); library(copula); library(RHugin)
 
 ## Load Julia Packages
 
-```{Julia}
-using CSV, HTTP, DataFrames
+```{julia}
+using Random, Distributions, CSV, HTTP, DataFrames
 
 ```
 
@@ -69,18 +70,18 @@ using CSV, HTTP, DataFrames
 ## Tip: Loading packages
 In `R` and `Python` packages first need to be installed. Guidance on installing packages can be found [here](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages) (for `R`) and [here](https://pypi.org/project/pip/) (for `Python`). 
 
-Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but those details can be found online, for example [here is the website for the `Python` pandas package](https://pandas.pydata.org).
+Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but such information can be found online, for example [here](https://pandas.pydata.org) is the website for the `Python` 'pandas' package.
 :::
 
 In addition, some statistical models that have been written in the probabilistic programming language `Stan` have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this [public Github repository](https://github.com/DomDF/DCE_guidance).
 
 # Uncertainty in the Built Environment
 
-Engineering standards acknowledge the presence of variability in the quantities they are dealing with. Repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
+Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
 
 Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a *safe* or *characteristic* value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.
 
-This can be achieved by using probability to formally quantify uncertainty, and various examples of this are presented in this document. Statistical models of variability can describe how many uncertain quantities can be dependent, how uncertainty can increase when making predictions over various time frames, and how uncertainty can decrease when new data becomes available. Uncertainty quantification therefore allows for many other types of analysis, such as identifying where, when and how additional data should be collected, which is the focus of this document.
+This can be resolved by using probability to formally quantify uncertainty, and various examples of this are presented in this document. Statistical models of variability can describe how many uncertain quantities can be dependent, how uncertainty can increase when making predictions over various time frames, and how uncertainty can decrease when new data becomes available. Uncertainty quantification therefore allows for many other types of analysis, such as identifying where, when and how additional data should be collected, which is the focus of this document.
 
 While data will generally always provide some value, provided that it is relevant, it will not always represent a good investment. There are various costs associated with collecting engineering data, including hiring/purchasing specialised measurement equipment, the storage costs of high-volume streaming data, and occasionally the risk associated with exposing personnel to hazardous environments to collect data. Justifying these costs require engineers to link data collection to the improved decision making that it facilitates. 
 
@@ -88,10 +89,23 @@ Without formal methods of uncertainty quantification, engineers may differ in op
 
 # Quantifying Uncertainty
 
-Some reasonable question regarding the use of probability distributions in engineering calculations, include:
+As described in the below note, there are many appealing reasons to use probability to describe variability.
+
+:::{.callout-note collapse="true"}
+## Thought: Using Probabilities
+
+It has been proposed that since probability is the mathematical language of randomness, it should be used to model the uncertainties that arise [@Gelman2014]. Another compelling argument is that the practical meaning of probability is intuitive. Probabilities can be assinged to possible (uncertain) outcomes in decision problems.
+
+Understanding how to estimate these probabilities as well as how to use them allows for coherent and replicable (auditable) deicion making. The statistics presented in this document are with the intention of providing this kind of pragmatic guidance.
+
+:::
+
+There are many established probability distributions, and some reasonable question regarding their application in engineering calculations, include:
 
 -   Where do distributions come from?
 -   When are they useful, or unhelpful in describing variability in engineering quantities?
+
+
 
 Uniform distribution can occur in the most ways. Mathematically it can be shown to have the maximum entropy (where information entropy can broadly considered to be a measure of uncertainty) of all possible distributions to describe this problem [@Jaynes2003, @Jordaan2005].
 
@@ -99,21 +113,12 @@ Other problems, with other features and constraints, have different maximum entr
 
 A maximum entropy distribution is therefore the least committal (contains the fewest assumptions), and this may be a justifiable argument for approximating an uncertain quantity. However, engineers will generally have enough knowledge about their systems to 
 
-Prior predictive simulation...[@McElreath2019]
-
-:::{.callout-note collapse="true"}
-## Thought: Using Probabilities
-
-In this document, uncertainty is quantified using probability. There are many academic arguments for using this approach [@McElreath2019; @Gelman2014], but another compelling argument is that the practical meaning of probability is intuitive. It can be used to describe decision making under uncertainty, and the statistics presented in this document are with the intention of providing immediate, pragmatic guidance.
-
-:::
-
 ## Working with Probability Distributions
 
-
+Both `Python` and `R` have many functions for evaluating, integrating, sampling, and estimating parameters from probability distributions. The below examples show how $10$ independent samples can be drawn from a normal ditribution, with a mean value of $0$ and a standard deviation of $1$.
 
 ::: panel-tabset
-## Python (using SciPy.stats)
+## Python (using SciPy)
 
 ```{python}
 stats.norm.rvs(size = 10, loc = 0, scale = 1)
@@ -126,10 +131,55 @@ stats.norm.rvs(size = 10, loc = 0, scale = 1)
 rnorm(n = 10, mean = 0, sd = 1)
 
 ```
+
+## Julia (using Distributions, Random)
+
+```{julia}
+Normal(1, 0) |> x -> rand(10)
+
+```
+
 :::
 
-## Sampling Outcome Variables
+Some variance reduction methods (add link to python and R lhs libraries)...., @fig-it_lhs.
 
+```{R}
+#| echo: false
+#| label: fig-it_lhs
+#| fig-cap: "Effect of sample size on methods of approximating a standard normal distribution"
+library(lhs)
+
+set.seed(seed = 1008); sampling_df <- tibble()
+
+for(n_samples in c(20, 100, 1000)){
+
+    probs <- lhs::randomLHS(n = n_samples, k = 1)
+    lhs_df <- tibble(samples = qnorm(p = probs[,1]), method = "LH Sampling", n = n_samples)
+    ind_df <- tibble(samples = rnorm(n = n_samples), method = "IT Sampling", n = n_samples)
+
+    sampling_df <- bind_rows(sampling_df, lhs_df, ind_df)
+
+}
+
+ggplot(data = sampling_df |> 
+    mutate(n = paste(n, "samples")) |>
+    mutate(n = forcats::as_factor(n)), 
+    mapping = aes(x = samples))+
+    geom_histogram(mapping = aes(y = after_stat(x = density)), 
+                  col = 'black', alpha = 1/2, bins = 15, position = position_dodge())+
+    facet_grid(method ~ n)+
+    stat_function(fun = dnorm, geom = 'line', mapping = aes(col = 'True function, N(0, 1)'))+
+    labs(x = "", y = "Probability density")+
+    ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
+    theme(legend.title = element_blank(), legend.position = 'top', plot.background = element_rect(colour = NA))
+
+```
+
+Sampling from distributions converts mathematically challenging statistical problems to simpler data analysis problems. Consider the basic problem of structural reliability, where an engineer is tasked with identifying the probability of an uncertain load exceeding a components uncertain resistance to that load.
+
+Probability defined by the convolution integral.
+
+Solution can also be obtained by counting the proportion of samples from the load model that exceed samples from the reistance model. Each set of samples can be considered as a possible outcome (realisation) from the models.
 
 
 ### Example: Analysis of Tensile Test Data of Steel
@@ -154,15 +204,15 @@ strength_df <- read_csv(file = "https://raw.githubusercontent.com/DomDF/DCE_guid
 strength_df |> head(n = 3)
 
 ```
-## Julia (using CSV)
+## Julia (using HTTP, CSV, DataFrames)
 
-```{Julia}
-strength_df = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv" |> 
-    x -> HTTP.get(x).body |>
-    x -> CSV.File(x) |>
-    x -> DataFrame(x)
+```{julia}
+σ_df = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"
 
-println(first(strength_df, 3))
+  # x -> HTTP.get(x).body |>
+  # x -> CSV.File(x) |>
+  # DataFrame |>
+  # x -> first(x, 3)
 
 ```
 
@@ -170,9 +220,9 @@ println(first(strength_df, 3))
 
 The results indicate some variability even though each row presents the result of the same test, using the same machine, on a tensile specimen from the same material. This variability can be attributed to:
 
--   *Material heterogeneity*. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.
+-   **Material heterogeneity**. Manufacturing processes used to make structural steel results in local hard spots, laminations, inclusions and other anomalies that can locally influence the strength of the material. The presence of such anomalies in the microstructure of a testing specimen will influence the measured properties.
 
--   *Imperfect measurement data*. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.
+-   **Imperfect measurement data**. There is no manufacturing process that creates perfectly homogeneous steel, and there is no measurement of an engineering quantity that will tell us everything we want to know. In this example, the machine used to perform the tests will output results with some precision, which has been quantified by the manufacturers.
 
 Shown here as a table:
 
@@ -205,7 +255,7 @@ MOTE
 This variability can be approximated using probability distributions. These should be considered to be a model 
 
 ::: panel-tabset
-## Python (using SciPy )
+## Python (using SciPy)
 
 ```{python}
 stats.norm.fit(data = strength_df['yield'].values, method = 'MLE')
@@ -240,7 +290,7 @@ One method of quantifying variability in a maximum likelihood estimate is to fin
 Some further detail on confidence intervals can be found in [@Gelman2020], but essentially, the below result should be interpreted as: in repeated experiments, the mean yield strength will lie somewhere within this range 95% of the time. How that fact can be used to support decision making is not clear, so this document considers a more intuitive method of describing this uncertainty.
 
 ::: panel-tabset
-## Python (using SciPy )
+## Python (using SciPy)
 
 ```{python}
 yield_data = (strength_df['yield'].values,)
@@ -334,7 +384,6 @@ strength_model <- get_stan_model(url = "https://raw.githubusercontent.com/DomDF/
 
 The data block in the `Stan` file indicates the data that it is expecting. In `Python` this data is provided to the `Stan` model in the form of a dictionary, and in `R` it is a list.
 
-
 :::{.callout-note collapse="true"}
 ## Thought: Data vs. Information
 It is widely acknowledged that not all data are equally informative. Engineering data often consists of some indirect measurements of a complex physical phenomena, sometimes in challenging environments. As a result, it will always be associated with some precision, bias and reliability.
@@ -345,6 +394,13 @@ Risk based inspection standards (such as API 580) often acknowledge this differe
 :::
 
 
+## Sampling Outcomes 
+
+prior predictive sampling - parameters may not have intuitive meaning. Outcomes generally will (particularly amongst domain experts).
+
+prior predictive (or pushword) sampling Recommended practice in Bayesian workflow paper [CITE]. 
+
+Example:
 
 Posterior predictive: pr(S > some value of interest) - ref Pratt, Raiffa, Schlaiffer....
 Now we can start combining the results with decision making...
@@ -356,8 +412,6 @@ Now we can start combining the results with decision making...
 Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed seprately from the underlying decision problem, and by a different team.
 
 A consequence 
-
-## Solutions
 
 Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benj Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger). 
 
@@ -375,39 +429,438 @@ A value of information analysis uses all of this available information and, in t
 
 Linking analysis to decisions is not new : Ref Raiffa, [@Benjamin2014c, @Jordaan2005]...
 
-In these books, problems are presented as decision-event trees...
+Convention for square, round and diamond (or sometimes triangular) nodes.
+
+In these books, problems are presented as decision-event trees, such as the example shown in @fig-example_tree.
+
+```{mermaid}
+%%| label: fig-example_tree
+%%| fig-cap: "Example Structure of a Decision-Event Tree"
+
+flowchart LR
+  d1[Decision] -- D1 --> o1((Uncertain outcome, \nD1))
+  d1[Decision] -- D2 --> o2((Uncertain outcome,  \nD2))
+  
+  o1 --O = A --> c1a{Utility, \nO = A, d = D1}
+  o1 --O = B --> c1b{Utility, \nO = B, d = D1}
+  o2 --O = A--> c2a{Utility, \nO = A, d = D2}
+  o2 --O = B--> c2b{Utility, \nO = B, d = D2}
+  
+```
+
+The expected utility associated with making decision $d1$, $\mathbb{E}\Big[ u(d1) \Big]$ can be calculated as follows:
+
+$$
+\mathbb{E}\Big[ u(d1) \Big] = \Pr(O = A) * u(O = A, d = D1) + \Pr(O = B) * u(O = B, d = D1)
+$$
+
+Here, the utilities (or costs) are being weighted by the probabilities that they will occur. The expected utility associated with making decision $D2$ can be calculated in the same way, and the expected optimal decision will be the option that has the highest expected utility, or lowest expected cost.
+
+<!-- Formally, ... -->
+
+<!-- $$ -->
+<!-- a^{*} = \arg \max_{a \in A} E \Big[ u(a, \theta) \Big] -->
+<!-- $$ -->
+
+<!-- On the basis that the expected optimal action is selected, the expected utility is $E \Big[ u(a^{*}, \theta) \Big]$. -->
 
 ### Graphical Models (Influence Diagrams)
 
+Approximating real engineering systems using decision-event trees will require many more nodes than those presented in @fig-example_tree. This would lead to very large diagrams. Consequenlty, they are often represented more concisely, using *influence diagrams*.
+
+Influence diagrams do not show every possible event path graphically (rather, these are stored as tables behind each node.) An influence diagram representation of @fig-example_tree is shown in @fig-example_id.
+
+```{mermaid}
+%%| label: fig-example_id
+%%| fig-cap: "Example Structure of an Influence Diagram"
+
+flowchart LR
+  d1[Decision] --> o1((Uncertain \noutcome))
+  d1 --> c1{Utility}
+  o1 --> c1
+
+```
+
+The arrows in an influence diagram are causal (like in a Bayesian network). The arrows in @fig-example_id imply that the selected decision influences the uncertain outcome, and that the utility is conditional on both of these parameters. Drawing a useful influence diagram therefore requires some knowledge of the system that it is designed to represent.
+
 :::{.callout-note collapse="true"}
 ## Thought: Drawing Upon Engineering Know-How
-Drawing a graphical model can be as simple as thinking about relationships between your parameters
+Drawing a graphical model can simply follow on, from a description of an engineering system.
+
+If tasked with describing a corrosion protection system as an influence diagram, to help identify whether a data collection activity is expected to be worthwhile, it would be recommended to consult a corrosion specialist.
+
+If a pipeline integrity engineer provided the following, basic information about the protection system for external corrosion of a buried pipeline:
+
+ - The rate of corrosion will depend on the type of soil in which the pipeline is buried, amongst other factors.
+ - The primary external protective system is a protective coating, which provides a physical barrier between the steel and the soil. 
+ - The pipeline is also protected by a Cathodic Protection (CP) system, which helps protect any exposed steel by ensuring it is sufficiently cathodic to prevent the oxidising corrosion reaction.
+ - Insufficient current from the CP system will mean that exposed steel (for example at locations of coating damage) will corrode. Excessive current can lead to disbondment of the coating from pipeline surface, meaning there may be a corrosive environment between the pipeline and the coating, which is shielded from any CP protection.
+ - A Direct Current Voltage Gradient (DCVG) survey, can provide us with some information about the presence of damage in the coating.
+
+This information can be shown graphically, using the influence diagram shown in @fig-id_cr. This representation allows for information on any of the uncertain parameter can be propagated through the network. It also describes how decision/actions can affect specific parameters in a model (and therefore also in the outcomes of interest, i.e. external corrosion rate). 
+
+Using a model to predict how a system will respond to various interventions, as facilitated by influence diagrams, is often described as the goal of *digital twins*.
+
+```{mermaid}
+%%| label: fig-id_cr
+%%| fig-cap: "Influence Diagram Showing Factors Affecting Corrosion Rate of a Buried Pipeline"
+
+flowchart LR
+ 
+  dcoat[Complete \nDCVG Survey?] --> coat((Coating \nCondition))
+  cp((CP \nPerformance)) --> corr((Corrosion \nRate))
+  coat --> corr
+  dcoat --> ccoat{DCVG \n Costs}
+  
+  cp --> ccp{CP costs}
+  cp --> coat
+  
+  soil((Soil Type)) --> corr
+  corr --> ccorr{Corrosion \ncosts}
+  
+```
+
 :::
 
 ## Example Calculations
 
 ### Crop Sales Forecasting
 
-### Temperatuere Calibration for Energy Systems
+...
 
-### Identifying a Data Collection Plan for a Bridge
+### Energy Use in Buildings
 
-# Recommendations
+Consider the problem of heating a residential building. Inefficiencies in ageing heaters can result in increased electricity costs to deliver energy requirements. This performance degradtio can be mitigated by maintenance work.
 
-## Probabilistic Models
+The problem is described by the influence diagram in @fig-prior_id_heat_pumps. Here, heat pump parameters, $\alpha$ and $\beta$ describe the degradation and improvements to the performance of a heat pump, respectively.
 
-## Neural Networks
+Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activites can improve, or restore, the performance (using $\beta$).
 
-:::{.callout-note collapse="true"}
-## Thought: Learning a Model
+```{mermaid}
+%%| label: fig-prior_id_heat_pumps
+%%| fig-cap: "Influence Diagram for Identifying Expected Optimal Maintenance Schedule of Heating System"
+
+flowchart LR
+  d2[Maintenance \nfrequency] --> o2((SPF))
+
+  o0((Heating \nload)) --> o1((SPF))
+  o2(("#946;")) --> o1((SPF))
+  o3(("#945;")) --> o1((SPF))
+
+  o1 --> c1{Electricity \ncost}
+  d2 --> c2{Maintenance \n cost}
+
+```
+
+The model that will be used is as follows:
+
+$$
+\beta = \frac{\beta_{A} * N_{m}^\gamma}{\beta_{B} + N_{m}^{\gamma}}
+$$
+$$
+\alpha \sim N(\mu = 1.6 \times 10^{-2}, \sigma = 1.6 \times 10^{-3})
+$$
+Where: $\beta_{A} = 0.073$, $\beta_{B} = 11.242$, and $\gamma = 1.307$. The cost of a heat pump is taken to be £$110472.50$, and the cost of  maintenance is equal to $1$% of this cost, multiplied by the number of activities, $N_{m}$.
+
+The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
+$$
+C_{e} = \frac{L_{H} \times p_{e}}{SPF}
+$$
+
+The inputs for the problem are defined below. These result in a decreasing efficacy of maintenance activities, when many are scheduled, see @fig-n_maint_beta.
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using SciPy)
+
+```{python}
+def get_beta(n_maintenance):
+  a = 0.07349026; b = 11.24172755; gamma = 1.30736477
+  return (a * n_maintenance ** gamma) / (b + n_maintenance ** gamma)
+
+n_samples = 10**3; alpha = stats.norm.rvs(loc = 1.6*10**-2, scale = 1.6 * 10**-3)
+
+SPF_inital = 3
+
+max_n_maint = 12; n_maint = np.arange(start = 0, stop = max_n_maint + 1, step = 1)
+
+heat_pump_cost_GBP = 441890/4; heating_load_kWh = 1753914; GBP_per_kWh = 0.51
+```
+
+## R
+
+```{R}
+get_beta <- function(n_maintenance){
+  a <- 0.07349026; b <- 11.24172755; gamma <- 1.30736477
+  # a <- 1/4; gamma <- 2; b <- 10
+  (a * n_maintenance^gamma) / (b + n_maintenance^gamma)
+}
+
+n_samples <- 1e3; alpha <- rnorm(n = n_samples, mean = 1.6e-2, sd = 1.6e-3)
+
+SPF_initial <- 3
+
+max_n_maint <- 12; n_maint <- seq(from = 0, to = max_n_maint, by = 1)
+
+heat_pump_cost_GBP <- 441890/4; heating_load_kWh <- 1753914; GBP_per_kWh <- 0.51
+```
 
 :::
 
-## Engineering Judgement
+```{R}
+#| echo: false
+#| label: fig-n_maint_beta
+#| fig-cap: "Effect of Increasing Number of Scheduled Maintenance Activities on Heat Pump Performance Improvement Factor"
+
+tibble(x = n_maint) |>
+  mutate(beta = get_beta(n_maintenance = x)) |>
+  ggplot(mapping = aes(x, beta))+
+  geom_point(shape = 1, size = 1)+
+  geom_line(alpha = 1/4)+
+  scale_x_continuous(name = 'Number of scheduled maintenance activities per year')+
+  scale_y_continuous(name = expression(beta))+
+  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
+  theme(plot.background = element_rect(color = NA),
+        legend.title = element_blank(), legend.position = 'top')
+```
+
+As shown in @fig-prior_heat_pump_decision, increasing the number of maintenance activities initially decreases the total cost (sum of electricity and maintenance costs), before no longer expecting to be worthwhile.
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using SciPy)
+
+```{python}
+def prior_decision_df(n_maint_range):
+  return 0
+
+```
+
+## R (using purrr)
+
+```{R}
+prior_decision_df <- function(n_maint_range){
+  
+  tibble(n_maint = n_maint_range, alpha = list(alpha)) |>
+  mutate(beta = get_beta(n_maintenance = n_maint),
+         SPF = SPF_initial,
+         maint_cost = n_maint * heat_pump_cost_GBP * 1e-2,
+         SPF_coeff = map2(.x = alpha, .y = beta,
+                          .f = function(.x, .y){(1 - .x) * (1 + .y)}),
+         SPF = map2(.x = SPF, .y = SPF_coeff,
+                    .f = function(.x, .y){lag(x = .x, n = 1, default = SPF_initial) * .y}),
+         elec_cost = map(.x = SPF,
+                         .f = function(.x){GBP_per_kWh * heating_load_kWh / .x}),
+         total_cost = map2(.x = elec_cost, .y = maint_cost,
+                           .f = function(.x, .y){ .x + .y})) |> 
+    group_by(n_maint) |>
+    mutate(exp_cost = mean(unlist(total_cost))) |>
+    ungroup()
+
+  }
+```
+
+:::
+
+```{R}
+#| echo: false
+#| label: fig-prior_heat_pump_decision
+#| fig-cap: "Identification of Number of Expected Optimal Heat Pump Maintenance Activities"
+
+prior_df <- prior_decision_df(n_maint_range = n_maint)
+
+ggplot(data = prior_df |>  
+              tidyr::unnest(cols = total_cost) |>
+              mutate(id = rep(x = seq(from = 1, to = n_samples, by = 1), times = max_n_maint + 1)), 
+       mapping = aes(x = n_maint, y = total_cost))+
+  geom_line(mapping = aes(group = id), alpha = 1/50)+
+  scale_x_continuous(name = 'Number of scheduled maintenance activities per year', 
+                     breaks = seq(from = 0, to = 12, by = 1))+
+  scale_y_continuous(name = 'Total (annual) operational costs, £', labels = scales::comma)+
+  geom_vline(lty = 2, alpha = 1/2, 
+             mapping = aes(color = 'Expected minimum cost',
+                           xintercept = prior_df[which.min(prior_df$exp_cost),]$n_maint))+
+  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
+  theme(plot.background = element_rect(color = NA),
+        legend.title = element_blank(), legend.position = 'top')
+
+```
+
+The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is `r prior_df[which.min(prior_df$exp_cost),]$n_maint`, with an associated expected cost of £`r prior_df[which.min(prior_df$exp_cost),]$exp_cost |> signif(digits = 4)`.
+
+How can a smart meter assist in solving this decision problem? As shown in @fig-prepost_id_heat_pumps, the data that a smart meter provides can be used to reduce uncertainty about the degradation parameter, $\alpha$.
+
+```{mermaid}
+%%| label: fig-prepost_id_heat_pumps
+%%| fig-cap: "Influence Diagram for Estimating the Expected Value of Smart Meters"
+
+flowchart LR
+  d2[Maintenance \nfrequency] --> o2((SPF))
+
+  o0((Heating \nload)) --> o1((SPF))
+  o2(("#946;")) --> o1((SPF))
+  o3(("#945;")) --> o1((SPF))
+
+  o1 --> c1{Electricity \ncost}
+  d2 --> c2{Maintenance \ncost}
+
+  d3[Smart \nmeter] --> c3{Meter \ncost}
+  d3 --> o3
+
+```
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using SciPy)
+
+```{python}
+def prepost_decision_df(n_maint_range):
+  return 0
+
+```
+
+## R (using purrr)
+
+```{R}
+
+prepost_decision_df <- function(n_maint_range){
+  
+  tibble(alpha = alpha, n_maint = list(n_maint_range)) |>
+  mutate(beta = map(.x = n_maint, 
+                    .f = function(.x){get_beta(.x)}),
+         SPF = SPF_initial,
+         maint_cost = map(.x = n_maint,
+                          .f = function(.x) {.x * heat_pump_cost_GBP * 1e-2}),
+         SPF_coeff = map2(.x = alpha, .y = beta,
+                          .f = function(.x, .y){(1 - .x) * (1 + .y)}),
+         SPF = map2(.x = SPF, .y = SPF_coeff,
+                    .f = function(.x, .y){
+                      lag(x = .x, n = 1, default = SPF_initial) * .y}),
+         elec_cost = map(.x = SPF,
+                         .f = function(.x){GBP_per_kWh * heating_load_kWh / .x}),
+         total_cost = map2(.x = elec_cost, .y = maint_cost,
+                           .f = function(.x, .y){ .x + .y})) |>
+    mutate(exp_cost = map(.x = total_cost, 
+                          .f = function(.x) {min(unlist(.x))}),
+           exp_cost = unlist(exp_cost))
+}
+```
+
+:::
+
+```{R}
+#| echo: false
+
+prior_df <- tibble(alpha_sd = double(), ec_pr = double(), a_pr = integer())
+prepost_df <- tibble(alpha_sd = double(), ec_prepost = double())
+
+for (alpha_sd in c(0.01, 0.05, 0.1, 0.25)){
+  
+  alpha <- rnorm(n = n_samples, mean = 1/2, sd = alpha_sd)
+  
+  df_pr <- prior_decision_df(n_maint_range = n_maint)
+  
+  prior_df <- bind_rows(prior_df, 
+                        tibble(alpha_sd = alpha_sd, ec_pr = df_pr[which.min(df_pr$exp_cost),]$exp_cost, a_pr = df_pr[which.min(df_pr$exp_cost),]$n_maint))
+    
+  df_pp <- prepost_decision_df(n_maint_range = n_maint)
+  
+  prepost_df <- bind_rows(prepost_df, 
+                          tibble(alpha_sd = alpha_sd, ec_prepost = df_pp$exp_cost |> mean()))
+  
+}
+  
+VoPI_df <- prior_df |>
+  left_join(y = prepost_df, by = 'alpha_sd') |>
+  mutate(VoPI = ec_pr - ec_prepost)
+
+```
+
+```{R}
+#| echo: false
+#| label: fig-voi_smart_meter_alpha_sensitivity
+#| fig-cap: "Effect of Prior Uncertainty on Expected Value of Smart Meter Data"
+
+ggplot(data = VoPI_df, mapping = aes(x = alpha_sd, y = VoPI))+
+  geom_point(shape = 1, size = 1) + geom_line(alpha = 1/4)+
+  geom_text(mapping = aes(label = paste("£", VoPI |> signif(digits = 3))), 
+            family = "Atkinson Hyperlegible", size = 3, vjust = -1)+
+  scale_x_continuous(name = expression(paste('Uncertainty (std. dev.) in prior model of ', alpha)))+
+  scale_y_continuous(name = 'Expected value of smart meter data, £', labels = scales::comma, limits = c(0, VoPI_df$VoPI |> max() + 3e3))+
+  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
+  theme(plot.background = element_rect(color = NA))
+```
+
+### Design of Energy Generation Asset Portfolio 
+
+In designing an energy system for...
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia (using Convex)
+
+```{julia}
+#| output: false
+
+assets = ["solar", "offshore", "nearshore"]
+
+α = 10; β = 2; γ = 1 * 0.1 * 24 * 365
+
+```
+
+:::
+
+```{julia}
+α
+
+```
+
+```{mermaid}
+%%| label: fig-prepost_id_energy_portfolio
+%%| fig-cap: "Influence Diagram for Estimating the Expected Value of an Energy Forecasting Model"
+
+flowchart LR
+  d0[System \ndesign] --> ons((Nearshore wind \ngeneration))
+  d0[System \ndesign] --> oos((Offshore wind \ngeneration))
+  d0[System \ndesign] --> os((Solar \ngeneration))
+
+  ons --> c_s
+  oos --> c_s
+  os --> c_s 
+
+  d1[Forecast \nmodel] --> ec((Energy \nprices))
+  ec --> c_s{Implementation \ncosts}
+
+  d1 --> c_m{Modelling \ncosts}
+
+```
 
 
+### Identifying a Data Collection Plan for a Bridge
 
-<!-- # References -->
+<!-- Structural reliability is concerned with... -->
+
+<!-- It is an established field of engineering, and reliability analysis serves as the technical justification for some of the lower level guidance in many engineering codes and standards. -->
+
+<!-- The probability will be dependent on the mdoel assumptions - and this has lead to multiple interpretations of SRA results. In many cases, it is recommended that these probabilities shoul;d only be considered... -->
+
+<!-- Some of the topics discussed in this document help address perceived challenges with SRA. For instance, the *tail sensitivity problem*... -->
+
+<!-- Consider the challenge of the integrity management of a rail bridge. Here, there are  -->
+
+# Recommendations
+
+...
+
+<!-- ## Probabilistic Models -->
+
+<!-- ## Neural Networks -->
+
+<!-- :::{.callout-note collapse="true"} -->
+<!-- ## Thought: Learning a Model -->
+
+<!-- ::: -->
+
+<!-- ## Engineering Judgement -->
 
 
-#

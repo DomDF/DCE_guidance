@@ -4,11 +4,13 @@ functions {
 
 data {
 
-  int <lower = 1> n_strength;
-  vector <lower = 0> [n_strength] strength_meas;
+  int <lower = 1> n_strength; // number of strength measurements
+  vector <lower = 0> [n_strength] strength_meas; // strength measurements
   
+  // Measurement error
   real <lower = 0> error;
   
+  // Prior parameters
   real m_s;
   real <lower = 0> sd_s;
   real <lower = 0> rate_s;
@@ -38,5 +40,7 @@ model {
 }
 
 generated quantities{
+
+  real strength_post_pred = lognormal_rng(strength_m_log, strength_sd_log);
   
 }
