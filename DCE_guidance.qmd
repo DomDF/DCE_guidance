@@ -1692,7 +1692,6 @@ As shown in... the precision with which the corrosion anomalies have been sized 
 
 plot_df <- reticulate::py$cgr_results
 
-plot_df
 ```
 
 
