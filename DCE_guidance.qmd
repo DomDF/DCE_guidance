@@ -2,7 +2,7 @@
 title: "Data-Centric Engineering"
 subtitle: "Guidance on the Use of Probabilistic Methods for Identifying Data Requirements"
 author: "Domenic Di Francesco, PhD, CEng"
-date: "June 2022"
+date: "November 2022"
 format:
   html:
     theme: simplex
@@ -591,6 +591,7 @@ The data block in the `Stan` file indicates the data that it is expecting. In `P
 ## Python
 
 ```{python}
+#| output: false
 strength_data = {"n_strength" : strength_df.shape[0], 
                  "strength_meas" : strength_df["yield"].values,
                  "error" : 3, "m_s" : 5, "sd_s" : 0.25, "rate_s" : 0.1}
@@ -607,6 +608,7 @@ strength_fit = strength_model.sample(data = strength_data, seed = 1234,
 ## R
 
 ```{R}
+#| output: false
 strength_data = list(n_strength = nrow(strength_df),
                      strength_meas = strength_df$yield,
                      error = 3,
@@ -622,7 +624,7 @@ strength_fit <- strength_model$sample(data = strength_data, seed = 1234,
 ```
 :::
 
-Processing results
+Processing results...
 
 ::: panel-tabset
 ## Python
@@ -711,9 +713,7 @@ posterior_df = yield_model(yield_strength = strength_df.yield) |>
 
 :::
 
-It is possible to sample from complex high-dimensional, correlated distributions using probabilistic programming.
-
-The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. These samples can then be used in the same way that the Monte Carlo samples were used in Section X to approximate probabilities of failure.
+The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. These samples can then be used in the same way that the Monte Carlo samples were used in Section *X* to approximate probabilities of failure.
 
 :::{.callout-note collapse="true"}
 ## Thought: Statistical Uncertainty in Monte Carlo Sampling
@@ -737,28 +737,19 @@ This can be achieved using probabilistic programming, but this may require some 
 
 ## Existing Challenges
 
-General principle: engineering analysis is intended to support decisions [Finad Jordaan quote], but it is necessary to link the analysis to a characterisation of the decision problem, for this to be achieved consistently and coherently.
+Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed separately from the underlying decision problem, and by a different team.
 
-For example: 
-uncertain quantity (informed by an analysis) = applied load on a component. 
-Decision = required strength.
-Result = A higher strength than believed to be required.
-
-The reason an engineer will recommend a higher strength than their *best estimate* of what will be required is they are accounting for the consequences of their best estimate being too low. The cost of an in-service failure will generally be much greater than the additional cost in design of upgrading the strength requirements. But how much higher the decision-maker chooses to go will depend on their perception of the magnitude of the consequences of the various outcomes, and the reliability of the stress analysis i.e. how uncertain is the prediction.
-
-A decision analysis will not remove subjectivity, since the costs of the consequences will be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way.
-
-This message is made in the below extract, in the context of pipeline engineering:
+This interpretation of a calculation by a decision-maker can introduce subjective judgement that is not formally reported. As a result, it may be difficult to repeatedly arrive at the same decision (conditional on the same information), or even explain how the decision was made in an audit. This message is made in the below extract, in the context of pipeline engineering:
 
 <q> ...you don't need anything at all! You don't need qualified engineers, you don't need quality systems, you don't need risk management, you don't need safety audits, you don't need inspections, you don't need training. You don't need anything! Until something happens... then you need everything.... Got the message? 
 
 [@Hopkins2002]
 
-Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed separately from the underlying decision problem, and by a different team.
+<!-- The reason an engineer will recommend a higher strength than their *best estimate* of what will be required is they are accounting for the consequences of their best estimate being too low. The cost of an in-service failure will generally be much greater than the additional cost in design of upgrading the strength requirements. But how much higher the decision-maker chooses to go will depend on their perception of the magnitude of the consequences of the various outcomes, and the reliability of the stress analysis i.e. how uncertain is the prediction. -->
 
-A consequence 
+<!-- A decision analysis will not remove subjectivity, since the costs of the consequences will be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way. -->
 
-Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benjamin Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger). 
+<!-- Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benjamin Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger).  -->
 
 :::{.callout-note collapse="true"}
 ## Thought: The Expected Value of Data ...*Before* Collecting it
@@ -771,19 +762,19 @@ A value of information analysis uses all of this available information and, in t
 
 ### Decision Trees
 
-Engineering textbooks that consider uncertainty often emphasise the importance of linking analysis to decision making. Some examples of this include [@Benjamin2014c] and [@Jordaan2005].
+<!-- Engineering textbooks that consider uncertainty often emphasise the importance of linking analysis to decision making. Some examples of this include [@Benjamin2014c] and [@Jordaan2005]. -->
 
-Statistics textbooks can sometimes underplay the challenge of this, for example, the below quote is taken from an excellent book on data analysis [@Gelman2014]:
+<!-- Statistics textbooks can sometimes underplay the challenge of this, for example, the below quote is taken from an excellent book on data analysis [@Gelman2014]: -->
 
-<q>
-Many if not most statistical analyses are performed for the ultimate goal of decision making.
+<!-- <q> -->
+<!-- Many if not most statistical analyses are performed for the ultimate goal of decision making. -->
 
-[@Gelman2014]
+<!-- [@Gelman2014] -->
 
 
-Convention for square, round and diamond (or sometimes triangular) nodes.
+<!-- Convention for square, round and diamond (or sometimes triangular) nodes. -->
 
-In these books, problems are presented as decision-event trees, such as the example shown in @fig-example_tree.
+<!-- In these books, problems are presented as decision-event trees, such as the example shown in @fig-example_tree. -->
 
 ```{mermaid}
 %%| label: fig-example_tree
@@ -1131,7 +1122,7 @@ However, neither R&D or the expert opinions of consultants provide perfect infor
 <!-- Therefore, a system designer will not be willing to pay the full EVPI for such improvements in the estimation of future costs, though if the EVPI is sufficiently large it may provide justification for taking such actions nonetheless. For these 'measurement actions' the EVPI may be used to assist a more qualitative judgement on their economic suitability. Though, expenditure on R&D projects also has the potential to reduce the future costs of renewable generation assets, providing additional advantage. -->
 
 
-### Expected Value of Imperfect (Imprecise) Data
+### Sensitivity Analysis: Influence of Prior Knowledge
 
 #### Example: Energy Use in Buildings
 
@@ -1217,7 +1208,7 @@ As shown in @fig-prior_heat_pump_decision, increasing the number of maintenance 
 
 Prior predictive sampling - easier to interpret variability in forecast SPF, than parameters in a Beta distribution model of an abstract degradation parameter, $\alpha$.
 
-Since Chaoqun has requested alpha be constrained as $0 \leq \alpha \leq 1$, consider a beta distribution.
+<!-- Since Chaoqun has requested alpha be constrained as $0 \leq \alpha \leq 1$, consider a beta distribution. -->
 
 ```{r}
 #| echo: false
@@ -1236,7 +1227,10 @@ tibble(alpha) |>
     geom_histogram(col = 'black', alpha = 1/2)+
     geom_vline(mapping = aes(xintercept = SPF), alpha = 1/2, lty = 2)+
     xlim(0, 3.5)+
-    labs(subtitle = paste("Std. Dev. of alpha:", alpha_sd))
+    labs(subtitle = paste("Std. Dev. of alpha:", alpha_sd))+
+  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
+  theme(plot.background = element_rect(color = NA),
+        legend.title = element_blank(), legend.position = 'top')
 ```
 
 ::: {#chunk_load_packages .panel-tabset}
@@ -1281,7 +1275,7 @@ ggplot(data = prior_df |>
   geom_line(mapping = aes(group = id), alpha = 1/50)+
   scale_x_continuous(name = 'Number of scheduled maintenance activities per year', 
                      breaks = seq(from = 0, to = 12, by = 1))+
-  scale_y_continuous(name = 'Total (annual) operational costs, £', labels = scales::comma)+
+  scale_y_continuous(name = 'Total (annual) operational costs, £', labels = scales::comma, limits = c(0, 1e6))+
   geom_vline(lty = 2, alpha = 1/2, 
              mapping = aes(color = 'Expected minimum cost',
                            xintercept = prior_df[which.min(prior_df$exp_cost),]$n_maint))+
@@ -1572,7 +1566,7 @@ VoPI = prepost_utility - prior_utility
 Another source of data that can be considered, is that which is obtained from verifying an existing model. There may be many reasons to complete such a study, such as to demonstrate compliance with a quality standard, or to obtain some certification, and though these can also be quantified and incorporated, this example will only consider the benefits in terms of risk management.
 
 
-### Identifying Priors: 
+### Expected Value of Imprecise (Imperfect) Information: 
 
 #### Example: Inspecting for Corrosion
 
@@ -1589,7 +1583,7 @@ flowchart LR
 
     m[Repair \nPlan] --> C_f
     
-    m --> C_m{Maintenance \nCosts}
+    m --> C_m{Repair \nCosts}
 
 ```
 
@@ -1674,7 +1668,6 @@ def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10
 
 :::
 
-
 ::: {#chunk_load_packages .panel-tabset}
 
 ## Python
@@ -1682,6 +1675,8 @@ def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10
 Solving the prior decision problem...
 
 ```{python}
+#| output: false
+
 model_data = gen_model_data(insp_data)
 cgr_results = corrosion_model(data = model_data)
 
@@ -1689,6 +1684,17 @@ costs_df = get_costs(insp_df = insp_data, results_df = cgr_results)
 prior_exp_cost = costs_df.cost.sum()
 
 ```
+
+As shown in... the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
+
+```{r}
+#| echo: false
+
+plot_df <- reticulate::py$cgr_results
+
+plot_df
+```
+
 
 Solving the preposterior decision problem...
 
@@ -1735,16 +1741,19 @@ VoInsp = prior_exp_cost - prepost_df.cost.mean()
 :::
 
 
-# Recommendations
+# Summary
 
 Key concepts:
 
- - link data to decisions
+ - quantify uncertainty using probability distributions
+ - quantify dependency using multi-variate distributions
+ - discretise (simplify) probabilistic analysis using sampling (simulation) methods
+ - link this analysis (and available data) to decision making
+ - arrive at consistent and coherent decisions, that can be understood, justified, and repeated
  - Example applications here are focused on identifying data requirements
  - subject matter expertise can be combined with data, and becomes especially important when data is limited.
- - replicable, auditable, decision making
  
- 
+ To discuss further, please contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk)
 
 ...
 
