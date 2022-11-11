@@ -5,15 +5,16 @@ author: "Domenic Di Francesco, PhD, CEng"
 date: "June 2022"
 format:
   html:
-    theme: spacelab
+    theme: simplex
+    highlight-style: atom-one
     html-math-mathod: mathjax
     toc: true
-    toc-location: right
+    # toc-location: top
     number-sections: true
     code-copy: true
     code-fold: true
     code-tools: true
-    code-overflow: wrap
+    code-overflow: scroll
     monofont: Fira Code
     mermaid-format: js
 execute:
@@ -35,6 +36,10 @@ The various new methods of collecting and analysing data that are increasingly a
 
 The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the current availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
+<q> Uncertainty accompanies our lives. Coherent modelling of uncertainties for decision-making is essential in engineering and related disciplines.
+
+[@Jordaan2005]
+
 ## How to use this document
 
 This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
@@ -43,7 +48,7 @@ This is a computational document that includes chunks of `Python` and `R` code n
 ## Load Python Packages
 
 ```{python}
-import cmdstanpy, requests, os, tempfile
+import cmdstanpy, requests, os, tempfile, multiprocessing, math
 import numpy as np, pandas as pd
 from scipy import stats
 
@@ -54,13 +59,16 @@ from scipy import stats
 ```{R}
 library(tidyverse); library(fitdistrplus); library(boot)
 library(cmdstanr); library(copula); library(RHugin)
+library(lhs)
 
 ```
 
 ## Load Julia Packages
 
 ```{julia}
-using Random, Distributions, CSV, HTTP, DataFrames
+using CSV, DataFrames, DataFramesMeta, Printf
+using Random, Distributions, Bootstrap, Copulas, LatinHypercubeSampling
+using JuMP, HiGHS, DecisionProgramming, Turing, LinearAlgebra
 
 ```
 
@@ -74,6 +82,22 @@ Packages only need to be installed once (unless they are uninstalled), but then 
 :::
 
 In addition, some statistical models that have been written in the probabilistic programming language `Stan` have been used. The data used in the examples, as well as the code used for each exercise can be freely downloaded from this [public Github repository](https://github.com/DomDF/DCE_guidance).
+
+Such calculations could also be performed using spreadsheet software. The primary reasons for not providing accompanying spreadsheet files to run the example calculations, are as follows:
+
+ - When running challenging simulations, or working with large amounts of data, spreadsheets may become unmanageably slow.
+ - Spreadsheet software has reproducibility challenges. Data can be difficult to distinguish from calculated quantities, and the sequence of calculations can also be difficult to identify. 
+ - Calculations using spreadsheets are often unreliable. Errors *arise* in spreadsheets for many reasons, such as obscuring (or deleting) data, incorrect assumptions regarding data types, uninterpretable functions, and automatic filling. Errors often *remain* in spreadsheets due to the challenges associated with testing, documenting and version control.
+
+Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group [(EuSpRiG)](http://www.eusprig.org) and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) be found in a presentation from Monash University, [here](https://www.youtube.com/watch?v=-NuTlczV72Q&t=35s).
+
+## Some other Published Guidance for Engineers
+
+ - HSE document
+ - BS 7910 Annex K
+ - Nuclear working group
+ - JCSS
+ - Textbooks (Jordaan + Benjamin&Cornell offer an engineering perspective)
 
 # Uncertainty in the Built Environment
 
@@ -94,9 +118,9 @@ As described in the below note, there are many appealing reasons to use probabil
 :::{.callout-note collapse="true"}
 ## Thought: Using Probabilities
 
-It has been proposed that since probability is the mathematical language of randomness, it should be used to model the uncertainties that arise [@Gelman2014]. Another compelling argument is that the practical meaning of probability is intuitive. Probabilities can be assinged to possible (uncertain) outcomes in decision problems.
+It has been proposed that since probability is the mathematical language of randomness, it should be used to model the uncertainties that arise [@Gelman2014]. Another compelling argument is that the practical meaning of probability is intuitive. Probabilities can be assigned to possible (uncertain) outcomes in decision problems.
 
-Understanding how to estimate these probabilities as well as how to use them allows for coherent and replicable (auditable) deicion making. The statistics presented in this document are with the intention of providing this kind of pragmatic guidance.
+Understanding how to estimate these probabilities as well as how to use them allows for coherent and replicable (auditable) decision making. The statistics presented in this document are with the intention of providing this kind of pragmatic guidance.
 
 :::
 
@@ -105,17 +129,17 @@ There are many established probability distributions, and some reasonable questi
 -   Where do distributions come from?
 -   When are they useful, or unhelpful in describing variability in engineering quantities?
 
+One common method of visualising of the Normal distribution is using a [Galton board](https://en.wikipedia.org/wiki/Galton_board). A number of beads hit a series of pegs as they fall to the base of the board. When they arrive at the base, they can be seen to approximate a Normal distribution. This can also be replicated using computer simulations, but in any case, it suggests that distribution functions are not arbitrary. 
 
+A similar example is presented in [@McElreath2019], where the author counts the number of possible arrangements of items that are hidden under buckets. Because there are more ways to hide these items evenly under the buckets, this is considered the most likely outcome (without any additional information). Running simulations (or other experiments) using this example will produce a Uniform distribution.
 
-Uniform distribution can occur in the most ways. Mathematically it can be shown to have the maximum entropy (where information entropy can broadly considered to be a measure of uncertainty) of all possible distributions to describe this problem [@Jaynes2003, @Jordaan2005].
+Both the Galton board and hidden items example show how a distribution can represent the most likely outcome of some event(s). They are said to be *Max*imum *Ent*ropy (MaxEnt) solutions for those problems. Using this principle is often recommended for deciding on a statistical model with very limited information about the problem [@Jaynes2003]. Some mathematical proofs of various MaxEnt models are presented in [@Jordaan2005].
 
-Other problems, with other features and constraints, have different maximum entropy solutions.
-
-A maximum entropy distribution is therefore the least committal (contains the fewest assumptions), and this may be a justifiable argument for approximating an uncertain quantity. However, engineers will generally have enough knowledge about their systems to 
+More generally though, engineers may need to impose some additional features and constrains in their models (to represent their knowledge of the system being analysed). Probability distributions can then be considered as helpful tools to represent uncertainty. Prior predictive checks (see Section X) can be used to ensure that the selected distribution are resulting in appropriate results on an intuitive outcome scale. 
 
 ## Working with Probability Distributions
 
-Both `Python` and `R` have many functions for evaluating, integrating, sampling, and estimating parameters from probability distributions. The below examples show how $10$ independent samples can be drawn from a normal ditribution, with a mean value of $0$ and a standard deviation of $1$.
+Modern programming languages have many functions for evaluating, integrating, sampling, and estimating parameters from probability distributions. The below examples show how $10$ independent samples can be drawn from a normal distribution, with a mean value of $0$ and a standard deviation of $1$.
 
 ::: panel-tabset
 ## Python (using SciPy)
@@ -135,13 +159,41 @@ rnorm(n = 10, mean = 0, sd = 1)
 ## Julia (using Distributions, Random)
 
 ```{julia}
-Normal(1, 0) |> x -> rand(10)
+Normal(0, 1) |> x -> rand(x, 10)
+
+```
+:::
+
+Many more samples are typically required for them to be considered a sufficient characterisation of the distribution. Various *variance reduction* methods have been developed, so that sampling problems can be solved using fewer samples, therefore requiring less computational effort. These include *importance sampling*, and *latin hypercube sampling*, and examples of the latter are presented below.
+
+::: panel-tabset
+## Python (using SciPy)
+
+```{python}
+probs = stats.qmc.LatinHypercube(1).random(10)
+stats.norm.ppf(probs, loc = 0, scale = 1)
 
 ```
 
+## R (using lhs)
+
+```{R}
+randomLHS(n = 10, k = 1) |>
+  qnorm(mean = 0, sd = 1)
+
+```
+## Julia (using LatinHypercubeSampling)
+
+```{julia}
+randomLHC(10 + 2, 1) |> 
+  x -> scaleLHC(x, [(0, 1)]) |>
+  x -> quantile(Normal(0, 1), x) |>
+  x -> filter(!in((-Inf, Inf)), x)
+
+```
 :::
 
-Some variance reduction methods (add link to python and R lhs libraries)...., @fig-it_lhs.
+The effect of latin hypercube sampling, when compared to standard (inverse-transform, Monte Carlo sampling) methods is shown in @fig-it_lhs.
 
 ```{R}
 #| echo: false
@@ -168,29 +220,194 @@ ggplot(data = sampling_df |>
     geom_histogram(mapping = aes(y = after_stat(x = density)), 
                   col = 'black', alpha = 1/2, bins = 15, position = position_dodge())+
     facet_grid(method ~ n)+
-    stat_function(fun = dnorm, geom = 'line', mapping = aes(col = 'True function, N(0, 1)'))+
+    stat_function(fun = dnorm, geom = 'line', mapping = aes(col = 'True function, Normal(0, 1)'))+
     labs(x = "", y = "Probability density")+
     ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
     theme(legend.title = element_blank(), legend.position = 'top', plot.background = element_rect(colour = NA))
 
 ```
 
-Sampling from distributions converts mathematically challenging statistical problems to simpler data analysis problems. Consider the basic problem of structural reliability, where an engineer is tasked with identifying the probability of an uncertain load exceeding a components uncertain resistance to that load.
-
-Probability defined by the convolution integral.
-
-Solution can also be obtained by counting the proportion of samples from the load model that exceed samples from the reistance model. Each set of samples can be considered as a possible outcome (realisation) from the models.
+Sampling from distributions converts mathematically challenging statistical problems to simpler data analysis problems. Consider the basic problem of structural reliability, where an engineer is tasked with identifying the probability of an uncertain load, $L$, exceeding a components uncertain resistance, $R$, to that load. This would represent the probability of the component failing, due to this load - a very important quantity for supporting inspection and maintenance decisions!
 
 
-### Example: Analysis of Tensile Test Data of Steel
+$$
+\Pr(fail) = \Pr(L \geq R)
+$$
+The probability of failure defined by the convolution integral, which only has analytical solutions for some simple examples: 
 
-This example considers how to interpret a set of measurements of material strength. The data is presented in @tbl-strength_data. This data can be downloaded using the below code, which also shows the first few rows.
+$$
+\Pr(L \geq R) = \int_{L \geq R} \int f(r, s) \; dr \; ds
+$$
+
+Alternatively, the solution can be approximated by counting the number of samples from the load model that exceed samples from the resistance model. Each set of samples can be considered as a possible outcome (realisation) from the models, so the proportion of samples where the load exceeds the resistance therefore represents the probability of failure. 
+
+Using `Python`, `R` or `Julia`, it is now possible run millions of such simulations relatively quickly (though this will depend on the complexity of the load and resistance models), and this allows engineers to find solutions that could be difficult to obtain mathematically.
+
+As a simple example, consider the series (or 'weakest link') arrangement of components in @fig-series_system.
+
+```{mermaid}
+%%| label: fig-series_system
+%%| fig-cap: "Diagram of Structural Components in Series Connection"
+
+graph LR
+        START[ ] --- A[Component 1]
+        A --- B[Component 2]
+        B --- C[Component 3]
+        C --- STOP[ ]
+
+        style START fill:#FFFFFF, stroke:#FFFFFF;
+        style STOP  fill:#FFFFFF, stroke:#FFFFFF;
+          
+```
+
+Such systems will fail when any of the components fail. If the below distributions describe the uncertainty in the applied loads and resistances, then it is possible the estimate the probability of failure by sampling from these distributions and evaluating the proportion of simulations associated with failure. 
+
+$$
+R_{1} \sim Normal(\mu = 17, \sigma = 2)
+$$
+
+$$
+R_{2} \sim Normal(\mu = 16, \sigma = 3/2)
+$$
+
+$$
+R_{3} \sim LogNormal(log\mu = 2.7, log\sigma = 0.07)
+$$
+
+::: panel-tabset
+## Python (using SciPy)
+
+```{python}
+
+# TBC
+
+```
+
+## R
+
+```{R}
+set.seed(seed = 240819); n_samples <- 10^6
+
+# TBC
+
+```
+## Julia (using Distributions, Random)
+
+```{julia}
+#| output: false
+#| 
+L = Normal(10, 2)
+R₁ = Normal(17, 2); R₂ = Normal(16, 3/2); R₃ = LogNormal(2.70, 0.07)
+
+prng = MersenneTwister(240819); n_samples = 10^6
+β_df = DataFrame(R₁ = rand(prng, R₁, n_samples), 
+    R₂ = rand(prng, R₂, n_samples),
+    R₃ = rand(prng, R₃, n_samples),
+    L = rand(prng, L, n_samples))
+
+β_df.fail = (β_df.L .>= β_df.R₁) .| (β_df.L .>= β_df.R₂) .| (β_df.L .>= β_df.R₃) 
+
+pof = sum(β_df.fail) / n_samples
+
+```
+
+```{julia}
+#| echo: false
+pof
+```
+:::
+
+## Multi-Variate Distributions
+
+In the above, the resistance parameters of the components are independent. This means that knowing that the resistance of Component A is relatively high, does not provide any information about the likely resistance of the other components. However, if the factors influencing the resistance were common, then a relatively high value for one component would suggest that a relatively high value for the other components were more likely. In such cases, this dependency should be accounted for in the probabilistic model.
+
+One method for achieving this is to use copula functions [@copula]. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.
+
+Copulas can be used to model complex dependency, for example weakly dependent at relatively low values and highly dependent at relatively high values (or vice versa). In this case a Gaussian copula is used, which can only model linear dependency using correlation coefficients $\rho$. 
+
+$$
+\rho_{R_{1}, R_{2}} = 0.8
+$$
+
+$$
+\rho_{R_{1}, R_{3}} = 0.6
+$$
+$$
+\rho_{R_{1}, R_{2}} = 0.4
+$$
+
+::: panel-tabset
+## Python (using SciPy)
+
+```{python}
+
+# TBC
+
+```
+
+## R
+
+```{R}
+set.seed(seed = 240819); n_samples <- 10^6
+
+# TBC
+
+```
+## Julia (using Distributions, Random)
+
+```{julia}
+#| output: false
+#| 
+function convert_logsd(log_μ, log_σ)
+    σ = exp(log_μ + 1/2 * log_σ^2) * sqrt(exp(log_σ^2) - 1)
+    return(σ)
+    end
+
+function convert_logmean(log_μ, log_σ)
+    μ = exp(log_μ + 1/2 * log_σ^2)
+    return(μ)
+    end
+
+ρ₁₂ = 0.8; ρ₁₃ = 0.6; ρ₂₃ = 0.4
+
+R₃_μ = convert_logmean(2.70, 0.07); R₃_σ = convert_logsd(2.70, 0.07)
+
+Σ = [R₁.σ^2 ρ₁₂*R₁.σ*R₂.σ ρ₁₃*R₁.σ*R₃_σ
+     ρ₁₂*R₁.σ*R₂.σ R₂.σ^2 ρ₂₃*R₂.σ*R₃_σ
+     ρ₁₃*R₁.σ*R₃_σ ρ₂₃*R₂.σ*R₃_σ R₃_σ^2]
+
+copula = GaussianCopula(Σ)
+MVR = SklarDist(copula, (R₁, R₂, R₃))
+
+prng = MersenneTwister(240819); n_samples = 10^6
+mv_df = rand(prng, MVR, n_samples) |> 
+    x -> transpose(x) |>
+    x -> DataFrame(x, ["R₁", "R₂", "R₃"])
+
+pof = sum((β_df.L .>= mv_df.R₁) .| (β_df.L .>= mv_df.R₂) .| (β_df.L .>= mv_df.R₃)) / n_samples 
+```
+
+```{julia}
+#| echo: false
+pof
+```
+:::
+
+Note that the probability of failure reduces when accounting for this dependency. Since failure is defined by the resistance of the components being lower than an applied load, ensuring that low resistances occur together result in fewer simulations that predict failure. Conversely, if multiple components were connected in parallel (where system failure requires all of the components to fail) increasing the dependency in the resistance properties increases the probability of failure as weak components occurring together is relatively more common with this Gaussian copula model.
+ 
+A comprehensive introduction to structural reliability methods is presented in [@Melchers2018]. This book also includes some perceived challenges which are discussed later in this document.
+
+## Statistical Uncertainty
+
+So far this document has introduced the use of probabilistic models to describe uncertainty inherent to simple systems (sometimes called *aleatory* uncertainty). The second key source of uncertainty in engineering calculations is the statistical uncertainty associated with small, imperfect datasets (sometimes called *epistemic* uncertainty).
+
+This example considers how to interpret a set of measurements of material strength, accounting for statistical uncertainty. The data is presented in @tbl-strength_data. This data can be downloaded using the below code, which also shows the first few rows.
 
 ::: panel-tabset
 ## Python (using pandas)
 
 ```{python}
-strength_df = pd.read_csv(filepath_or_buffer = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv")
+strength_df = pd.read_csv(filepath_or_buffer = "data_files/strength_data.csv")
 
 strength_df.head(n = 3)
 
@@ -199,21 +416,24 @@ strength_df.head(n = 3)
 ## R (using readr)
 
 ```{R}
-strength_df <- read_csv(file = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv")
+strength_df <- read_csv(file = "data_files/strength_data.csv")
 
 strength_df |> head(n = 3)
 
 ```
-## Julia (using HTTP, CSV, DataFrames)
+## Julia (using CSV, DataFrames)
 
 ```{julia}
-σ_df = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/data_files/strength_data.csv"
+#| output: false
+strength_df = CSV.read("data_files/strength_data.csv", DataFrame)
+first(strength_df, 3)
 
-  # x -> HTTP.get(x).body |>
-  # x -> CSV.File(x) |>
-  # DataFrame |>
-  # x -> first(x, 3)
+```
 
+```{julia}
+#| echo: false
+
+first(strength_df, 3)
 ```
 
 :::
@@ -268,6 +488,12 @@ stats.norm.fit(data = strength_df['yield'].values, method = 'MLE')
 fitdist(data = strength_df$yield, distr = 'norm', method = 'mle')
 
 ```
+
+## Julia (using Distributions)
+```{julia}
+fit_mle(LogNormal, strength_df.yield)
+
+```
 :::
 
 These distribution parameters represent those with the highest score (likelihood) of the range considered. If the standard deviation was any higher, the likelihood of any values near the mean would be reduced, and if it was any lower the likelihood of any data at the tails would be reduced. Similarly, if the mean was any higher, the likelihood of any lower values would be reduced. So there is a trade-off here, and maximum likelihood estimates will provide the values that maximise the product of the likelihoods (or the sum of the log-likelihoods) for the data that is being used to fit the distribution.
@@ -305,7 +531,7 @@ bootstrap_mean.confidence_interval
 
 ```
 
-## R, using boot
+## R (using boot)
 
 ```{R}
 get_MLE_mean <- function(x, id) {fitdist(x[id], distr = 'norm')$estimate[1]}
@@ -319,47 +545,26 @@ bootstrap_mean$basic |> as_tibble() |>
   rename(lower_bound = V4, upper_bound = V5)
 
 ```
+
+## Julia (using Distributions, Bootstrap)
+
+```{julia}
+function get_MLE_mean(data)
+    Distributions.fit_mle(LogNormal, data).μ
+end
+
+bootstrap(get_MLE_mean, strength_df.yield, BasicSampling(1_000)) |>
+    x -> confint(x, BasicConfInt(0.95))
+```
 :::
 
-# Probabilistic Programming
+## Probabilistic Programming
 
-## Introduction
+### Introduction
 
 Probabilistic programming is used to describe a statistical model, and then automate the inference (estimation of the unknown and uncertain parameters) [@Rainforth2017]. Sometimes known as probabilistic machine learning [@Ghahramani2015], inferring unknown parameters, while also accounting for the uncertainty, including statistical uncertainty, is a desirable characteristic of a calculation. One reason for this is because it can be used to demonstrate how additional data can reduce uncertainty, and this can be used as the basis for intelligently collecting data.
 
-There are now many probabilistic programming languages available to engineers, but the one that is used in the examples in this document is `Stan`. The primary justification for this is that it runs a state of the art sampling algorithm, and (unlike many alternatives) it can be used with many other langauges. In these examples, pre- and post-processing of data will be done in `R` and `Python`.
-
-The below functions will be used to load `Stan` files from the Github repository:
-
-::: panel-tabset
-## Python
-
-```{python}
-#| output: false
-
-def get_stan_model(url):
-  new_file, filename = tempfile.mkstemp()
-  filename = filename + ".stan"
-  
-  f = open(filename, "w"); f.write(requests.get(url).text)
-  
-  return cmdstanpy.CmdStanModel(stan_file = filename)
-
-```
-
-## R
-
-```{R}
-
-get_stan_model <- function(url) {
-  url |> url() |>
-    readLines() |>
-    write_stan_file() |>
-    cmdstan_model()
-}
-
-```
-:::
+There are now many probabilistic programming languages available to engineers, but the one that is used in the examples in this document is `Stan`. The primary justification for this is that it runs a state of the art sampling algorithm, and (unlike many alternatives) it can be used with many other languages. In these examples, pre- and post-processing of data will be done in `R` and `Python`.
 
 Firstly, loading the Stan model for quantifying uncertainty in material strength:
 
@@ -367,9 +572,7 @@ Firstly, loading the Stan model for quantifying uncertainty in material strength
 ## Python
 
 ```{python}
-#| output: false
-
-strength_model = get_stan_model(url = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan")
+strength_model = cmdstanpy.CmdStanModel(stan_file = "stan_models/yield_strength_model.stan")
 
 ```
 
@@ -377,12 +580,94 @@ strength_model = get_stan_model(url = "https://raw.githubusercontent.com/DomDF/D
 
 ```{R}
 
-strength_model <- get_stan_model(url = "https://raw.githubusercontent.com/DomDF/DCE_guidance/main/stan_models/yield_strength_model.stan")
+strength_model <- cmdstan_model(stan_file = "stan_models/yield_strength_model.stan", stanc_options = list("O1"))
 
 ```
 :::
 
 The data block in the `Stan` file indicates the data that it is expecting. In `Python` this data is provided to the `Stan` model in the form of a dictionary, and in `R` it is a list.
+
+::: panel-tabset
+## Python
+
+```{python}
+strength_data = {"n_strength" : strength_df.shape[0], 
+                 "strength_meas" : strength_df["yield"].values,
+                 "error" : 3, "m_s" : 5, "sd_s" : 0.25, "rate_s" : 0.1}
+
+n_par = multiprocessing.cpu_count()
+n_chains = 4; n_draws = 1000; n_warmup = 2000
+
+strength_fit = strength_model.sample(data = strength_data, seed = 1234, 
+                                     chains = n_chains, parallel_chains = n_par, 
+                                     iter_warmup = n_warmup, iter_sampling = n_draws)
+
+```
+
+## R
+
+```{R}
+strength_data = list(n_strength = nrow(strength_df),
+                     strength_meas = strength_df$yield,
+                     error = 3,
+                     m_s = 5, sd_s = 0.1, rate_s = 0.1)
+
+n_par <- parallel::detectCores()
+n_chains <- 4; n_draws <- 1000; n_warmup <- 2000
+
+strength_fit <- strength_model$sample(data = strength_data, seed = 1234,
+                                      chains = n_chains, parallel_chains = n_par, 
+                                      iter_warmup = n_warmup, iter_sampling = n_draws)
+
+```
+:::
+
+Processing results
+
+::: panel-tabset
+## Python
+
+```{python}
+class Stan_Posterior:
+    def __init__(self, fit):
+        self.fit = fit
+        self.draws_per_chain = self.fit.draws().shape[0]
+        self.n_chains = self.fit.draws().shape[1]
+        self.n_pars = self.fit.draws().shape[2]
+        self.draws_tot = self.draws_per_chain * self.n_chains
+        
+    def draws_df(self):
+        posterior_df = pd.DataFrame(columns = self.fit.column_names + ("Chain", "Iteration"))
+        for c in range(self.n_chains):
+            posterior_df = pd.concat([posterior_df,
+                      (pd.DataFrame(self.fit.draws()[:,c,:], columns = self.fit.column_names).
+                      assign(Chain = "Chain {}".format(1 + c),
+                      Iteration = 1 + np.arange(self.draws_per_chain)))])
+        return(posterior_df)
+      
+    def tidy_draws_df(self):
+        posterior_df_tidy = self.draws_df().melt(id_vars = ("Chain", "Iteration"))
+        return(posterior_df_tidy)
+```
+
+which allows for...
+
+```{python}
+strength_posterior = Stan_Posterior(fit = strength_fit)
+
+strength_posterior_df = strength_posterior.tidy_draws_df()
+strength_posterior_df.tail(n = 3)
+```
+
+## R
+
+```{R}
+strength_data_df <- DomDF::tidy_mcmc_draws(cmdstan_fit = strength_fit)
+tail(strength_data_df)
+
+```
+:::
+
 
 :::{.callout-note collapse="true"}
 ## Thought: Data vs. Information
@@ -394,26 +679,86 @@ Risk based inspection standards (such as API 580) often acknowledge this differe
 :::
 
 
+...There are many alternative PPLs available to engineers. One example is the Turing library, written for Julia users. The model can be specified using the `@model` macro, as shown below:
+
+::: panel-tabset
+## Julia (using Turing)
+
+```{julia}
+@model function yield_model(;yield_strength::Vector{Float64})
+    
+    σ ~ Exponential(10)
+    μ ~ Normal(350, 50)
+
+    n_samples = length(yield_strength)
+
+    for n ∈ n_samples
+        yield_strength[n] ~ Normal(μ, σ)
+    end
+end
+```
+
+Which can then be run to generate a data frame of samples from the joint posterior distribution:
+
+```{julia}
+n_draws = 1000; n_chains = 4; sampler = NUTS()
+posterior_df = yield_model(yield_strength = strength_df.yield) |>
+    x -> sample(x, sampler, MCMCThreads(), n_draws, n_chains) |>
+    x -> DataFrame(x) |>
+    x -> @select(x, :chain, :iteration, :σ, :μ)
+
+```
+
+:::
+
+It is possible to sample from complex high-dimensional, correlated distributions using probabilistic programming.
+
+The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. These samples can then be used in the same way that the Monte Carlo samples were used in Section X to approximate probabilities of failure.
+
+:::{.callout-note collapse="true"}
+## Thought: Statistical Uncertainty in Monte Carlo Sampling
+Monte Carlo sampling of rare events, such as failure may require a large amount of simulations, only very few of which may predict failure. As proposed in [this article](https://eracons.com/resources/mcs-post-processing), statistical uncertainty can be accounted for in this estimate to provide a distribution of credible probabilities of failure, rather than a single maximum likelihood point.
+
+This can be achieved using probabilistic programming, but this may require some re-scaling. Many MCMC sampling algorithms may find it challenging to sample from the very narrow distribution of probabilities of failure. All the values will be very small, the sampling will be highly sensitive to the parameters that govern the sampling. However, sampling from the negative index of $\beta_{R}$ will provide a more management scale, likely to be in the region of $0$ - $10$. This could be further reparameterised if required, but would then lose some immediate interpretability.
+:::
+
 ## Sampling Outcomes 
 
-prior predictive sampling - parameters may not have intuitive meaning. Outcomes generally will (particularly amongst domain experts).
+<!-- prior predictive sampling - parameters may not have intuitive meaning. Outcomes generally will (particularly amongst domain experts). -->
 
-prior predictive (or pushword) sampling Recommended practice in Bayesian workflow paper [CITE]. 
+<!-- prior predictive (or push forward) sampling Recommended practice in Bayesian workflow paper [CITE].  -->
 
-Example:
+<!-- Example: -->
 
-Posterior predictive: pr(S > some value of interest) - ref Pratt, Raiffa, Schlaiffer....
-Now we can start combining the results with decision making...
+<!-- Posterior predictive: pr(S > some value of interest) - ref Pratt, Raiffa, Schlaiffer.... -->
+<!-- Now we can start combining the results with decision making... -->
 
 # Supporting Decision Making
 
 ## Existing Challenges
 
-Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed seprately from the underlying decision problem, and by a different team.
+General principle: engineering analysis is intended to support decisions [Finad Jordaan quote], but it is necessary to link the analysis to a characterisation of the decision problem, for this to be achieved consistently and coherently.
+
+For example: 
+uncertain quantity (informed by an analysis) = applied load on a component. 
+Decision = required strength.
+Result = A higher strength than believed to be required.
+
+The reason an engineer will recommend a higher strength than their *best estimate* of what will be required is they are accounting for the consequences of their best estimate being too low. The cost of an in-service failure will generally be much greater than the additional cost in design of upgrading the strength requirements. But how much higher the decision-maker chooses to go will depend on their perception of the magnitude of the consequences of the various outcomes, and the reliability of the stress analysis i.e. how uncertain is the prediction.
+
+A decision analysis will not remove subjectivity, since the costs of the consequences will be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way.
+
+This message is made in the below extract, in the context of pipeline engineering:
+
+<q> ...you don't need anything at all! You don't need qualified engineers, you don't need quality systems, you don't need risk management, you don't need safety audits, you don't need inspections, you don't need training. You don't need anything! Until something happens... then you need everything.... Got the message? 
+
+[@Hopkins2002]
+
+Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed separately from the underlying decision problem, and by a different team.
 
 A consequence 
 
-Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benj Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger). 
+Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benjamin Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger). 
 
 :::{.callout-note collapse="true"}
 ## Thought: The Expected Value of Data ...*Before* Collecting it
@@ -424,10 +769,17 @@ Instead, the method considers all of the information that will be available at t
 A value of information analysis uses all of this available information and, in the context of the decision problem that the data is intended to support, quantifies on a meaningful, monetary scale, the expected value of the data to the engineer.
 :::
 
-
 ### Decision Trees
 
-Linking analysis to decisions is not new : Ref Raiffa, [@Benjamin2014c, @Jordaan2005]...
+Engineering textbooks that consider uncertainty often emphasise the importance of linking analysis to decision making. Some examples of this include [@Benjamin2014c] and [@Jordaan2005].
+
+Statistics textbooks can sometimes underplay the challenge of this, for example, the below quote is taken from an excellent book on data analysis [@Gelman2014]:
+
+<q>
+Many if not most statistical analyses are performed for the ultimate goal of decision making.
+
+[@Gelman2014]
+
 
 Convention for square, round and diamond (or sometimes triangular) nodes.
 
@@ -438,8 +790,8 @@ In these books, problems are presented as decision-event trees, such as the exam
 %%| fig-cap: "Example Structure of a Decision-Event Tree"
 
 flowchart LR
-  d1[Decision] -- D1 --> o1((Uncertain outcome, \nD1))
-  d1[Decision] -- D2 --> o2((Uncertain outcome,  \nD2))
+  d1[Decision] -- D1 --> o1((Uncertain \noutcome, \nD1))
+  d1[Decision] -- D2 --> o2((Uncertain \noutcome,  \nD2))
   
   o1 --O = A --> c1a{Utility, \nO = A, d = D1}
   o1 --O = B --> c1b{Utility, \nO = B, d = D1}
@@ -466,7 +818,7 @@ Here, the utilities (or costs) are being weighted by the probabilities that they
 
 ### Graphical Models (Influence Diagrams)
 
-Approximating real engineering systems using decision-event trees will require many more nodes than those presented in @fig-example_tree. This would lead to very large diagrams. Consequenlty, they are often represented more concisely, using *influence diagrams*.
+Approximating real engineering systems using decision-event trees will require many more nodes than those presented in @fig-example_tree. This would lead to very large diagrams. Consequently, they are often represented more concisely, using *influence diagrams*.
 
 Influence diagrams do not show every possible event path graphically (rather, these are stored as tables behind each node.) An influence diagram representation of @fig-example_tree is shown in @fig-example_id.
 
@@ -501,6 +853,8 @@ This information can be shown graphically, using the influence diagram shown in 
 
 Using a model to predict how a system will respond to various interventions, as facilitated by influence diagrams, is often described as the goal of *digital twins*.
 
+:::
+
 ```{mermaid}
 %%| label: fig-id_cr
 %%| fig-cap: "Influence Diagram Showing Factors Affecting Corrosion Rate of a Buried Pipeline"
@@ -520,21 +874,272 @@ flowchart LR
   
 ```
 
-:::
-
 ## Example Calculations
 
-### Crop Sales Forecasting
+### Expected Value of Perfect Information
 
-...
+#### Energy Generation Asset Portfolio 
 
-### Energy Use in Buildings
+In designing an energy system for a region, using some combination of nearshore and offshore wind, and solar. The combination (portfolio) should be selected such that the some system requirements are met, namely:
 
-Consider the problem of heating a residential building. Inefficiencies in ageing heaters can result in increased electricity costs to deliver energy requirements. This performance degradtio can be mitigated by maintenance work.
+ - The minimum annual TWhrs of generation, $\alpha$ must be met.
+ - Fewer than $\gamma$ GWhrs can be dropped below the threshold of $\beta$ GW
+
+This problem is based on (normalised) power time series data for the three assets, which are read below.
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia (using DataFrames)
+
+```{julia}
+#| output: false
+power_df = CSV.File("data_files/power_data.csv",
+                    dateformat = "dd-mm-yyyy HH:MM") |>
+  DataFrame |> x -> rename(x, :Column1 => :time)
+
+α = 10; β = 2; γ = 1 * 0.1 * 24 * 365
+assets = names(power_df)[2:end]
+
+```
+
+Viewing the first few items...
+
+```{julia}
+first(power_df, 3)
+
+```
+
+:::
+
+Due to land availability, solar power can only supply either $0\%$ or $20\%$ of the total capacity. Similarly, nearshore wind can only provide either $0\%$, $25\%$  or $50\%$. The offshore wind asset is sufficiently flexible to be able to provide the remaining capacity. This leads to $6$ competing strategies, which can be evaluated, subject to the aforementioned constraints to identify how much power each asset is required to provide for each option.
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia (using JuMP, HiGHS)
+
+```{julia}
+#| output: false
+asset_norm_power_series = [power_df.solar; 
+                           power_df.offshore; 
+                           power_df.nearshore] |>
+        x -> reshape(x, (nrow(power_df), 3)) |>
+        x -> transpose(x)
+
+total_energies = sum(asset_norm_power_series, dims = 2)
+
+strategies = [[0 1 0],
+              [0 0.75 0.25],
+              [0 0.5 0.5],
+              [0.2 0.8 0],
+              [0.2 0.55 0.25],
+              [0.2 0.3 0.5]]
+
+capacities = Vector{Float64}()
+
+for strategy ∈ strategies
+  
+  energy_gen = JuMP.Model(HiGHS.Optimizer)
+  
+  @variable(energy_gen, capacity >= 0)
+  @variable(energy_gen, ϕ[i = 1:nrow(power_df)] >= 0)
+  
+  @constraints(energy_gen, begin
+               capacity * *(strategy, total_energies) .>= α * 24 * 365
+               sum(ϕ) <= γ
+               ϕ .>= β .- transpose(capacity * *(strategy, asset_norm_power_series))
+               end)
+  
+  @objective(energy_gen, Min, capacity)
+  optimize!(energy_gen)
+  
+  append!(capacities, [value(capacity)])
+
+end
+
+```
+
+The results of this optimisation problem are shown below:
+
+```{julia}
+#| output: false
+nₛ = length(strategies)
+
+energy_df = DataFrame(strategy = [i for i ∈ strategies],
+                      solar_GW = [(capacities .* strategies)[i][1] for i ∈ 1:nₛ],
+                      offshore_GW = [(capacities .* strategies)[i][2] for i ∈ 1:nₛ],
+                      nearshore_GW = [(capacities .* strategies)[i][3] for i ∈ 1:nₛ])
+```
+
+```{julia}
+#| echo: false
+energy_df
+
+```
+
+:::
+
+The different options can then be evaluated using forecast costs, to identify which option is expected to minimise costs. The uncertainty in forecast costs of the different assets are described by the below probabilistic models:
+
+$$
+C_{solar} \sim N(\mu = 125 \times 10^{6}, \sigma = 25 \times 10^{6})
+$$
+The prior model for the cost of wind power includes a correlation between nearshore and offshore assets i.e. in cases where the cost of generating offshore wind power is relatively high, the cost of generating nearshore wind is also expected to be higher (and vice versa). 
+
+Rather than use a copula model, a multivariate normal distribution can be used, since both marginal distributions are also normal, and there is no non-linear dependency to consider.
+
+$$
+C_{wind} \sim MVN \Bigg( \mu = \begin{pmatrix} \mu_{nearshore} \\ \mu_{offshore} \end{pmatrix}, \Sigma = \begin{pmatrix} \sigma_{nearshore}^2 & \rho \cdot \sigma_{nearshore} \cdot \sigma_{offshore} \\ \rho \cdot \sigma_{nearshore} \cdot \sigma_{offshore} &  \sigma_{offshore}^2 \end{pmatrix} \Bigg)
+$$
+$$
+\mu_{nearshore}  = 275 \times 10^{6}, \: \mu_{offshore}  = 325 \times 10^{6}
+$$
+$$
+\sigma_{nearshore}  = 75 \times 10^{6}, \: \sigma_{offshore}  = 75 \times 10^{6}
+$$
+$$
+\rho = 0.6
+$$
+::: {#chunk .panel-tabset}
+
+## Julia
+
+```{julia}
+#| output: false
+mean_costs = Dict("solar" => 125.0 * 10^6, "offshore" => 325.0 * 10^6, "nearshore" => 275.0 * 10^6)
+sd_costs = Dict("solar" => 25.0 * 10^6, "offshore" => 75.0 * 10^6, "nearshore" => 75.0 * 10^6)
+
+function get_prior_decision(;input_df::DataFrame, mean_costs = mean_costs)
+  power_df = input_df[!, names(input_df, Float64)]
+  expected_costs = Vector{Float64}()
+
+  for row in eachrow(power_df)
+    append!(expected_costs, Vector{Any}(row) .* [get(mean_costs, i, "unknown") for i in assets] |> x -> sum(x))
+  end
+
+  input_df[!, :prior_costs] = expected_costs
+  
+  minimum_prior_cost = minimum(input_df.prior_costs)
+  prior_df = @subset(input_df, :prior_costs .== minimum_prior_cost)
+  
+  return(prior_df)
+end
+```
+
+The result is shown below:
+
+```{julia}
+#| echo: false
+prior_decision_df = get_prior_decision(input_df = energy_df)
+```
+
+:::
+
+If forecasting models could be improved, so that the uncertainty could be removed, what would this mean for the expected cost of delivering the identified strategies? This question can be answered using a value of information analysis.
+
+In this case, this is achieved by sampling from the prior distributions of costs. Here each sample provides an imagined result of a study to identify the costs more precisely. For each result the expected optimal strategy (and associated cost) is evaluated, and an average of the samples are required, to account for the various possible results of the study.
+
+```{mermaid}
+%%| label: fig-prepost_id_energy_portfolio
+%%| fig-cap: "Influence Diagram for Estimating the Expected Value of an Energy Forecasting Model"
+
+flowchart LR
+  d0[System \ndesign] --> ons((Nearshore wind \ngeneration))
+  d0[System \ndesign] --> oos((Offshore wind \ngeneration))
+  d0[System \ndesign] --> os((Solar \ngeneration))
+
+  ons --> c_s
+  oos --> c_s
+  os --> c_s 
+
+  d1[Forecast \nmodel] --> ec((Energy \nprices))
+  ec --> c_s{Implementation \ncosts}
+
+  d1 --> c_m{Modelling \ncosts}
+
+```
+
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia
+
+```{julia}
+#| output: false
+function cov_mat_3_params(sd_costs::Vector{Float64}, ρ::Vector{Float64})
+    C = [sd_costs[1]^2 ρ[1]*sd_costs[1]*sd_costs[2] ρ[2]*sd_costs[1]*sd_costs[3];
+        ρ[1]*sd_costs[1]*sd_costs[2] sd_costs[2]^2  ρ[3]*sd_costs[3]*sd_costs[3];
+        ρ[2]*sd_costs[1]*sd_costs[3] ρ[3]*sd_costs[3]*sd_costs[3] sd_costs[3]^2]
+    return C
+end
+
+prng = MersenneTwister(1234)
+
+function get_prepost_decision(;input_df::DataFrame, n_samples::Int64, mean_costs = mean_costs, sd_costs = sd_costs, ρ = [0, 0, 0.6])
+  power_df = input_df[!, names(input_df, Float64)]
+
+  costs = MvNormal([get(mean_costs, i, "unknown") for i in assets], 
+                 cov_mat_3_params([get(sd_costs, i, "unknown") for i in assets], ρ)) |>
+    x -> rand(prng, x, n_samples)
+  
+  expected_costs =  Array{Float64}[] |> x -> reshape(x, n_samples, 0)
+  
+  for row in eachrow(power_df)
+    expected_costs = hcat(expected_costs,
+                          *(Vector{Float64}(row) |> x -> transpose(x),
+                          costs) |> x -> transpose(x))
+  end
+  
+  prepost_df = DataFrame(strat_opt = Int[], exp_cost = Float64[])
+  
+  for i in 1:size(expected_costs)[1]
+      append!(prepost_df, 
+              DataFrame(strat_opt = argmin(expected_costs[i, :]),
+                        exp_cost = minimum(expected_costs[i, :])))
+  end
+  
+  return(prepost_df)
+end
+```
+
+:::
+
+```{julia}
+#| echo: false
+prepost_decision_df = DataFrame(strategy = [i for i ∈ strategies],
+          solar_GW = [(capacities .* strategies)[i][1] for i ∈ 1:nₛ],
+          offshore_GW = [(capacities .* strategies)[i][2] for i ∈ 1:nₛ],
+          nearshore_GW = [(capacities .* strategies)[i][3] for i ∈ 1:nₛ]) |>
+  x -> get_prepost_decision(input_df = x, n_samples = 10^5)
+```
+
+Again, the expected value of perfect information is the difference between the expected prior and preposterior costs. In this case, it is estimated to be just over two million pounds:
+
+```{julia}
+#| output: false
+VoI = prior_decision_df.prior_costs[1] .- mean(prepost_decision_df.exp_cost)
+```
+```{julia}
+@printf "VoPI = GBP %.6e" VoI
+```
+
+Recall that this represents the expected value of removing uncertainty in forecasting electricity generation costs for various technologies. It can therefore be interpreted as (an upper-bound estimate of) how much the project should be willing to invest in improving modelling of cost forecasting.
+
+For the near-term planning of energy system asset development, the calculated expected value of perfect cost forecasting can inform the decision maker whether it is financially worthwhile to undertake an initial asset development contracting process, such as a *contract for difference auction*, prior to the design of the energy system. Such a contracting process would provide the system designer with exact information on the cost of the assets that would be developed, via the clearing price of the auction to which the developers agree, after which an informed decision on the optimal system design could be made, but would incur a significant time and administrative cost. For the long-term planning of future energy systems, this analysis can be used to determine whether and to what extent Research and Development (R&D) and the purchase of expert opinion on future asset costs (either internal or contracted) should be used to assist the creation of energy system development strategies. 
+
+However, neither R&D or the expert opinions of consultants provide perfect information on future costs, and determining models for their efficacy is required to identify a more realistic expected value of imperfect information, which will be lower than the value predicted here. This chellenge is discussed in a different context in the below example.
+
+<!-- Therefore, a system designer will not be willing to pay the full EVPI for such improvements in the estimation of future costs, though if the EVPI is sufficiently large it may provide justification for taking such actions nonetheless. For these 'measurement actions' the EVPI may be used to assist a more qualitative judgement on their economic suitability. Though, expenditure on R&D projects also has the potential to reduce the future costs of renewable generation assets, providing additional advantage. -->
+
+
+### Expected Value of Imperfect (Imprecise) Data
+
+#### Example: Energy Use in Buildings
+
+Consider the problem of heating a residential building. Inefficiencies in ageing heaters can result in increased electricity costs to deliver energy requirements. This performance degradation can be mitigated by maintenance work.
 
 The problem is described by the influence diagram in @fig-prior_id_heat_pumps. Here, heat pump parameters, $\alpha$ and $\beta$ describe the degradation and improvements to the performance of a heat pump, respectively.
 
-Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activites can improve, or restore, the performance (using $\beta$).
+Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activities can improve, or restore, the performance (using $\beta$).
 
 ```{mermaid}
 %%| label: fig-prior_id_heat_pumps
@@ -570,22 +1175,6 @@ $$
 The inputs for the problem are defined below. These result in a decreasing efficacy of maintenance activities, when many are scheduled, see @fig-n_maint_beta.
 
 ::: {#chunk_load_packages .panel-tabset}
-
-## Python (using SciPy)
-
-```{python}
-def get_beta(n_maintenance):
-  a = 0.07349026; b = 11.24172755; gamma = 1.30736477
-  return (a * n_maintenance ** gamma) / (b + n_maintenance ** gamma)
-
-n_samples = 10**3; alpha = stats.norm.rvs(loc = 1.6*10**-2, scale = 1.6 * 10**-3)
-
-SPF_inital = 3
-
-max_n_maint = 12; n_maint = np.arange(start = 0, stop = max_n_maint + 1, step = 1)
-
-heat_pump_cost_GBP = 441890/4; heating_load_kWh = 1753914; GBP_per_kWh = 0.51
-```
 
 ## R
 
@@ -626,15 +1215,31 @@ tibble(x = n_maint) |>
 
 As shown in @fig-prior_heat_pump_decision, increasing the number of maintenance activities initially decreases the total cost (sum of electricity and maintenance costs), before no longer expecting to be worthwhile.
 
-::: {#chunk_load_packages .panel-tabset}
+Prior predictive sampling - easier to interpret variability in forecast SPF, than parameters in a Beta distribution model of an abstract degradation parameter, $\alpha$.
 
-## Python (using SciPy)
+Since Chaoqun has requested alpha be constrained as $0 \leq \alpha \leq 1$, consider a beta distribution.
 
-```{python}
-def prior_decision_df(n_maint_range):
-  return 0
+```{r}
+#| echo: false
+alpha_sd <- 0.25
 
+lnorm_params <- DomDF::lnorm_params(norm_mean = 0.16, norm_sd = alpha_sd)
+
+alpha <- rlnorm(n = n_samples, meanlog = lnorm_params$meanlog, sdlog = lnorm_params$sdlog)
+
+SPF <- 3
+
+tibble(alpha) |>
+  mutate(SPF_new = purrr::map_dbl(.x = alpha, 
+                                  .f = function(.x) {(1 -.x) * SPF})) |>
+  ggplot(mapping = aes(x = SPF_new, y = after_stat(x = density)))+
+    geom_histogram(col = 'black', alpha = 1/2)+
+    geom_vline(mapping = aes(xintercept = SPF), alpha = 1/2, lty = 2)+
+    xlim(0, 3.5)+
+    labs(subtitle = paste("Std. Dev. of alpha:", alpha_sd))
 ```
+
+::: {#chunk_load_packages .panel-tabset}
 
 ## R (using purrr)
 
@@ -644,7 +1249,7 @@ prior_decision_df <- function(n_maint_range){
   tibble(n_maint = n_maint_range, alpha = list(alpha)) |>
   mutate(beta = get_beta(n_maintenance = n_maint),
          SPF = SPF_initial,
-         maint_cost = n_maint * heat_pump_cost_GBP * 1e-2,
+         maint_cost = n_maint * heat_pump_cost_GBP * 1.5e-2,
          SPF_coeff = map2(.x = alpha, .y = beta,
                           .f = function(.x, .y){(1 - .x) * (1 + .y)}),
          SPF = map2(.x = SPF, .y = SPF_coeff,
@@ -711,18 +1316,9 @@ flowchart LR
 
 ::: {#chunk_load_packages .panel-tabset}
 
-## Python (using SciPy)
-
-```{python}
-def prepost_decision_df(n_maint_range):
-  return 0
-
-```
-
 ## R (using purrr)
 
 ```{R}
-
 prepost_decision_df <- function(n_maint_range){
   
   tibble(alpha = alpha, n_maint = list(n_maint_range)) |>
@@ -750,13 +1346,14 @@ prepost_decision_df <- function(n_maint_range){
 
 ```{R}
 #| echo: false
-
 prior_df <- tibble(alpha_sd = double(), ec_pr = double(), a_pr = integer())
 prepost_df <- tibble(alpha_sd = double(), ec_prepost = double())
 
-for (alpha_sd in c(0.01, 0.05, 0.1, 0.25)){
+for (alpha_sd in c(0.01, 0.05, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25)){
   
-  alpha <- rnorm(n = n_samples, mean = 1/2, sd = alpha_sd)
+  set.seed(seed = 240819)
+  
+  alpha <- randomLHS(n = n_samples, k = 1) |> qnorm(mean = 1/2, sd = alpha_sd)
   
   df_pr <- prior_decision_df(n_maint_range = n_maint)
   
@@ -780,87 +1377,376 @@ VoPI_df <- prior_df |>
 #| echo: false
 #| label: fig-voi_smart_meter_alpha_sensitivity
 #| fig-cap: "Effect of Prior Uncertainty on Expected Value of Smart Meter Data"
-
 ggplot(data = VoPI_df, mapping = aes(x = alpha_sd, y = VoPI))+
   geom_point(shape = 1, size = 1) + geom_line(alpha = 1/4)+
   geom_text(mapping = aes(label = paste("£", VoPI |> signif(digits = 3))), 
             family = "Atkinson Hyperlegible", size = 3, vjust = -1)+
   scale_x_continuous(name = expression(paste('Uncertainty (std. dev.) in prior model of ', alpha)))+
-  scale_y_continuous(name = 'Expected value of smart meter data, £', labels = scales::comma, limits = c(0, VoPI_df$VoPI |> max() + 3e3))+
+  scale_y_continuous(name = 'Expected value of (perfect) smart meter data, £', labels = scales::comma, limits = c(0, VoPI_df$VoPI |> max() + 3e3))+
   ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
   theme(plot.background = element_rect(color = NA))
 ```
 
-### Design of Energy Generation Asset Portfolio 
+The above examples have used bespoke code to represent the decision that needed to be solved. Though this can be helpful for prototyping inital calculations, small changes to the problem may require large amounts of code to be re-written.
 
-In designing an energy system for...
+### Influence Diagram Representation
+
+#### Example A: Measuring Temperature for Forecasting Crop Sales
+
+An environment for growing various produce, such as the underground farm project [@Ward2022], requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.
+
+In this challenge, a buyer is willing to purchase at one of multiple levels. In response, the operator can agree to sell at one of these levels (earning payment for sufficient delivery, or paying a penalty if insufficient crops are available), or to not engage with the market at this time (at no risk, with no reward). 
+
+A model predicting crop availability from the local temperature can be linked to this decision making under uncertainty problem, as shown in the influence diagram in @fig-prior_id_farm.
+
+```{mermaid}
+%%| label: fig-prior_id_farm
+%%| fig-cap: "Influence Diagram for Identifying Expected Optimal Crop Sales Commitment"
+
+flowchart LR
+  
+  t((Estimated \nTemperature)) --> c((Crop \nAvailability))
+  d2[Sales \nCommitment] -->  c1{Utility}
+  c --> c1
+
+```
 
 ::: {#chunk_load_packages .panel-tabset}
 
-## Julia (using Convex)
+Inputs describing the levels at which the operator can commit to sell, as well as prospective reward and penalty fees are shown below. Also included in the below code chunk is the sigmoid model relating local temperature to the proportion of crops expected to be available at the time of the sale.
+
+## Julia
+
+```{julia}
+#| output: false
+delivery_options = Dict("Option_0" => 0, "Option_1" => 0.5, "Option_2" => 0.75)
+delivery_states = keys(delivery_options) |> x -> collect(x)
+delivery_values = [delivery_options[state] for state in delivery_states]
+
+survival_states = ["met", "not_met"]
+
+rewards = Dict("Option_0" => 0, "Option_1" => 0.4, "Option_2" => 0.6)
+reward_states = delivery_states; reward_values =  [rewards[state] for state in reward_states]
+
+penalties = Dict("Option_0" => 0, "Option_1" => -0.5, "Option_2" => -1)
+penalty_states = delivery_states; penalty_values =  [penalties[state] for state in penalty_states]
+
+function crop_survival(Temp, α = 4, β = -1/5)
+    survival = 1 / (1 + exp(-(α + β * Temp)))
+    return survival
+end
+
+```
+:::
+
+The [DecisionProgramming.jl](https://gamma-opt.github.io/DecisionProgramming.jl/stable/) Julia library includes intuitive syntax for creating an influence diagram, and populating the nodes with the appropriate probability, utility and decision inputs. Expected optimal actions can then be identified using one of many compatible solvers. Note that the [JuMP.jl](https://jump.dev) library used here, was also used to solve the optimisation problem in the energy generation problem. 
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia (using DecisionProgramming, JuMP, HiGHS)
+
+```{julia}
+function get_exp_u(S, optimiser)
+
+    # Initialise influence diagram
+    crop_delivery = InfluenceDiagram()
+
+    # Create structure of influence diagram
+    add_node!(crop_delivery, DecisionNode("Delivery", [], delivery_states))
+    add_node!(crop_delivery, ChanceNode("Survival", ["Delivery"], survival_states))
+    add_node!(crop_delivery, ValueNode("Pay", ["Survival", "Delivery"]))
+
+    generate_arcs!(crop_delivery)
+
+    # Calculate probabilities for meeting delivery levels
+    pr_S = [sum(S .> delivery_values[i]) / length(S) for i in 1:length(delivery_values)]
+
+    Pr_S = ProbabilityMatrix(crop_delivery, "Survival")
+    U_p = UtilityMatrix(crop_delivery, "Pay")
+
+    # Assigning probabilities and utilities to diagram
+    Pr_S[:, "met"] = pr_S
+    Pr_S[:, "not_met"] = 1 .- pr_S
+    
+    U_p["met", :] = reward_values
+    U_p["not_met", :] = penalty_values
+
+    add_probabilities!(crop_delivery, "Survival", Pr_S)
+    add_utilities!(crop_delivery, "Pay", U_p)
+
+    generate_diagram!(crop_delivery)
+
+    # Define and run solver
+    model = JuMP.Model(optimiser)
+    z = DecisionVariables(model, crop_delivery)
+    EV = expected_value(model, crop_delivery, PathCompatibilityVariables(model, crop_delivery, z))
+
+    @objective(model, Max, EV)
+    optimize!(model)
+
+    # Process results
+    Z = DecisionStrategy(z)
+    U_dist = UtilityDistribution(crop_delivery, Z)
+
+    exp_opt_decision = DataFrame(Exp_Utility = dot(U_dist.p, U_dist.u),
+                             Action = delivery_states[argmax(Z.Z_d[1])])
+    
+    return exp_opt_decision
+end
+
+```
+
+The prior model of temperature is a Normal distribution with a mean of $10^{\circ} C$ and a standard deviation of $5 ^{\circ} C$. This continuous model has been discretised by drawing $1000$ samples using the Latin Hypercube method.
+
+$$
+T\_{prior} \sim N(\mu = 10, \sigma = 5)
+$$
 
 ```{julia}
 #| output: false
 
-assets = ["solar", "offshore", "nearshore"]
+prior_temp = Normal(10, 5)
 
-α = 10; β = 2; γ = 1 * 0.1 * 24 * 365
+function draw_lhs(dist, n::Int; reprod::Int = 240819)
+    Random.seed!(reprod)
+    samples = randomLHC(n + 2, 1) |>
+        x -> scaleLHC(x, [(0, 1)]) |>
+        x -> quantile(dist, x)[:,1] |>
+        x -> filter(!∈((-Inf, Inf)), x) |>
+        x -> [x[i] for i ∈ 1:length(x) if abs(x[i]) >= 10^-10]
+    return samples
+end
+
+temp_df = DataFrame(temp = draw_lhs(prior_temp, 1_000)) |>
+    x -> @rtransform(x, :surv = crop_survival(:temp)) |>
+    x -> @orderby(x, :temp)
+
+```
+
+The expected optimal action, conditional on the influence diagram representation of the decision problem, and the prior model of temperature can then be calculated:
+
+```{julia}
+get_exp_u(temp_df.surv, HiGHS.Optimizer)
+```
+:::
+
+Considering the option of installing devices to measure the temperature (as shown in @fig-prepost_id_farm), requires the influence diagram to be solved many times (for each hypothesised outcome). The average expected utility over each of the subsequent decision analyses can then be compared to the expected prior utility, to find the expected value of (perfect) temperature measurements, in the context of supporting the crop sales decision.
+
+```{mermaid}
+%%| label: fig-prepost_id_farm
+%%| fig-cap: "Influence Diagram for Calculating Expected Value of Temperature Data"
+
+flowchart LR
+  
+  d1[Measure \nTemperature] --> t((Estimated \nTemperature)) 
+  t --> c((Crop \nAvailability))
+  d2[Sales \nCommitment] -->  c1{Utility}
+  c --> c1
+
+```
+
+::: {#chunk_load_packages .panel-tabset}
+
+```{julia}
+#| output: false
+measure_df = DataFrame()
+for s_meas in temp_df.surv
+    append!(measure_df, get_exp_u(s_meas, HiGHS.Optimizer))
+end
+
+prior_utility = get_exp_u(temp_df.surv, HiGHS.Optimizer).Exp_Utility[1]
+prepost_utility = mean(measure_df.Exp_Utility)
+
+VoPI = prepost_utility - prior_utility
+
+```
+
+```{julia}
+@printf "VoPI = %.4f" VoPI
+```
+
+:::
+
+#### Example B: Verification of a Digital Twin for Maintenance Planning
+
+Another source of data that can be considered, is that which is obtained from verifying an existing model. There may be many reasons to complete such a study, such as to demonstrate compliance with a quality standard, or to obtain some certification, and though these can also be quantified and incorporated, this example will only consider the benefits in terms of risk management.
+
+
+### Identifying Priors: 
+
+#### Example: Inspecting for Corrosion
+
+One method of estimating corrosion growth rates is by comparing repeated measurements of damage at sites of active corrosion. In this example, inspection data for $10$ sites of corrosion can be analysed, so that future degradation can be forecast. Predicting when these locations will fail will inform the decision of whether to invest in repairs. An influence diagram representation of this challenge is shown in @fig-prepost_id_voi.
+
+```{mermaid}
+%%| label: fig-prepost_id_voi
+%%| fig-cap: "Influence Diagram for Identifying Expected Optimal Repair Plan for Corroding Structure"
+
+flowchart LR
+
+    v[Inspect \nAnomaly 4] --> c((Estimated \nCorrosion Rate))
+    c --> C_f{Failure \nRisk}
+
+    m[Repair \nPlan] --> C_f
+    
+    m --> C_m{Maintenance \nCosts}
+
+```
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using CmdStanPy)
+
+```{python}
+n_chains = 4; n_warmup = 2000; n_draws = int(1000/n_chains)
+cgr_model = cmdstanpy.CmdStanModel(stan_file = "stan_models/corr_fp_md_c.stan")
+
+def lnorm_params(mu, sigma):
+    sdlog = math.sqrt(math.log(1 + sigma**2 / mu**2))
+    meanlog = math.log(mu) - 0.5 * sdlog**2
+    return {"sdlog" : sdlog, "meanlog" : meanlog}
+
+prior_depth_params = lnorm_params(10, 6)
+
+insp_data = pd.read_csv("data_files/inspection_data.csv")
+
+years = insp_data.t.unique()
+insps = insp_data.inspection.unique()
+locations = insp_data.location.unique()
 
 ```
 
 :::
 
-```{julia}
-α
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using NumPy, Pandas, CmdStanPy)
+
+```{python}
+def gen_model_data(inspection_df):
+  model_data = {
+  "N": inspection_df.shape[0],
+  "n_A": inspection_df.anomaly_id.nunique(),
+  "n_M": inspection_df.missing.sum(),
+  "ID": inspection_df.anomaly_id,
+  "depth_i1": inspection_df[inspection_df.t == years[0]].depth_mm,
+  "depth_i2": inspection_df[inspection_df.t == years[1]].depth_mm,
+  "error_i1": inspection_df[inspection_df.inspection == insps[0]].sizing_uncertainty,
+  "error_i2": inspection_df[inspection_df.inspection == insps[1]].sizing_uncertainty,
+  "d_years": years.max() - years.min(),
+  "ex_1": inspection_df[inspection_df.t == years[0]].missing,
+  "ex_2": inspection_df[inspection_df.t == years[1]].missing,
+  "mu_mu_beta": 1, "sigma_mu_beta": 1, "rate_sigma_beta": 1,
+  "mu_depth_imp": prior_depth_params["meanlog"],
+  "sigma_depth_imp": prior_depth_params["sdlog"]}
+  return(model_data)
+  
+```
+
+```{python}
+def corrosion_model(data):
+  cgr_posterior = Stan_Posterior(cgr_model.sample(data = data, 
+                                                  seed = 240819, 
+                                                  iter_warmup = n_warmup, 
+                                                  iter_sampling = n_draws, 
+                                                  chains = 4, 
+                                                  parallel_chains = multiprocessing.cpu_count()))
+  return(cgr_posterior.draws_df())
+  
+def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10**5):
+  PoF_df = pd.DataFrame(data = {"anomaly": insp_df.anomaly_id.unique()})
+  PoF = []; cost = []
+  for i in insp_df.anomaly_id.unique():
+      id = "depth_true_i2[" + str(i) + "]"
+      depth = np.array(results_df[id] + results_df["CGR_pp"])
+      PoF.append((depth >= t).sum() / len(depth))
+  
+  PoF_df["PoF"] = np.array(PoF)
+  for i in PoF_df.PoF:
+      if i * cost_fail < cost_repair:
+          cost.append(i * cost_fail)
+      else:
+          cost.append(cost_repair)
+  PoF_df["cost"] = np.array(cost)
+  return(PoF_df)
+  
+```
+
+:::
+
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python
+
+Solving the prior decision problem...
+
+```{python}
+model_data = gen_model_data(insp_data)
+cgr_results = corrosion_model(data = model_data)
+
+costs_df = get_costs(insp_df = insp_data, results_df = cgr_results)
+prior_exp_cost = costs_df.cost.sum()
 
 ```
 
-```{mermaid}
-%%| label: fig-prepost_id_energy_portfolio
-%%| fig-cap: "Influence Diagram for Estimating the Expected Value of an Energy Forecasting Model"
+Solving the preposterior decision problem...
 
-flowchart LR
-  d0[System \ndesign] --> ons((Nearshore wind \ngeneration))
-  d0[System \ndesign] --> oos((Offshore wind \ngeneration))
-  d0[System \ndesign] --> os((Solar \ngeneration))
+```{python}
+#| output: false
+#| eval: false
 
-  ons --> c_s
-  oos --> c_s
-  os --> c_s 
+depths_i1 = np.array(model_data["depth_i1"])
+depths_i2 = np.array(model_data["depth_i2"])
 
-  d1[Forecast \nmodel] --> ec((Energy \nprices))
-  ec --> c_s{Implementation \ncosts}
+prepost_df = pd.DataFrame()
+for depth in np.sort(cgr_results["depth_true_i2[4]"]):
+    
+    model_data_iter = model_data; insp_data_iter = insp_data
 
-  d1 --> c_m{Modelling \ncosts}
+    depths_i2[3] = depth    
+    model_data_iter["depth_i2"] = depths_i2
+    model_data_iter["ex_2"] = np.repeat(a = 0, repeats = len(depths_i2))
+
+    insp_data_iter.depth = np.concatenate((depths_i1, depths_i2))
+    insp_data_iter.depth[13] = depth
+
+    prepost_df = pd.concat((prepost_df, 
+                            pd.DataFrame(data = {"d_insp": depth, 
+                                                 "cost": get_costs(insp_df = insp_data_iter, 
+                                                                   results_df = corrosion_model(data = model_data_iter)).cost.sum()}, 
+                                        index = [0])))
 
 ```
 
+```{python}
+#| echo: false
 
-### Identifying a Data Collection Plan for a Bridge
+prepost_df = pd.read_csv("data_files/VoInsp.csv")
+```
 
-<!-- Structural reliability is concerned with... -->
+The expected value of (an imperfect) inspection at the site of corrosion anomaly 4, can then be calculated.
 
-<!-- It is an established field of engineering, and reliability analysis serves as the technical justification for some of the lower level guidance in many engineering codes and standards. -->
+```{python}
+VoInsp = prior_exp_cost - prepost_df.cost.mean()
 
-<!-- The probability will be dependent on the mdoel assumptions - and this has lead to multiple interpretations of SRA results. In many cases, it is recommended that these probabilities shoul;d only be considered... -->
+```
 
-<!-- Some of the topics discussed in this document help address perceived challenges with SRA. For instance, the *tail sensitivity problem*... -->
+:::
 
-<!-- Consider the challenge of the integrity management of a rail bridge. Here, there are  -->
 
 # Recommendations
 
+Key concepts:
+
+ - link data to decisions
+ - Example applications here are focused on identifying data requirements
+ - subject matter expertise can be combined with data, and becomes especially important when data is limited.
+ - replicable, auditable, decision making
+ 
+ 
+
 ...
 
-<!-- ## Probabilistic Models -->
-
-<!-- ## Neural Networks -->
-
-<!-- :::{.callout-note collapse="true"} -->
-<!-- ## Thought: Learning a Model -->
-
-<!-- ::: -->
-
-<!-- ## Engineering Judgement -->
 
 

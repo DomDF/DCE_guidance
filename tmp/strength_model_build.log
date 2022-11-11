@@ -1,0 +1,8 @@
+Syntax error in '/Users/ddifrancesco/Github/DCE_guidance/tmp/strength_model.stan', line 1, column 0 to column 1, parsing error:
+   -------------------------------------------------
+     1:  /Users/ddifrancesco/Github/DCE_guidance/stan_models/yield_strength_model.stan
+         ^
+   -------------------------------------------------
+
+Expected "functions {" or "data {" or "transformed data {" or "parameters {" or "transformed parameters {" or "model {" or "generated quantities {".
+make: *** [/Users/ddifrancesco/Github/DCE_guidance/tmp/strength_model.hpp] Error 1
