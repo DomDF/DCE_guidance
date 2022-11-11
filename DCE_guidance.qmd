@@ -76,7 +76,7 @@ using JuMP, HiGHS, DecisionProgramming, Turing, LinearAlgebra
 
 :::{.callout-tip collapse="true"}
 ## Tip: Loading packages
-In `R` and `Python` packages first need to be installed. Guidance on installing packages can be found [here](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages) (for `R`) and [here](https://pypi.org/project/pip/) (for `Python`). 
+In `R`, `Python` and `Julia` packages first need to be installed. Guidance on installing packages can be found [here](https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages) (for `R`),  [here](https://pypi.org/project/pip/) (for `Python`), and [here](https://docs.julialang.org/en/v1/stdlib/Pkg/) for `Julia`. 
 
 Packages only need to be installed once (unless they are uninstalled), but then need to be loaded each time you want to make direct use of the functions or data they contain. This document will not detail the workings of each package, but such information can be found online, for example [here](https://pandas.pydata.org) is the website for the `Python` 'pandas' package.
 :::
@@ -1565,6 +1565,200 @@ VoPI = prepost_utility - prior_utility
 
 Another source of data that can be considered, is that which is obtained from verifying an existing model. There may be many reasons to complete such a study, such as to demonstrate compliance with a quality standard, or to obtain some certification, and though these can also be quantified and incorporated, this example will only consider the benefits in terms of risk management.
 
+The source of value of verification studies arises from the propagation of the reduced uncertainty through a decision analysis i.e. the information from verification studies facilitate improved risk management. 
+
+Consider the representation in @fig-dt_id of the decision problem regarding whether to send maintenance personnel to investigate a component. An investigation includes the repair of any defect(s), and is expected to be worthwhile if the cost of the activity is less than that associated with the risk of failure. The state/condition of the component can be estimated based on the knowledge of the operations engineers, as well as data from a digital twin, which is being used in this context to support a condition assessment.
+
+```{mermaid}
+%%| label: fig-dt_id
+%%| fig-cap: "Influence Diagram of Maintenance Decision Problem"
+
+flowchart LR
+  d1[Maintenance \nPlan]  --> o1((Component \nCondition))
+  o2((Digital \nTwin Data))  --> o1
+  d2[Verification Plan \nfor Digital Twin] --> o1
+  d2 --> o2
+
+  d1 --> c1{Maintenance \nCost} 
+  o1  --> c2{Failure \nRisk}
+  
+```
+
+```{r}
+#| echo: false
+#| label: tbl-model_inputs
+#| tbl-cap: "Key Inputs for Decision Analysis"
+
+input_df <- tribble(
+  ~Input, ~Value, ~Units,
+  "probability of defect", 0.15, NA,
+  "cost of investigation", 1e5, "$",
+  "cost of shut-down", 2e5, "$",
+  "cost of component failure", 5e5, "$",
+  "probability of failure of defective component", 1/2, NA,
+  "probability of failure of undamaged component", 1e-4, NA,
+  "probability of failure during shut-down", 1e-6, NA
+)
+
+input_df |> knitr::kable()
+```
+
+
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia 
+
+```{julia}
+#| output: false
+
+# Set up decision inputs
+maint_options = Dict("no_action" => 1, "investigate" => 10^-2, "shut_down" => 10^-4)
+maint_states = keys(maint_options) |> x -> collect(x)
+maint_values = [maint_options[state] for state in maint_states]
+
+dt_output_states = ["defect", "no_defect"]
+condition_states = ["failure", "survival"]
+
+pr_defect = 0.15; pr_fail_defect = 0.5; pr_fail_undamaged = 10^-2
+
+cost_inv = 100_000; cost_shutdown = 200_000; cost_failure = 500_000
+
+n_samples = 1_000; prior_β = Beta(6, 2)
+reliabilities = draw_lhs(prior_β, n_samples)
+
+```
+
+:::
+
+
+::: {#chunk_load_packages .panel-tabset}
+
+The below function initialises the influence diagram, and defines it's structure in terms of nodes and edges:
+
+## Julia (using DecisionProgramming, JuMP, HiGHS)
+
+```{julia}
+
+# Initialise influence diagram
+function create_id(β::Float64)
+
+    maint_dec = InfluenceDiagram()
+
+    # Create structure of influence diagram
+    add_node!(maint_dec, DecisionNode("Maintenance", [], maint_states))
+
+    add_node!(maint_dec, ChanceNode("DT_output", [], dt_output_states))
+    add_node!(maint_dec, ChanceNode("Condition", ["DT_output", "Maintenance"], condition_states))
+
+    add_node!(maint_dec, ValueNode("Fail_risk", ["Condition"]))
+    add_node!(maint_dec, ValueNode("Maint_cost", ["Maintenance"]))
+
+    generate_arcs!(maint_dec)
+
+    Pr_DT = ProbabilityMatrix(maint_dec, "DT_output")
+    Pr_C = ProbabilityMatrix(maint_dec, "Condition")
+
+    U_M = UtilityMatrix(maint_dec, "Maint_cost")
+    U_f = UtilityMatrix(maint_dec, "Fail_risk")
+
+    # Calculate probabilities of detection and failure
+    pr_defect_detected = (pr_defect * β) + (1 - pr_defect) * (1 - β)
+    pr_fail_det = pr_fail_defect * β + pr_fail_undamaged * (1 - β)
+    pr_fail_nodet = pr_fail_undamaged * β + pr_fail_defect * (1 - β)
+
+    # Assign probabilities and utilities to nodes
+    Pr_DT["defect"] = pr_defect_detected
+    Pr_DT["no_defect"] = 1 - pr_defect_detected
+
+    for i in maint_states
+        Pr_C["defect", :, "failure"] = pr_fail_det * [maint_options[i] for i in maint_states]
+        Pr_C["defect", :, "survival"] = 1 .- pr_fail_det * [maint_options[i] for i in maint_states]
+        Pr_C["no_defect", :, "failure"] = pr_fail_nodet * [maint_options[i] for i in maint_states]
+        Pr_C["no_defect", :, "survival"] = 1 .- pr_fail_nodet * [maint_options[i] for i in maint_states]
+    end
+
+    U_M["no_action"] = 0; U_M["investigate"] = cost_inv; U_M["shut_down"] = cost_shutdown
+    U_f["survival"] = 0; U_f["failure"] = cost_failure
+
+    add_probabilities!(maint_dec, "DT_output", Pr_DT)
+    add_probabilities!(maint_dec, "Condition", Pr_C)
+
+    add_utilities!(maint_dec, "Maint_cost", U_M)
+    add_utilities!(maint_dec, "Fail_risk", U_f)
+
+    generate_diagram!(maint_dec)
+    
+    return maint_dec
+
+end
+
+```
+
+Then the following function solves the influence diagram (identifies the expected optimal action and costs).
+
+```{julia}
+#| output: false
+
+# Solve the influence diagram
+function solve_id(; β::Float64, optimiser::DataType = HiGHS.Optimizer)
+
+    maint_dec = create_id(β)
+
+    # Define and run solver
+    model = JuMP.Model(optimiser)
+    z = DecisionVariables(model, maint_dec)
+    EV = expected_value(model, maint_dec, PathCompatibilityVariables(model, maint_dec, z))
+
+    @objective(model, Min, EV)
+    optimize!(model)
+
+    # Process results
+    Z = DecisionStrategy(z)
+    U_dist = UtilityDistribution(maint_dec, Z)
+
+    opt_df = DataFrame(β = β,
+        u_opt = dot(U_dist.p, U_dist.u),
+        a_opt = maint_states[argmax(Z.Z_d[1])])
+
+    return opt_df
+end
+
+```
+
+
+```{julia}
+#| output: false
+
+solve_id(β = 0.8)
+
+```
+
+To consider the additional cost associated with the epistemic uncertainty in the digital twin reliability, a *value of information* calculation can be completed. Since we are quantifying the expected value of a verification that has not yet been completed, we must consider the range of possible results. The prior model of reliability describes what we expect a verification activity to find, and simulating possible results (and evaluating their impact of an expected optimal maintenance decision) can be used to quantify the expected value of verification in this context.
+
+```{julia}
+#| output: false
+
+# Simulating many possible outcomes from the verification
+verif_df = DataFrame()
+for βᵣ in reliabilities
+    append!(verif_df, solve_id(β = βᵣ))
+end
+
+```
+
+As shown in @fig-voi_results, in instances where a verification study identifies a relatively high reliability of the digital twin, this can be used to justify deferral of a site investigation of a component. Whereas in instances where a relatively low reliability is identified, an investigation is still justified. For this particular scenario, a shut-down was never found to be the expected optimal action, despite the reduced probability of failure due to the high cost of implementation.
+
+```{julia}
+
+prior_cost = solve_id(β = mean(reliabilities)).u_opt[1]
+prepost_cost = verif_df.u_opt |> x -> mean(x)
+
+VoI = prior_cost - prepost_cost
+
+```
+
+:::
 
 ### Expected Value of Imprecise (Imperfect) Information: 
 
@@ -1685,12 +1879,53 @@ prior_exp_cost = costs_df.cost.sum()
 
 ```
 
-As shown in... the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
 
 ```{r}
 #| echo: false
 
-plot_df <- reticulate::py$cgr_results
+cgr_df <- reticulate::py$cgr_results |> as_tibble()
+
+cols <- colnames(cgr_df); depth_cols <- cols[grepl(pattern = "depth_true", x = cols)]
+
+depth_df <- cgr_df |>
+  dplyr::select(depth_cols) |> 
+  unnest(cols = all_of(depth_cols)) |>
+  tidyr::pivot_longer(cols = all_of(depth_cols), names_to = "anomaly_id", values_to = "depth") |>
+  mutate(inspection = case_when(
+    grepl(pattern = "i1", x = anomaly_id) ~ "Inspection A",
+    T ~ "Inspection B"
+  ),
+  anomaly_id = stringr::str_match(anomaly_id, "\\[(.*?)\\]")[,2],
+  anomaly_id = factor(x = anomaly_id, levels = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)),
+  type = case_when(
+    anomaly_id == 4 & inspection == "Inspection B" ~ "Imputed",
+    T ~ "Measured"
+  ))
+
+ggplot(data = cgr_df |> dplyr::select(CGR_pp) |> unnest())+
+  geom_histogram(mapping = aes(x = CGR_pp, y = after_stat(x = density)), col = "black", alpha = 1/2)+
+  scale_x_continuous(name = "Estimated corrosion growth rate, mm/year")+
+  scale_y_continuous(name = "Likelihood")+
+  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
+  theme(plot.background = element_rect(color = NA), legend.title = element_blank(), legend.position = "top")
+
+```
+
+As shown in @fig-corrosion_depths the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
+
+```{r}
+#| echo: false
+#| fig-height: 9
+#| fig-width: 6
+#| label: fig-corrosion_depths
+#| fig-cap: "Probabilistic Models for Imputed and Measured Corrosion Damage"
+ggplot(data = depth_df)+
+  geom_density(mapping = aes(x = depth, y = after_stat(x = density), alpha = type), col = "black", fill = "gray")+
+  facet_grid(anomaly_id ~ inspection)+
+  scale_x_continuous(name = "Estimated corrosion depth, mm")+
+  scale_y_continuous(name = "Likelihood")+
+  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
+  theme(plot.background = element_rect(color = NA), legend.title = element_blank(), legend.position = "top")
 
 ```
 
