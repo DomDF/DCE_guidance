@@ -336,8 +336,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([-1.7911363 , -0.44092676,  1.19811958, -0.41364954,  0.74871747,
-        0.73907878,  1.07544515, -0.99134426, -1.36638934,  1.2256631 ])</code></pre>
+<pre><code>array([-0.92095763,  0.51260616, -1.29886216,  0.55376187, -1.02470555,
+        1.96499151,  0.523537  ,  1.93538936,  0.68564796,  0.66083299])</code></pre>
 </div>
 </div>
 </div>
@@ -348,8 +348,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1]  1.59293223 -0.21928643  0.63581716 -0.52423449 -1.35179207 -0.50545179
- [7] -0.97648662  0.76202011  0.04455822 -0.39256846</code></pre>
+<pre><code> [1] -1.0383778 -0.4706759 -2.1168751 -0.1699272  0.9359071 -1.0132259
+ [7] -0.1932869  1.0647189 -0.7857250 -0.2706679</code></pre>
 </div>
 </div>
 </div>
@@ -361,16 +361,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
- -1.9754880817593936
- -0.09149943651510499
- -0.8088949696320308
- -0.30469860531471443
-  0.8264852719509602
- -0.14215686140417289
- -0.4530680812020838
-  0.8962135890959695
- -0.5335486070458045
-  0.010579728208899603</code></pre>
+  1.4258293705343628
+  0.052689248226215284
+  0.3801336029965056
+  1.2926248777754648
+ -0.6538892439048067
+ -0.9420776149499588
+  0.5853858002657022
+ -1.5222329253390077
+ -2.241309229206864
+  0.8340670103639988</code></pre>
 </div>
 </div>
 </div>
@@ -388,16 +388,16 @@ Thought: Using Probabilities
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>stats.norm.ppf(probs, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([[ 0.80096943],
-       [-0.96149225],
-       [-0.26262622],
-       [-0.80025797],
-       [ 0.18933196],
-       [ 1.01358794],
-       [ 1.58868629],
-       [-0.22351447],
-       [ 0.44448472],
-       [-2.30974924]])</code></pre>
+<pre><code>array([[ 1.24306729],
+       [ 0.79362858],
+       [-2.1952185 ],
+       [ 1.84208808],
+       [-1.26921252],
+       [-0.29050337],
+       [ 0.09960127],
+       [-0.76568536],
+       [ 0.36107255],
+       [-0.23970531]])</code></pre>
 </div>
 </div>
 </div>
@@ -409,17 +409,17 @@ Thought: Using Probabilities
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">qnorm</span>(<span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>             [,1]
- [1,] -0.78774047
- [2,] -0.06485213
- [3,]  0.55593170
- [4,]  0.34807813
- [5,] -1.65196266
- [6,]  0.03394198
- [7,]  2.08350302
- [8,] -1.17813261
- [9,]  1.20156210
-[10,] -0.40267487</code></pre>
+<pre><code>            [,1]
+ [1,] -0.1857291
+ [2,]  0.1578941
+ [3,]  1.9151440
+ [4,] -0.6415159
+ [5,]  0.9180292
+ [6,]  0.7803898
+ [7,] -0.2881004
+ [8,]  0.4174460
+ [9,] -1.1463059
+[10,] -1.4337282</code></pre>
 </div>
 </div>
 </div>
@@ -434,16 +434,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
-  0.11418529432142821
-  0.6045853465832374
-  1.3351777361189363
+ -0.3487556955170447
+ -1.3351777361189363
   0.9084578685373853
  -0.6045853465832374
  -0.9084578685373852
- -1.3351777361189363
- -0.3487556955170447
+ -0.11418529432142835
   0.3487556955170447
- -0.11418529432142835</code></pre>
+  0.6045853465832374
+  0.11418529432142821
+  1.3351777361189363</code></pre>
 </div>
 </div>
 </div>
@@ -925,7 +925,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb36-9"><a href="#cb36-9" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>ConfidenceInterval(low=378.10951519849993, high=401.75025752899995)</code></pre>
+<pre><code>ConfidenceInterval(low=379.01813995025, high=402.20136097449983)</code></pre>
 </div>
 </div>
 </div>
@@ -969,7 +969,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb42-3"><a href="#cb42-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">confint</span>(x, <span class="fu">BasicConfInt</span>(<span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>((5.965508668241968, 5.934564562905441, 5.995001352935367),)</code></pre>
+<pre><code>((5.965508668241968, 5.934221546677255, 5.9954535750110125),)</code></pre>
 </div>
 </div>
 </div>
@@ -1177,26 +1177,26 @@ Thought: Data vs.&nbsp;Information
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>4000×4 DataFrame
-  Row │ chain  iteration  σ         μ
-      │ Int64  Int64      Float64   Float64
-──────┼─────────────────────────────────────
-    1 │     1        501  48.4662   355.464
-    2 │     1        502  27.4351   366.571
-    3 │     1        503  10.2238   354.045
-    4 │     1        504   8.02806  358.321
-    5 │     1        505   7.93687  348.035
-    6 │     1        506   4.06066  339.232
-    7 │     1        507   4.14305  339.046
-    8 │     1        508   5.13051  345.704
-  ⋮   │   ⋮        ⋮         ⋮         ⋮
- 3994 │     4       1494   2.67485  344.396
- 3995 │     4       1495   8.62816  345.674
- 3996 │     4       1496  18.8528   346.134
- 3997 │     4       1497  12.9748   356.379
- 3998 │     4       1498  16.7579   364.462
- 3999 │     4       1499  20.607    351.577
- 4000 │     4       1500  12.0078   350.642
-                           3985 rows omitted</code></pre>
+  Row │ chain  iteration  σ          μ
+      │ Int64  Int64      Float64    Float64
+──────┼──────────────────────────────────────
+    1 │     1        501  18.1781    355.487
+    2 │     1        502  12.1913    342.233
+    3 │     1        503   7.63129   348.484
+    4 │     1        504   9.2045    332.035
+    5 │     1        505   7.03883   341.236
+    6 │     1        506   5.71218   346.035
+    7 │     1        507   5.07512   348.006
+    8 │     1        508   5.35034   342.993
+  ⋮   │   ⋮        ⋮          ⋮         ⋮
+ 3994 │     4       1494   0.850507  342.626
+ 3995 │     4       1495   0.850507  342.626
+ 3996 │     4       1496   0.850507  342.626
+ 3997 │     4       1497   0.850507  342.626
+ 3998 │     4       1498   0.850507  342.626
+ 3999 │     4       1499   0.850507  342.626
+ 4000 │     4       1500   0.850507  342.626
+                            3985 rows omitted</code></pre>
 </div>
 </div>
 </div>
@@ -2062,7 +2062,7 @@ Solving report
                     0 (bound viol.)
                     0 (int. viol.)
                     0 (row viol.)
-  Timing            0.00 (total)
+  Timing            0.01 (total)
                     0.00 (presolve)
                     0.00 (postsolve)
   Nodes             0
@@ -2437,156 +2437,257 @@ Solving report
 </div>
 </div>
 </div>
+<p>The available inspection data is loaded in the below <code>Python</code> code. As well as the measurement, identifiers for the inspection, and anomaly are listed. Note that the second inspection was not completed at anomaly <span class="math inline">\(4\)</span>. Sometimes inspections cannot be completed due to time, weather (or other safety constraints). In this case, this instance is labelled as missing data.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-25-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-25-1" role="tab" aria-controls="tabset-25-1" aria-selected="true" href="">Python (using CmdStanPy)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-25-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-25-1" role="tab" aria-controls="tabset-25-1" aria-selected="true" href="">Python (using Pandas)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
 <div id="tabset-25-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-25-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>n_chains <span class="op">=</span> <span class="dv">4</span><span class="op">;</span> n_warmup <span class="op">=</span> <span class="dv">2000</span><span class="op">;</span> n_draws <span class="op">=</span> <span class="bu">int</span>(<span class="dv">1000</span><span class="op">/</span>n_chains)</span>
-<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>cgr_model <span class="op">=</span> cmdstanpy.CmdStanModel(stan_file <span class="op">=</span> <span class="st">"stan_models/corr_fp_md_c.stan"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a>insp_data <span class="op">=</span> pd.read_csv(<span class="st">"data_files/inspection_data.csv"</span>)</span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a>years <span class="op">=</span> insp_data.t.unique()</span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a>insps <span class="op">=</span> insp_data.inspection.unique()</span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>locations <span class="op">=</span> insp_data.location.unique()</span>
+<span id="cb99-6"><a href="#cb99-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-7"><a href="#cb99-7" aria-hidden="true" tabindex="-1"></a>insp_data.head(n <span class="op">=</span> <span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div class="cell-output cell-output-stdout">
+<pre><code>   t  depth_mm inspection  anomaly_id  location  sizing_uncertainty  missing
+0  0      4.17          A           1         1                 0.5        0
+1  0      3.62          A           2         1                 0.5        0
+2  0     11.01          A           3         1                 0.5        0</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<p>A <code>Stan</code> model has been written that estimates the corrosion growth rate, in <span class="math inline">\(mm/year\)</span> for this population as the difference in the measured extent (depth) of the damage in <span class="math inline">\(mm\)</span>, divided by the time interval between the measurements, in <span class="math inline">\(years\)</span>. This probabilistic estimate is then use to forecast future growth for a defined time window, so that the probabilities of failure for each of the anomalies can be calculated, for the purpose of identifying where repairs are expected to be required.</p>
+<p>The model is set loaded below, along with some options for the sampling.</p>
+<div id="chunk_load_packages" class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-26-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-26-1" role="tab" aria-controls="tabset-26-1" aria-selected="true" href="">Python (using CmdStanPy)</a></li></ul>
+<div id="chunk_load_packages" class="tab-content">
+<div id="tabset-26-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-26-1-tab">
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a>n_chains <span class="op">=</span> <span class="dv">4</span><span class="op">;</span> n_warmup <span class="op">=</span> <span class="dv">2000</span><span class="op">;</span> n_draws <span class="op">=</span> <span class="bu">int</span>(<span class="dv">1000</span><span class="op">/</span>n_chains)</span>
+<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>cgr_model <span class="op">=</span> cmdstanpy.CmdStanModel(stan_file <span class="op">=</span> <span class="st">"stan_models/corr_fp_md_c.stan"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>INFO:cmdstanpy:found newer exe file, not recompiling</code></pre>
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb101"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb101-1"><a href="#cb101-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lnorm_params(mu, sigma):</span>
-<span id="cb101-2"><a href="#cb101-2" aria-hidden="true" tabindex="-1"></a>    sdlog <span class="op">=</span> math.sqrt(math.log(<span class="dv">1</span> <span class="op">+</span> sigma<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> mu<span class="op">**</span><span class="dv">2</span>))</span>
-<span id="cb101-3"><a href="#cb101-3" aria-hidden="true" tabindex="-1"></a>    meanlog <span class="op">=</span> math.log(mu) <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> sdlog<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb101-4"><a href="#cb101-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"sdlog"</span> : sdlog, <span class="st">"meanlog"</span> : meanlog}</span>
-<span id="cb101-5"><a href="#cb101-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb101-6"><a href="#cb101-6" aria-hidden="true" tabindex="-1"></a>prior_depth_params <span class="op">=</span> lnorm_params(<span class="dv">10</span>, <span class="dv">6</span>)</span>
-<span id="cb101-7"><a href="#cb101-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb101-8"><a href="#cb101-8" aria-hidden="true" tabindex="-1"></a>insp_data <span class="op">=</span> pd.read_csv(<span class="st">"data_files/inspection_data.csv"</span>)</span>
-<span id="cb101-9"><a href="#cb101-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb101-10"><a href="#cb101-10" aria-hidden="true" tabindex="-1"></a>years <span class="op">=</span> insp_data.t.unique()</span>
-<span id="cb101-11"><a href="#cb101-11" aria-hidden="true" tabindex="-1"></a>insps <span class="op">=</span> insp_data.inspection.unique()</span>
-<span id="cb101-12"><a href="#cb101-12" aria-hidden="true" tabindex="-1"></a>locations <span class="op">=</span> insp_data.location.unique()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> lnorm_params(mu, sigma):</span>
+<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>    sdlog <span class="op">=</span> math.sqrt(math.log(<span class="dv">1</span> <span class="op">+</span> sigma<span class="op">**</span><span class="dv">2</span> <span class="op">/</span> mu<span class="op">**</span><span class="dv">2</span>))</span>
+<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>    meanlog <span class="op">=</span> math.log(mu) <span class="op">-</span> <span class="fl">0.5</span> <span class="op">*</span> sdlog<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> {<span class="st">"sdlog"</span> : sdlog, <span class="st">"meanlog"</span> : meanlog}</span>
+<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>prior_depth_params <span class="op">=</span> lnorm_params(<span class="dv">10</span>, <span class="dv">6</span>)</span>
+<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb103-8"><a href="#cb103-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gen_model_data(inspection_df):</span>
+<span id="cb103-9"><a href="#cb103-9" aria-hidden="true" tabindex="-1"></a>  model_data <span class="op">=</span> {</span>
+<span id="cb103-10"><a href="#cb103-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N"</span>: inspection_df.shape[<span class="dv">0</span>],</span>
+<span id="cb103-11"><a href="#cb103-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"n_A"</span>: inspection_df.anomaly_id.nunique(),</span>
+<span id="cb103-12"><a href="#cb103-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"n_M"</span>: inspection_df.missing.<span class="bu">sum</span>(),</span>
+<span id="cb103-13"><a href="#cb103-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ID"</span>: inspection_df.anomaly_id,</span>
+<span id="cb103-14"><a href="#cb103-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"depth_i1"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">0</span>]].depth_mm,</span>
+<span id="cb103-15"><a href="#cb103-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"depth_i2"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">1</span>]].depth_mm,</span>
+<span id="cb103-16"><a href="#cb103-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"error_i1"</span>: inspection_df[inspection_df.inspection <span class="op">==</span> insps[<span class="dv">0</span>]].sizing_uncertainty,</span>
+<span id="cb103-17"><a href="#cb103-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"error_i2"</span>: inspection_df[inspection_df.inspection <span class="op">==</span> insps[<span class="dv">1</span>]].sizing_uncertainty,</span>
+<span id="cb103-18"><a href="#cb103-18" aria-hidden="true" tabindex="-1"></a>  <span class="st">"d_years"</span>: years.<span class="bu">max</span>() <span class="op">-</span> years.<span class="bu">min</span>(),</span>
+<span id="cb103-19"><a href="#cb103-19" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ex_1"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">0</span>]].missing,</span>
+<span id="cb103-20"><a href="#cb103-20" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ex_2"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">1</span>]].missing,</span>
+<span id="cb103-21"><a href="#cb103-21" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu_mu_beta"</span>: <span class="dv">1</span>, <span class="st">"sigma_mu_beta"</span>: <span class="dv">1</span>, <span class="st">"rate_sigma_beta"</span>: <span class="dv">1</span>,</span>
+<span id="cb103-22"><a href="#cb103-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu_depth_imp"</span>: prior_depth_params[<span class="st">"meanlog"</span>],</span>
+<span id="cb103-23"><a href="#cb103-23" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma_depth_imp"</span>: prior_depth_params[<span class="st">"sdlog"</span>]}</span>
+<span id="cb103-24"><a href="#cb103-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(model_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </div>
 </div>
 </div>
+<p>The below functions are used to extract results from the model:</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-26-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-26-1" role="tab" aria-controls="tabset-26-1" aria-selected="true" href="">Python (using NumPy, Pandas, CmdStanPy)</a></li></ul>
-<div id="chunk_load_packages" class="tab-content">
-<div id="tabset-26-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-26-1-tab">
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb102"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb102-1"><a href="#cb102-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> gen_model_data(inspection_df):</span>
-<span id="cb102-2"><a href="#cb102-2" aria-hidden="true" tabindex="-1"></a>  model_data <span class="op">=</span> {</span>
-<span id="cb102-3"><a href="#cb102-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"N"</span>: inspection_df.shape[<span class="dv">0</span>],</span>
-<span id="cb102-4"><a href="#cb102-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"n_A"</span>: inspection_df.anomaly_id.nunique(),</span>
-<span id="cb102-5"><a href="#cb102-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"n_M"</span>: inspection_df.missing.<span class="bu">sum</span>(),</span>
-<span id="cb102-6"><a href="#cb102-6" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ID"</span>: inspection_df.anomaly_id,</span>
-<span id="cb102-7"><a href="#cb102-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"depth_i1"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">0</span>]].depth_mm,</span>
-<span id="cb102-8"><a href="#cb102-8" aria-hidden="true" tabindex="-1"></a>  <span class="st">"depth_i2"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">1</span>]].depth_mm,</span>
-<span id="cb102-9"><a href="#cb102-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">"error_i1"</span>: inspection_df[inspection_df.inspection <span class="op">==</span> insps[<span class="dv">0</span>]].sizing_uncertainty,</span>
-<span id="cb102-10"><a href="#cb102-10" aria-hidden="true" tabindex="-1"></a>  <span class="st">"error_i2"</span>: inspection_df[inspection_df.inspection <span class="op">==</span> insps[<span class="dv">1</span>]].sizing_uncertainty,</span>
-<span id="cb102-11"><a href="#cb102-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"d_years"</span>: years.<span class="bu">max</span>() <span class="op">-</span> years.<span class="bu">min</span>(),</span>
-<span id="cb102-12"><a href="#cb102-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ex_1"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">0</span>]].missing,</span>
-<span id="cb102-13"><a href="#cb102-13" aria-hidden="true" tabindex="-1"></a>  <span class="st">"ex_2"</span>: inspection_df[inspection_df.t <span class="op">==</span> years[<span class="dv">1</span>]].missing,</span>
-<span id="cb102-14"><a href="#cb102-14" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu_mu_beta"</span>: <span class="dv">1</span>, <span class="st">"sigma_mu_beta"</span>: <span class="dv">1</span>, <span class="st">"rate_sigma_beta"</span>: <span class="dv">1</span>,</span>
-<span id="cb102-15"><a href="#cb102-15" aria-hidden="true" tabindex="-1"></a>  <span class="st">"mu_depth_imp"</span>: prior_depth_params[<span class="st">"meanlog"</span>],</span>
-<span id="cb102-16"><a href="#cb102-16" aria-hidden="true" tabindex="-1"></a>  <span class="st">"sigma_depth_imp"</span>: prior_depth_params[<span class="st">"sdlog"</span>]}</span>
-<span id="cb102-17"><a href="#cb102-17" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(model_data)</span>
-<span id="cb102-18"><a href="#cb102-18" aria-hidden="true" tabindex="-1"></a>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-<div class="cell">
-<details>
-<summary>Code</summary>
-<div class="sourceCode cell-code" id="cb103"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb103-1"><a href="#cb103-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corrosion_model(data):</span>
-<span id="cb103-2"><a href="#cb103-2" aria-hidden="true" tabindex="-1"></a>  cgr_posterior <span class="op">=</span> Stan_Posterior(cgr_model.sample(data <span class="op">=</span> data, </span>
-<span id="cb103-3"><a href="#cb103-3" aria-hidden="true" tabindex="-1"></a>                                                  seed <span class="op">=</span> <span class="dv">240819</span>, </span>
-<span id="cb103-4"><a href="#cb103-4" aria-hidden="true" tabindex="-1"></a>                                                  iter_warmup <span class="op">=</span> n_warmup, </span>
-<span id="cb103-5"><a href="#cb103-5" aria-hidden="true" tabindex="-1"></a>                                                  iter_sampling <span class="op">=</span> n_draws, </span>
-<span id="cb103-6"><a href="#cb103-6" aria-hidden="true" tabindex="-1"></a>                                                  chains <span class="op">=</span> <span class="dv">4</span>, </span>
-<span id="cb103-7"><a href="#cb103-7" aria-hidden="true" tabindex="-1"></a>                                                  parallel_chains <span class="op">=</span> multiprocessing.cpu_count()))</span>
-<span id="cb103-8"><a href="#cb103-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(cgr_posterior.draws_df())</span>
-<span id="cb103-9"><a href="#cb103-9" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb103-10"><a href="#cb103-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_costs(insp_df, results_df, t <span class="op">=</span> <span class="fl">12.7</span>, cost_repair <span class="op">=</span> <span class="dv">10</span><span class="op">**</span><span class="dv">4</span>, cost_fail <span class="op">=</span> <span class="dv">10</span><span class="op">**</span><span class="dv">5</span>):</span>
-<span id="cb103-11"><a href="#cb103-11" aria-hidden="true" tabindex="-1"></a>  PoF_df <span class="op">=</span> pd.DataFrame(data <span class="op">=</span> {<span class="st">"anomaly"</span>: insp_df.anomaly_id.unique()})</span>
-<span id="cb103-12"><a href="#cb103-12" aria-hidden="true" tabindex="-1"></a>  PoF <span class="op">=</span> []<span class="op">;</span> cost <span class="op">=</span> []</span>
-<span id="cb103-13"><a href="#cb103-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> insp_df.anomaly_id.unique():</span>
-<span id="cb103-14"><a href="#cb103-14" aria-hidden="true" tabindex="-1"></a>      <span class="bu">id</span> <span class="op">=</span> <span class="st">"depth_true_i2["</span> <span class="op">+</span> <span class="bu">str</span>(i) <span class="op">+</span> <span class="st">"]"</span></span>
-<span id="cb103-15"><a href="#cb103-15" aria-hidden="true" tabindex="-1"></a>      depth <span class="op">=</span> np.array(results_df[<span class="bu">id</span>] <span class="op">+</span> results_df[<span class="st">"CGR_pp"</span>])</span>
-<span id="cb103-16"><a href="#cb103-16" aria-hidden="true" tabindex="-1"></a>      PoF.append((depth <span class="op">&gt;=</span> t).<span class="bu">sum</span>() <span class="op">/</span> <span class="bu">len</span>(depth))</span>
-<span id="cb103-17"><a href="#cb103-17" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb103-18"><a href="#cb103-18" aria-hidden="true" tabindex="-1"></a>  PoF_df[<span class="st">"PoF"</span>] <span class="op">=</span> np.array(PoF)</span>
-<span id="cb103-19"><a href="#cb103-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> PoF_df.PoF:</span>
-<span id="cb103-20"><a href="#cb103-20" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> i <span class="op">*</span> cost_fail <span class="op">&lt;</span> cost_repair:</span>
-<span id="cb103-21"><a href="#cb103-21" aria-hidden="true" tabindex="-1"></a>          cost.append(i <span class="op">*</span> cost_fail)</span>
-<span id="cb103-22"><a href="#cb103-22" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span>:</span>
-<span id="cb103-23"><a href="#cb103-23" aria-hidden="true" tabindex="-1"></a>          cost.append(cost_repair)</span>
-<span id="cb103-24"><a href="#cb103-24" aria-hidden="true" tabindex="-1"></a>  PoF_df[<span class="st">"cost"</span>] <span class="op">=</span> np.array(cost)</span>
-<span id="cb103-25"><a href="#cb103-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(PoF_df)</span>
-<span id="cb103-26"><a href="#cb103-26" aria-hidden="true" tabindex="-1"></a>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</details>
-</div>
-</div>
-</div>
-</div>
-<div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-27-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-27-1" role="tab" aria-controls="tabset-27-1" aria-selected="true" href="">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-27-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-27-1" role="tab" aria-controls="tabset-27-1" aria-selected="true" href="">Python (using NumPy, Pandas, CmdStanPy)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
 <div id="tabset-27-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-27-1-tab">
-<p>Solving the prior decision problem…</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a>model_data <span class="op">=</span> gen_model_data(insp_data)</span>
-<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>cgr_results <span class="op">=</span> corrosion_model(data <span class="op">=</span> model_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb104"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb104-1"><a href="#cb104-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> corrosion_model(data):</span>
+<span id="cb104-2"><a href="#cb104-2" aria-hidden="true" tabindex="-1"></a>  cgr_posterior <span class="op">=</span> Stan_Posterior(cgr_model.sample(data <span class="op">=</span> data, </span>
+<span id="cb104-3"><a href="#cb104-3" aria-hidden="true" tabindex="-1"></a>                                                  seed <span class="op">=</span> <span class="dv">240819</span>, </span>
+<span id="cb104-4"><a href="#cb104-4" aria-hidden="true" tabindex="-1"></a>                                                  iter_warmup <span class="op">=</span> n_warmup, </span>
+<span id="cb104-5"><a href="#cb104-5" aria-hidden="true" tabindex="-1"></a>                                                  iter_sampling <span class="op">=</span> n_draws, </span>
+<span id="cb104-6"><a href="#cb104-6" aria-hidden="true" tabindex="-1"></a>                                                  chains <span class="op">=</span> <span class="dv">4</span>, </span>
+<span id="cb104-7"><a href="#cb104-7" aria-hidden="true" tabindex="-1"></a>                                                  parallel_chains <span class="op">=</span> multiprocessing.cpu_count()))</span>
+<span id="cb104-8"><a href="#cb104-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(cgr_posterior.draws_df())</span>
+<span id="cb104-9"><a href="#cb104-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-10"><a href="#cb104-10" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> get_costs(insp_df, results_df, t <span class="op">=</span> <span class="fl">12.7</span>, cost_repair <span class="op">=</span> <span class="dv">10</span><span class="op">**</span><span class="dv">4</span>, cost_fail <span class="op">=</span> <span class="dv">10</span><span class="op">**</span><span class="dv">5</span>):</span>
+<span id="cb104-11"><a href="#cb104-11" aria-hidden="true" tabindex="-1"></a>  PoF_df <span class="op">=</span> pd.DataFrame(data <span class="op">=</span> {<span class="st">"anomaly"</span>: insp_df.anomaly_id.unique()})</span>
+<span id="cb104-12"><a href="#cb104-12" aria-hidden="true" tabindex="-1"></a>  PoF <span class="op">=</span> []<span class="op">;</span> cost <span class="op">=</span> []<span class="op">;</span> action <span class="op">=</span> []</span>
+<span id="cb104-13"><a href="#cb104-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> insp_df.anomaly_id.unique():</span>
+<span id="cb104-14"><a href="#cb104-14" aria-hidden="true" tabindex="-1"></a>      <span class="bu">id</span> <span class="op">=</span> <span class="st">"depth_true_i2["</span> <span class="op">+</span> <span class="bu">str</span>(i) <span class="op">+</span> <span class="st">"]"</span></span>
+<span id="cb104-15"><a href="#cb104-15" aria-hidden="true" tabindex="-1"></a>      depth <span class="op">=</span> np.array(results_df[<span class="bu">id</span>] <span class="op">+</span> results_df[<span class="st">"CGR_pp"</span>])</span>
+<span id="cb104-16"><a href="#cb104-16" aria-hidden="true" tabindex="-1"></a>      PoF.append((depth <span class="op">&gt;=</span> t).<span class="bu">sum</span>() <span class="op">/</span> <span class="bu">len</span>(depth))</span>
+<span id="cb104-17"><a href="#cb104-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb104-18"><a href="#cb104-18" aria-hidden="true" tabindex="-1"></a>  PoF_df[<span class="st">"PoF"</span>] <span class="op">=</span> np.array(PoF)</span>
+<span id="cb104-19"><a href="#cb104-19" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> i <span class="kw">in</span> PoF_df.PoF:</span>
+<span id="cb104-20"><a href="#cb104-20" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> i <span class="op">*</span> cost_fail <span class="op">&lt;</span> cost_repair:</span>
+<span id="cb104-21"><a href="#cb104-21" aria-hidden="true" tabindex="-1"></a>          cost.append(i <span class="op">*</span> cost_fail)</span>
+<span id="cb104-22"><a href="#cb104-22" aria-hidden="true" tabindex="-1"></a>          action.append(<span class="st">"No action"</span>)</span>
+<span id="cb104-23"><a href="#cb104-23" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span>:</span>
+<span id="cb104-24"><a href="#cb104-24" aria-hidden="true" tabindex="-1"></a>          cost.append(cost_repair)</span>
+<span id="cb104-25"><a href="#cb104-25" aria-hidden="true" tabindex="-1"></a>          action.append(<span class="st">"Repair"</span>)</span>
+<span id="cb104-26"><a href="#cb104-26" aria-hidden="true" tabindex="-1"></a>  PoF_df[<span class="st">"cost"</span>] <span class="op">=</span> np.array(cost)</span>
+<span id="cb104-27"><a href="#cb104-27" aria-hidden="true" tabindex="-1"></a>  PoF_df[<span class="st">"action"</span>] <span class="op">=</span> np.array(action)</span>
+<span id="cb104-28"><a href="#cb104-28" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span>(PoF_df)</span>
+<span id="cb104-29"><a href="#cb104-29" aria-hidden="true" tabindex="-1"></a>  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+</div>
+</div>
+</div>
+</div>
+<p>The decision analysis consists of identifying the expected optimal repairs to perform, based on an expected repair cost of <span class="math inline">\(\$10,000\)</span> and an expected failure cost, per anomaly of <span class="math inline">\(\$100,000\)</span>.</p>
+<div id="chunk_load_packages" class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-28-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-28-1" role="tab" aria-controls="tabset-28-1" aria-selected="true" href="">Python</a></li></ul>
+<div id="chunk_load_packages" class="tab-content">
+<div id="tabset-28-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-28-1-tab">
+<p>Solving the prior decision problem identifies for which anomalies a repair is expected to be worthwhile, as shown in <a href="#tbl-corrosion_model_inputs">Table&nbsp;3</a>. The total cost is the prior expected cost.</p>
+<div class="cell">
+<details>
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>model_data <span class="op">=</span> gen_model_data(insp_data)</span>
+<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>cgr_results <span class="op">=</span> corrosion_model(data <span class="op">=</span> model_data)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb105"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb105-1"><a href="#cb105-1" aria-hidden="true" tabindex="-1"></a>costs_df <span class="op">=</span> get_costs(insp_df <span class="op">=</span> insp_data, results_df <span class="op">=</span> cgr_results)</span>
-<span id="cb105-2"><a href="#cb105-2" aria-hidden="true" tabindex="-1"></a>prior_exp_cost <span class="op">=</span> costs_df.cost.<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>costs_df <span class="op">=</span> get_costs(insp_df <span class="op">=</span> insp_data, results_df <span class="op">=</span> cgr_results)</span>
+<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>prior_exp_cost <span class="op">=</span> costs_df.cost.<span class="bu">sum</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
 <div class="cell-output-display">
-<p><img src="DCE_guidance_files/figure-html/unnamed-chunk-86-1.png" class="img-fluid" width="672"></p>
+<div id="tbl-corrosion_model_inputs" class="anchored">
+<table class="table table-sm table-striped">
+<caption>Table 3: Expected Optimal Repair Plan for 10 Corrosion Anomalies</caption>
+<thead>
+<tr class="header">
+<th style="text-align: right;">Anomaly</th>
+<th style="text-align: right;">Cost, £</th>
+<th style="text-align: left;">Expected optimal action</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">2</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">10000</td>
+<td style="text-align: left;">Repair</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">4200</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">10000</td>
+<td style="text-align: left;">Repair</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">0</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">5600</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: left;">No action</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">10</td>
+<td style="text-align: right;">3400</td>
+<td style="text-align: left;">No action</td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
-<p>As shown in <a href="#fig-corrosion_depths">Figure&nbsp;16</a> the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.</p>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div id="fig-cgr" class="quarto-figure quarto-figure-center anchored">
+<figure class="figure">
+<p><img src="DCE_guidance_files/figure-html/fig-cgr-1.png" class="img-fluid figure-img" width="672"></p>
+<p></p><figcaption class="figure-caption">Figure 16: Probabilistic Estimate of Corrosion Growth Rate, mm/year</figcaption><p></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The estimated corrosion growth rate, as shown in <a href="#fig-cgr">Figure&nbsp;16</a>, was estimated using the measurements from the inspection data. As shown in <a href="#fig-corrosion_depths">Figure&nbsp;17</a> the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.</p>
+<p>The imputed corrosion depth at anomaly 4 was jointly estimated with the corrosion growth rate in the <code>Stan</code> model. It is a probabilistic estimate consistent with the data that <em>is</em> available, i.e.&nbsp;the inspection measurements from the other anomalies and the below prior model.</p>
+<p><span class="math display">\[
+d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
+\]</span></p>
+<p>This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation <span class="citation" data-cites="Reg&amp;OtherStories">(<a href="#ref-Reg&amp;OtherStories" role="doc-biblioref"><strong>Reg&amp;OtherStories?</strong></a>)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-corrosion_depths" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="DCE_guidance_files/figure-html/fig-corrosion_depths-1.png" class="img-fluid figure-img" width="576"></p>
-<p></p><figcaption class="figure-caption">Figure 16: Probabilistic Models for Imputed and Measured Corrosion Damage</figcaption><p></p>
+<p></p><figcaption class="figure-caption">Figure 17: Probabilistic Models for Imputed and Measured Corrosion Damage</figcaption><p></p>
 </figure>
 </div>
 </div>
 </div>
-<p>Solving the preposterior decision problem…</p>
+<p>Quantifying the expected value of returning the location of anomaly 4 and completing this measurement, requires sampling from the imputed prior model which effectively describes what is expected to be measured.</p>
+<p>Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb106"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb106-1"><a href="#cb106-1" aria-hidden="true" tabindex="-1"></a>depths_i1 <span class="op">=</span> np.array(model_data[<span class="st">"depth_i1"</span>])</span>
-<span id="cb106-2"><a href="#cb106-2" aria-hidden="true" tabindex="-1"></a>depths_i2 <span class="op">=</span> np.array(model_data[<span class="st">"depth_i2"</span>])</span>
-<span id="cb106-3"><a href="#cb106-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb106-4"><a href="#cb106-4" aria-hidden="true" tabindex="-1"></a>prepost_df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb106-5"><a href="#cb106-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> depth <span class="kw">in</span> np.sort(cgr_results[<span class="st">"depth_true_i2[4]"</span>]):</span>
-<span id="cb106-6"><a href="#cb106-6" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb106-7"><a href="#cb106-7" aria-hidden="true" tabindex="-1"></a>    model_data_iter <span class="op">=</span> model_data<span class="op">;</span> insp_data_iter <span class="op">=</span> insp_data</span>
-<span id="cb106-8"><a href="#cb106-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb106-9"><a href="#cb106-9" aria-hidden="true" tabindex="-1"></a>    depths_i2[<span class="dv">3</span>] <span class="op">=</span> depth    </span>
-<span id="cb106-10"><a href="#cb106-10" aria-hidden="true" tabindex="-1"></a>    model_data_iter[<span class="st">"depth_i2"</span>] <span class="op">=</span> depths_i2</span>
-<span id="cb106-11"><a href="#cb106-11" aria-hidden="true" tabindex="-1"></a>    model_data_iter[<span class="st">"ex_2"</span>] <span class="op">=</span> np.repeat(a <span class="op">=</span> <span class="dv">0</span>, repeats <span class="op">=</span> <span class="bu">len</span>(depths_i2))</span>
-<span id="cb106-12"><a href="#cb106-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb106-13"><a href="#cb106-13" aria-hidden="true" tabindex="-1"></a>    insp_data_iter.depth <span class="op">=</span> np.concatenate((depths_i1, depths_i2))</span>
-<span id="cb106-14"><a href="#cb106-14" aria-hidden="true" tabindex="-1"></a>    insp_data_iter.depth[<span class="dv">13</span>] <span class="op">=</span> depth</span>
-<span id="cb106-15"><a href="#cb106-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb106-16"><a href="#cb106-16" aria-hidden="true" tabindex="-1"></a>    prepost_df <span class="op">=</span> pd.concat((prepost_df, </span>
-<span id="cb106-17"><a href="#cb106-17" aria-hidden="true" tabindex="-1"></a>                            pd.DataFrame(data <span class="op">=</span> {<span class="st">"d_insp"</span>: depth, </span>
-<span id="cb106-18"><a href="#cb106-18" aria-hidden="true" tabindex="-1"></a>                                                 <span class="st">"cost"</span>: get_costs(insp_df <span class="op">=</span> insp_data_iter, </span>
-<span id="cb106-19"><a href="#cb106-19" aria-hidden="true" tabindex="-1"></a>                                                                   results_df <span class="op">=</span> corrosion_model(data <span class="op">=</span> model_data_iter)).cost.<span class="bu">sum</span>()}, </span>
-<span id="cb106-20"><a href="#cb106-20" aria-hidden="true" tabindex="-1"></a>                                        index <span class="op">=</span> [<span class="dv">0</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>depths_i1 <span class="op">=</span> np.array(model_data[<span class="st">"depth_i1"</span>])</span>
+<span id="cb107-2"><a href="#cb107-2" aria-hidden="true" tabindex="-1"></a>depths_i2 <span class="op">=</span> np.array(model_data[<span class="st">"depth_i2"</span>])</span>
+<span id="cb107-3"><a href="#cb107-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-4"><a href="#cb107-4" aria-hidden="true" tabindex="-1"></a>prepost_df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb107-5"><a href="#cb107-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> depth <span class="kw">in</span> np.sort(cgr_results[<span class="st">"depth_true_i2[4]"</span>]):</span>
+<span id="cb107-6"><a href="#cb107-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb107-7"><a href="#cb107-7" aria-hidden="true" tabindex="-1"></a>    model_data_iter <span class="op">=</span> model_data<span class="op">;</span> insp_data_iter <span class="op">=</span> insp_data</span>
+<span id="cb107-8"><a href="#cb107-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-9"><a href="#cb107-9" aria-hidden="true" tabindex="-1"></a>    depths_i2[<span class="dv">3</span>] <span class="op">=</span> depth    </span>
+<span id="cb107-10"><a href="#cb107-10" aria-hidden="true" tabindex="-1"></a>    model_data_iter[<span class="st">"depth_i2"</span>] <span class="op">=</span> depths_i2</span>
+<span id="cb107-11"><a href="#cb107-11" aria-hidden="true" tabindex="-1"></a>    model_data_iter[<span class="st">"ex_2"</span>] <span class="op">=</span> np.repeat(a <span class="op">=</span> <span class="dv">0</span>, repeats <span class="op">=</span> <span class="bu">len</span>(depths_i2))</span>
+<span id="cb107-12"><a href="#cb107-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-13"><a href="#cb107-13" aria-hidden="true" tabindex="-1"></a>    insp_data_iter.depth <span class="op">=</span> np.concatenate((depths_i1, depths_i2))</span>
+<span id="cb107-14"><a href="#cb107-14" aria-hidden="true" tabindex="-1"></a>    insp_data_iter.depth[<span class="dv">13</span>] <span class="op">=</span> depth</span>
+<span id="cb107-15"><a href="#cb107-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb107-16"><a href="#cb107-16" aria-hidden="true" tabindex="-1"></a>    prepost_df <span class="op">=</span> pd.concat((prepost_df, </span>
+<span id="cb107-17"><a href="#cb107-17" aria-hidden="true" tabindex="-1"></a>                            pd.DataFrame(data <span class="op">=</span> {<span class="st">"d_insp"</span>: depth, </span>
+<span id="cb107-18"><a href="#cb107-18" aria-hidden="true" tabindex="-1"></a>                                                 <span class="st">"cost"</span>: get_costs(insp_df <span class="op">=</span> insp_data_iter, </span>
+<span id="cb107-19"><a href="#cb107-19" aria-hidden="true" tabindex="-1"></a>                                                                   results_df <span class="op">=</span> corrosion_model(data <span class="op">=</span> model_data_iter)).cost.<span class="bu">sum</span>()}, </span>
+<span id="cb107-20"><a href="#cb107-20" aria-hidden="true" tabindex="-1"></a>                                        index <span class="op">=</span> [<span class="dv">0</span>])))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 <div class="cell">
@@ -2596,7 +2697,7 @@ Solving report
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb107"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb107-1"><a href="#cb107-1" aria-hidden="true" tabindex="-1"></a>VoInsp <span class="op">=</span> prior_exp_cost <span class="op">-</span> prepost_df.cost.mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb108"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb108-1"><a href="#cb108-1" aria-hidden="true" tabindex="-1"></a>VoInsp <span class="op">=</span> prior_exp_cost <span class="op">-</span> prepost_df.cost.mean()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 </div>
 </div>
@@ -4743,6 +4844,31 @@ flowchart LR
 
 ```
 
+The available inspection data is loaded in the below `Python` code. As well as the measurement, identifiers for the inspection, and anomaly are listed. Note that the second inspection was not completed at anomaly $4$. Sometimes inspections cannot be completed due to time, weather (or other safety constraints). In this case, this instance is labelled as missing data.
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using Pandas)
+
+quarto-executable-code-5450563D
+
+```python
+insp_data = pd.read_csv("data_files/inspection_data.csv")
+
+years = insp_data.t.unique()
+insps = insp_data.inspection.unique()
+locations = insp_data.location.unique()
+
+insp_data.head(n = 3)
+
+```
+
+:::
+
+A `Stan` model has been written that estimates the corrosion growth rate, in $mm/year$ for this population as the difference in the measured extent (depth) of the damage in $mm$, divided by the time interval between the measurements, in $years$. This probabilistic estimate is then use to forecast future growth for a defined time window, so that the probabilities of failure for each of the anomalies can be calculated, for the purpose of identifying where repairs are expected to be required.
+
+The model is set loaded below, along with some options for the sampling.
+
 ::: {#chunk_load_packages .panel-tabset}
 
 ## Python (using CmdStanPy)
@@ -4760,23 +4886,6 @@ def lnorm_params(mu, sigma):
 
 prior_depth_params = lnorm_params(10, 6)
 
-insp_data = pd.read_csv("data_files/inspection_data.csv")
-
-years = insp_data.t.unique()
-insps = insp_data.inspection.unique()
-locations = insp_data.location.unique()
-
-```
-
-:::
-
-::: {#chunk_load_packages .panel-tabset}
-
-## Python (using NumPy, Pandas, CmdStanPy)
-
-quarto-executable-code-5450563D
-
-```python
 def gen_model_data(inspection_df):
   model_data = {
   "N": inspection_df.shape[0],
@@ -4794,8 +4903,16 @@ def gen_model_data(inspection_df):
   "mu_depth_imp": prior_depth_params["meanlog"],
   "sigma_depth_imp": prior_depth_params["sdlog"]}
   return(model_data)
-  
+
 ```
+
+:::
+
+The below functions are used to extract results from the model:
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using NumPy, Pandas, CmdStanPy)
 
 quarto-executable-code-5450563D
 
@@ -4811,7 +4928,7 @@ def corrosion_model(data):
   
 def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10**5):
   PoF_df = pd.DataFrame(data = {"anomaly": insp_df.anomaly_id.unique()})
-  PoF = []; cost = []
+  PoF = []; cost = []; action = []
   for i in insp_df.anomaly_id.unique():
       id = "depth_true_i2[" + str(i) + "]"
       depth = np.array(results_df[id] + results_df["CGR_pp"])
@@ -4821,20 +4938,25 @@ def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10
   for i in PoF_df.PoF:
       if i * cost_fail &lt; cost_repair:
           cost.append(i * cost_fail)
+          action.append("No action")
       else:
           cost.append(cost_repair)
+          action.append("Repair")
   PoF_df["cost"] = np.array(cost)
+  PoF_df["action"] = np.array(action)
   return(PoF_df)
   
 ```
 
 :::
 
+The decision analysis consists of identifying the expected optimal repairs to perform, based on an expected repair cost of $\$10,000$ and an expected failure cost, per anomaly of $\$100,000$. 
+
 ::: {#chunk_load_packages .panel-tabset}
 
 ## Python
 
-Solving the prior decision problem...
+Solving the prior decision problem identifies for which anomalies a repair is expected to be worthwhile, as shown in @tbl-corrosion_model_inputs. The total cost is the prior expected cost. 
 
 quarto-executable-code-5450563D
 
@@ -4849,11 +4971,28 @@ prior_exp_cost = costs_df.cost.sum()
 
 ```
 
+quarto-executable-code-5450563D
+
+```r
+#| echo: false
+#| label: tbl-corrosion_model_inputs
+#| tbl-cap: "Expected Optimal Repair Plan for 10 Corrosion Anomalies"
+
+costs_df &lt;- reticulate::py$costs_df |&gt; 
+               dplyr::select(-c(PoF)) |&gt;
+               rename("Anomaly" = anomaly, "Cost, £" = cost, "Expected optimal action" = action)
+
+knitr::kable(costs_df)
+
+```
+
 
 quarto-executable-code-5450563D
 
 ```r
 #| echo: false
+#| label: fig-cgr
+#| fig-cap: "Probabilistic Estimate of Corrosion Growth Rate, mm/year"
 
 cgr_df &lt;- reticulate::py$cgr_results |&gt; as_tibble()
 
@@ -4882,8 +5021,15 @@ ggplot(data = cgr_df |&gt; dplyr::select(CGR_pp) |&gt; unnest())+
   theme(plot.background = element_rect(color = NA), legend.title = element_blank(), legend.position = "top")
 
 ```
+The estimated corrosion growth rate, as shown in @fig-cgr, was estimated using the measurements from the inspection data. As shown in @fig-corrosion_depths the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
 
-As shown in @fig-corrosion_depths the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
+The imputed corrosion depth at anomaly 4 was jointly estimated with the corrosion growth rate in the `Stan` model. It is a probabilistic estimate consistent with the data that *is* available, i.e. the inspection measurements from the other anomalies and the below prior model. 
+
+$$
+d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
+$$
+
+This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation @Reg&amp;OtherStories.
 
 quarto-executable-code-5450563D
 
@@ -4903,8 +5049,9 @@ ggplot(data = depth_df)+
 
 ```
 
+Quantifying the expected value of returning the location of anomaly 4 and completing this measurement, requires sampling from the imputed prior model which effectively describes what is expected to be measured.
 
-Solving the preposterior decision problem...
+Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.
 
 quarto-executable-code-5450563D
 

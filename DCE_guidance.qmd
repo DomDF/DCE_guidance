@@ -1781,6 +1781,29 @@ flowchart LR
 
 ```
 
+The available inspection data is loaded in the below `Python` code. As well as the measurement, identifiers for the inspection, and anomaly are listed. Note that the second inspection was not completed at anomaly $4$. Sometimes inspections cannot be completed due to time, weather (or other safety constraints). In this case, this instance is labelled as missing data.
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using Pandas)
+
+```{python}
+insp_data = pd.read_csv("data_files/inspection_data.csv")
+
+years = insp_data.t.unique()
+insps = insp_data.inspection.unique()
+locations = insp_data.location.unique()
+
+insp_data.head(n = 3)
+
+```
+
+:::
+
+A `Stan` model has been written that estimates the corrosion growth rate, in $mm/year$ for this population as the difference in the measured extent (depth) of the damage in $mm$, divided by the time interval between the measurements, in $years$. This probabilistic estimate is then use to forecast future growth for a defined time window, so that the probabilities of failure for each of the anomalies can be calculated, for the purpose of identifying where repairs are expected to be required.
+
+The model is set loaded below, along with some options for the sampling.
+
 ::: {#chunk_load_packages .panel-tabset}
 
 ## Python (using CmdStanPy)
@@ -1796,21 +1819,6 @@ def lnorm_params(mu, sigma):
 
 prior_depth_params = lnorm_params(10, 6)
 
-insp_data = pd.read_csv("data_files/inspection_data.csv")
-
-years = insp_data.t.unique()
-insps = insp_data.inspection.unique()
-locations = insp_data.location.unique()
-
-```
-
-:::
-
-::: {#chunk_load_packages .panel-tabset}
-
-## Python (using NumPy, Pandas, CmdStanPy)
-
-```{python}
 def gen_model_data(inspection_df):
   model_data = {
   "N": inspection_df.shape[0],
@@ -1828,8 +1836,16 @@ def gen_model_data(inspection_df):
   "mu_depth_imp": prior_depth_params["meanlog"],
   "sigma_depth_imp": prior_depth_params["sdlog"]}
   return(model_data)
-  
+
 ```
+
+:::
+
+The below functions are used to extract results from the model:
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Python (using NumPy, Pandas, CmdStanPy)
 
 ```{python}
 def corrosion_model(data):
@@ -1843,7 +1859,7 @@ def corrosion_model(data):
   
 def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10**5):
   PoF_df = pd.DataFrame(data = {"anomaly": insp_df.anomaly_id.unique()})
-  PoF = []; cost = []
+  PoF = []; cost = []; action = []
   for i in insp_df.anomaly_id.unique():
       id = "depth_true_i2[" + str(i) + "]"
       depth = np.array(results_df[id] + results_df["CGR_pp"])
@@ -1853,20 +1869,25 @@ def get_costs(insp_df, results_df, t = 12.7, cost_repair = 10**4, cost_fail = 10
   for i in PoF_df.PoF:
       if i * cost_fail < cost_repair:
           cost.append(i * cost_fail)
+          action.append("No action")
       else:
           cost.append(cost_repair)
+          action.append("Repair")
   PoF_df["cost"] = np.array(cost)
+  PoF_df["action"] = np.array(action)
   return(PoF_df)
   
 ```
 
 :::
 
+The decision analysis consists of identifying the expected optimal repairs to perform, based on an expected repair cost of $\$10,000$ and an expected failure cost, per anomaly of $\$100,000$. 
+
 ::: {#chunk_load_packages .panel-tabset}
 
 ## Python
 
-Solving the prior decision problem...
+Solving the prior decision problem identifies for which anomalies a repair is expected to be worthwhile, as shown in @tbl-corrosion_model_inputs. The total cost is the prior expected cost. 
 
 ```{python}
 #| output: false
@@ -1879,9 +1900,24 @@ prior_exp_cost = costs_df.cost.sum()
 
 ```
 
+```{r}
+#| echo: false
+#| label: tbl-corrosion_model_inputs
+#| tbl-cap: "Expected Optimal Repair Plan for 10 Corrosion Anomalies"
+
+costs_df <- reticulate::py$costs_df |> 
+               dplyr::select(-c(PoF)) |>
+               rename("Anomaly" = anomaly, "Cost, £" = cost, "Expected optimal action" = action)
+
+knitr::kable(costs_df)
+
+```
+
 
 ```{r}
 #| echo: false
+#| label: fig-cgr
+#| fig-cap: "Probabilistic Estimate of Corrosion Growth Rate, mm/year"
 
 cgr_df <- reticulate::py$cgr_results |> as_tibble()
 
@@ -1910,8 +1946,15 @@ ggplot(data = cgr_df |> dplyr::select(CGR_pp) |> unnest())+
   theme(plot.background = element_rect(color = NA), legend.title = element_blank(), legend.position = "top")
 
 ```
+The estimated corrosion growth rate, as shown in @fig-cgr, was estimated using the measurements from the inspection data. As shown in @fig-corrosion_depths the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
 
-As shown in @fig-corrosion_depths the precision with which the corrosion anomalies have been sized varied between the inspections. However, in both cases, there is less uncertainty about the size of a measured extent of damage, than an imputed extent.
+The imputed corrosion depth at anomaly 4 was jointly estimated with the corrosion growth rate in the `Stan` model. It is a probabilistic estimate consistent with the data that *is* available, i.e. the inspection measurements from the other anomalies and the below prior model. 
+
+$$
+d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
+$$
+
+This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation @Reg&OtherStories.
 
 ```{r}
 #| echo: false
@@ -1929,8 +1972,9 @@ ggplot(data = depth_df)+
 
 ```
 
+Quantifying the expected value of returning the location of anomaly 4 and completing this measurement, requires sampling from the imputed prior model which effectively describes what is expected to be measured.
 
-Solving the preposterior decision problem...
+Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.
 
 ```{python}
 #| output: false
