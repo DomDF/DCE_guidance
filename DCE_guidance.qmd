@@ -5,7 +5,9 @@ author: "Domenic Di Francesco, PhD, CEng"
 date: "November 2022"
 format:
   html:
-    theme: simplex
+    knitr: true 
+    theme: 
+      - simplex
     highlight-style: atom-one
     html-math-mathod: mathjax
     toc: true
@@ -58,8 +60,8 @@ from scipy import stats
 
 ```{R}
 library(tidyverse); library(fitdistrplus); library(boot)
-library(cmdstanr); library(copula); library(RHugin)
-library(lhs)
+library(cmdstanr); library(copula); library(ggthemes)
+library(lhs); library(parallel)
 
 ```
 
@@ -170,26 +172,36 @@ Many more samples are typically required for them to be considered a sufficient 
 ## Python (using SciPy)
 
 ```{python}
-probs = stats.qmc.LatinHypercube(1).random(10)
-stats.norm.ppf(probs, loc = 0, scale = 1)
+def lhs(n_samples, dim = 1):
+  probs = stats.qmc.LatinHypercube(dim).random(n_samples)
+  return probs
+  
+stats.norm.ppf(lhs(10), loc = 0, scale = 1)
 
 ```
 
 ## R (using lhs)
 
 ```{R}
-randomLHS(n = 10, k = 1) |>
-  qnorm(mean = 0, sd = 1)
+lhs <- function(n_samples, dim){
+  randomLHS(n = n_samples, k = dim) 
+}
+
+(lhs(10, 1) |> qnorm(mean = 0, sd = 1))[,1]
 
 ```
 ## Julia (using LatinHypercubeSampling)
 
 ```{julia}
-randomLHC(10 + 2, 1) |> 
-  x -> scaleLHC(x, [(0, 1)]) |>
-  x -> quantile(Normal(0, 1), x) |>
-  x -> filter(!in((-Inf, Inf)), x)
+function draw_lhs(dist, n::Int)
+    samples = randomLHC(n + 2, 1) |>
+        x -> scaleLHC(x, [(0, 1)]) |>
+        x -> quantile(dist, x)[:,1] |>
+        x -> filter(!∈((-Inf, Inf)), x)
+    return samples
+end
 
+draw_lhs(Normal(0, 1), 10)
 ```
 :::
 
@@ -199,7 +211,6 @@ The effect of latin hypercube sampling, when compared to standard (inverse-trans
 #| echo: false
 #| label: fig-it_lhs
 #| fig-cap: "Effect of sample size on methods of approximating a standard normal distribution"
-library(lhs)
 
 set.seed(seed = 1008); sampling_df <- tibble()
 
@@ -491,7 +502,7 @@ fitdist(data = strength_df$yield, distr = 'norm', method = 'mle')
 
 ## Julia (using Distributions)
 ```{julia}
-fit_mle(LogNormal, strength_df.yield)
+fit_mle(Normal, strength_df.yield)
 
 ```
 :::
@@ -1976,6 +1987,8 @@ Quantifying the expected value of returning the location of anomaly 4 and comple
 
 Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.
 
+This example is based on a published calculation @DiFrancesco2022, which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for *better quality* data. 
+
 ```{python}
 #| output: false
 #| eval: false
@@ -2009,10 +2022,12 @@ for depth in np.sort(cgr_results["depth_true_i2[4]"]):
 prepost_df = pd.read_csv("data_files/VoInsp.csv")
 ```
 
-The expected value of (an imperfect) inspection at the site of corrosion anomaly 4, can then be calculated.
+The expected value of (an imperfect) inspection at the site of corrosion anomaly 4, can then be calculated:
 
 ```{python}
 VoInsp = prior_exp_cost - prepost_df.cost.mean()
+
+
 
 ```
 
@@ -2032,6 +2047,12 @@ Key concepts:
  - subject matter expertise can be combined with data, and becomes especially important when data is limited.
  
  To discuss further, please contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk)
+
+# Acknowledgements
+
+list all contributors
+list all reviewers
+list any funding
 
 ...
 
