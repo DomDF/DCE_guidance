@@ -364,7 +364,8 @@ set.seed(seed = 240819); n_samples <- 10^6
 # TBC
 
 ```
-## Julia (using Distributions, Random)
+
+## Julia (using Distributions, Random, Copulas)
 
 ```{julia}
 #| output: false
@@ -473,17 +474,79 @@ There is a range of `r paste(signif(x = strength_df$yield |> max() - strength_df
 :::{.callout-note collapse="true"}
 ## Thought: Dealing with variability
 
-Engineers need to...
+Engineers need to incorporate uncertainty in quantities like material properties to ensure safety and efficiency. Using a *worst-case* or *conservative* value as as a threshold is convenient as it does not complicate the calculation, but it doesn't fully solve the problem because there may not be an obvious threshold value to take. Using the lowest yield strength value measured so far may incentivise minimal testing, as the value will only decrease (or remain constant) as more data is collected.
 
-nice to have a cut-off (threshold). then worst-case assessments are possible.
+One attempt to get around this, is provided in the guidance on identifying a suitable value of fracture toughness in a widely used structural integrity management standard [@BSI2015]. It introduces the procedure for a Minimum Of Three Equivalent (MOTE), estimate. When $3 \to 5$ measurements are available, engineers are advised to take the lowest value, then the second lowest value of $6 \to 10$ measurements, and the third lowest of $10 \to 15$ values.
 
-assessing cracks in welded structures [@BSI2015]
+By running some simulations of fracture toughness tests, below, it can be shown that even by using the MOTE value, there is generally more uncertainty with fewer tests. This results in relatively higher probabilities of non-conservative values such as those greater than the mean (indicated by the dashed line in @fig-MOTE) being selected.
 
-MOTE
+::: panel-tabset
+## Julia (using Distributions, Random)
+
+```{julia}
+#| output: false
+true_strength = Normal(130, 20)
+
+function MOTE(samples::Vector{Float64})
+    n = length(samples)
+    if n < 3 || n > 15
+        print("Between 3 and 15 samples required")
+    else 
+        MOTE = sort(samples)[Int(ceil(n/5))]
+    end
+    return MOTE
+end
+
+MOTE_df = DataFrame()
+for i in 1:100
+    meas_strength = rand(MersenneTwister(i), true_strength, 15)
+    for j in 3:length(meas_strength)
+        append!(MOTE_df, 
+                DataFrame(sim = i, 
+                          n_tests = j, 
+                          MOTE = MOTE(meas_strength[begin:j])))
+    end
+end
+```
+
+```{julia}
+#| echo: false
+@rput(MOTE_df); @rput(true_strength)
+```
 
 :::
 
-This variability can be approximated using probability distributions. These should be considered to be a model 
+```{r}
+#| echo: false
+#| label: fig-MOTE
+#| fig-cap: "Effect of Number of Tests on BS 7910 MOTE Estimate of Fracture Toughness"
+
+y_min <- 50; y_max <- 180; 
+
+MOTE_plot <- ggplot(data = MOTE_df)+
+  geom_point(mapping = aes(x = n_tests, y = MOTE), alpha = 1/8)+
+  geom_hline(mapping = aes(yintercept = true_strength$μ), alpha = 1/2, lty = 2)+
+  scale_x_continuous(name = "Number of Toughness Measurements", 
+                     breaks = seq(from = min(MOTE_df$n_tests), to = max(MOTE_df$n_tests), by = 1))+
+  scale_y_continuous(name = expression(paste("MOTE, N·",~mm^{-3/2})), limits = c(y_min, y_max))+
+  ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
+  theme(legend.title = element_blank(), plot.background = element_rect(colour = NA))
+
+dist_plot <- ggplot(data = NULL)+
+  geom_function(fun = dnorm, args = list(mean = true_strength$μ, sd = true_strength$σ))+
+  geom_vline(mapping = aes(xintercept = true_strength$μ), alpha = 1/2, lty = 2)+
+  xlim(y_min, y_max)+
+  coord_flip()+
+  theme_void()
+
+library(patchwork)
+(MOTE_plot + dist_plot) + plot_layout(widths = c(4, 1))
+
+```
+
+:::
+
+This variability can be approximated using probability distributions. Below, shows how a Normal distribution can be used to approximate the uncertainty in material strength, based on the data in @tbl-strength_data. 
 
 ::: panel-tabset
 ## Python (using SciPy)
@@ -507,7 +570,7 @@ fit_mle(Normal, strength_df.yield)
 ```
 :::
 
-These distribution parameters represent those with the highest score (likelihood) of the range considered. If the standard deviation was any higher, the likelihood of any values near the mean would be reduced, and if it was any lower the likelihood of any data at the tails would be reduced. Similarly, if the mean was any higher, the likelihood of any lower values would be reduced. So there is a trade-off here, and maximum likelihood estimates will provide the values that maximise the product of the likelihoods (or the sum of the log-likelihoods) for the data that is being used to fit the distribution.
+These distribution parameters (mean, $\mu$ and standard deviation, $\sigma$) represent those with the highest score (likelihood) of the range considered. If the standard deviation was any higher, the likelihood of any values near the mean would be reduced, and if it was any lower the likelihood of any data at the tails would be reduced. Similarly, if the mean was any higher, the likelihood of any lower values would be reduced. So there is a trade-off here, and maximum likelihood estimates will provide the values that maximise the product of the likelihoods (or the sum of the log-likelihoods) for the data that is being used to fit the distribution.
 
 However, there may often not be a clear maximum likelihood, particularly when estimating distribution parameters from a small dataset. In these cases the *statistical* uncertainty results in many possible values being credible (or having a similar likelihood). These should not be dismissed, and certainly not before there is enough evidence for a model to be confident of it's maximum likelihood estimates.
 
@@ -517,7 +580,54 @@ The reason engineers pay for material tests, inspection activities and sensing s
 
 The uncertainty that is associated with limited amounts of data is often referred to as *statistical* or *epistemic* uncertainty. It is distinct from *aleatory* uncertainty, which is the variability that is inherent in the problem, no matter how many measurements are available.
 
-Since statistical uncertainty can be reduced by collecting more data, there are ways to intelligently identify when it is expected to be worthwhile paying more data, and where the point of diminishing returns is. The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful.
+Consider how the maximum likelihood estimates of distribution parameters in the above code chunk evolve, as more data is made available. As shown in @fig-MLE, the mean value changes significantly before converging, but the standard error does not diminish.
+
+::: panel-tabset
+## R (using fitdistrplus)
+
+```{r}
+mle_df <- tibble()
+for(n in seq(from = 2, to = nrow(strength_df), by = 1)){
+  available_data <- strength_df$yield[1:n]
+  mle <- fitdist(data = available_data, distr = 'norm', method = 'mle')
+  mle_df <- bind_rows(mle_df, tibble(n_tests = n, 
+                                     mean = mle$estimate[1], sd = mle$estimate[2],
+                                     mean_se = mle$sd[1], sd_se = mle$sd[2]))
+}
+
+```
+
+```{r}
+#| echo: false
+#| label: fig-MLE
+#| fig-cap: "Effect of Number of Tests on Maximum Likelihood Estimate of Distribution Parameters"
+
+ggplot(data = mle_df |>
+         pivot_longer(cols = c(mean, sd), names_to = "Parameter") |>
+         mutate(error = case_when(
+           Parameter == "mean" ~ mean_se,
+           Parameter == "sd" ~ sd_se)) |> dplyr::select(-c(mean_se, sd_se)) |>
+         mutate(Parameter = case_when(
+           Parameter == "mean" ~ "\u03bc",
+           Parameter == "sd" ~ "\u03c3")),
+       mapping = aes(x = n_tests, y = value))+
+  geom_pointrange(mapping = aes(ymin = value - error, ymax = value + error, 
+                                shape = "MLE ± std. error"), alpha = 1/2)+
+  scale_shape_manual(values = c(1))+
+  geom_line(alpha = 1/4)+
+  facet_wrap(facets = ~ Parameter, scales = "free_y")+
+  scale_x_continuous(name = "Number of Strength Measurements")+
+  scale_y_continuous(name = "Maximum Likelihood Estimate, MPa")+
+  ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
+  theme(legend.title = element_blank(), plot.background = element_rect(colour = NA),
+        strip.text = element_text(family = "Cambria"), legend.position = "top")
+
+```
+:::
+
+A distribution based on the maximum likelihood estimates, which could be used for prediction, varies a lot. Rather than using point values of parameters that move around as more data becomes available, it is preferable to quantify the statistical uncertainty in these estimates so that the effect of collecting additional data can be accounted for, allowing for the identification of when it is expected to be worthwhile paying for more data. 
+
+The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful.
 :::
 
 Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can mean ac and this distinction is important when they are being used for decision support. 
@@ -2045,6 +2155,7 @@ Key concepts:
  - arrive at consistent and coherent decisions, that can be understood, justified, and repeated
  - Example applications here are focused on identifying data requirements
  - subject matter expertise can be combined with data, and becomes especially important when data is limited.
+ <!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. -->
  
  To discuss further, please contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk)
 
