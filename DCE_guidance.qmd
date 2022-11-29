@@ -44,7 +44,7 @@ The principles of data-centric engineering are not new. Engineers have always ha
 
 ## How to use this document
 
-This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
+This is a computational document that includes chunks of `Python`, `R`, and `Julia` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
 
 ::: {#chunk_load_packages .panel-tabset}
 ## Load Python Packages
@@ -95,11 +95,10 @@ Some notable examples of high consequence spreadsheet errors are recorded by the
 
 ## Some other Published Guidance for Engineers
 
- - HSE document
- - BS 7910 Annex K
- - Nuclear working group
- - JCSS
- - Textbooks (Jordaan + Benjamin&Cornell offer an engineering perspective)
+ - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@HSE2002]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of ... . It also lists various limitations of probabilistic methods, the status of which is not 
+ - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry [@NuclearWorkingGroup] has similar limitations.
+ - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@COSTActionTU1402]. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
+ - As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014, @Jordaan2005, @Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
 
 # Uncertainty in the Built Environment
 
@@ -745,7 +744,7 @@ strength_fit <- strength_model$sample(data = strength_data, seed = 1234,
 ```
 :::
 
-Processing results...
+After sampling from the fitted model, it is necessary to extract (and process) the results, so that they can be used to make predictions. Below are some suggested methods of achieving this.
 
 ::: panel-tabset
 ## Python
@@ -802,13 +801,13 @@ Risk based inspection standards (such as API 580) often acknowledge this differe
 :::
 
 
-...There are many alternative PPLs available to engineers. One example is the Turing library, written for Julia users. The model can be specified using the `@model` macro, as shown below:
+There are many alternative probabilistic programming languages available to engineers. One example is the `Turing` library, written for `Julia` users. The model can be specified using the `@model` macro, as shown below:
 
 ::: panel-tabset
 ## Julia (using Turing)
 
 ```{julia}
-@model function yield_model(;yield_strength::Vector{Float64})
+@model function yield_model(yield_strength::Vector{Float64})
     
     σ ~ Exponential(10)
     μ ~ Normal(350, 50)
@@ -825,7 +824,7 @@ Which can then be run to generate a data frame of samples from the joint posteri
 
 ```{julia}
 n_draws = 1000; n_chains = 4; sampler = NUTS()
-posterior_df = yield_model(yield_strength = strength_df.yield) |>
+posterior_df = yield_model(strength_df.yield) |>
     x -> sample(x, sampler, MCMCThreads(), n_draws, n_chains) |>
     x -> DataFrame(x) |>
     x -> @select(x, :chain, :iteration, :σ, :μ)
