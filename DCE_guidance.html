@@ -214,7 +214,7 @@ div.csl-indent {
 </section>
 <section id="how-to-use-this-document" class="level2" data-number="1.2">
 <h2 data-number="1.2" class="anchored" data-anchor-id="how-to-use-this-document"><span class="header-section-number">1.2</span> How to use this document</h2>
-<p>This is a computational document that includes chunks of <code>Python</code> and <code>R</code> code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.</p>
+<p>This is a computational document that includes chunks of <code>Python</code>, <code>R</code>, and <code>Julia</code> code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.</p>
 <div id="chunk_load_packages" class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-1-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-1" role="tab" aria-controls="tabset-1-1" aria-selected="true" href="">Load Python Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-2" role="tab" aria-controls="tabset-1-2" aria-selected="false" href="">Load R Packages</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-1-3-tab" data-bs-toggle="tab" data-bs-target="#tabset-1-3" role="tab" aria-controls="tabset-1-3" aria-selected="false" href="">Load Julia Packages</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
@@ -279,11 +279,10 @@ Tip: Loading packages
 <section id="some-other-published-guidance-for-engineers" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="some-other-published-guidance-for-engineers"><span class="header-section-number">1.3</span> Some other Published Guidance for Engineers</h2>
 <ul>
-<li>HSE document</li>
-<li>BS 7910 Annex K</li>
-<li>Nuclear working group</li>
-<li>JCSS</li>
-<li>Textbooks (Jordaan + Benjamin&amp;Cornell offer an engineering perspective)</li>
+<li>The UK Health &amp; Safety Executive produced a guidance document on the use of probabilistic methods in engineering <span class="citation" data-cites="HSE2002">(<a href="#ref-HSE2002" role="doc-biblioref"><strong>HSE2002?</strong></a>)</span>. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of … . It also lists various limitations of probabilistic methods, the status of which is not</li>
+<li>BS 7910 is a widely used industrial standard for assessing damage in welded steel structures <span class="citation" data-cites="BSI2015">(<a href="#ref-BSI2015" role="doc-biblioref"><strong>BSI2015?</strong></a>)</span>. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry <span class="citation" data-cites="NuclearWorkingGroup">(<a href="#ref-NuclearWorkingGroup" role="doc-biblioref"><strong>NuclearWorkingGroup?</strong></a>)</span> has similar limitations.</li>
+<li>The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety <span class="citation" data-cites="JCSS">(<a href="#ref-JCSS" role="doc-biblioref"><strong>JCSS?</strong></a>)</span>. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems <span class="citation" data-cites="COSTActionTU1402">(<a href="#ref-COSTActionTU1402" role="doc-biblioref"><strong>COSTActionTU1402?</strong></a>)</span>. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.</li>
+<li>As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges <span class="citation" data-cites="Benjamin2014">(<a href="#ref-Faber2012" role="doc-biblioref"><strong>Faber2012?</strong></a>)</span>. These books all consider, to some extent, quantification of the expected value of data to engineers.</li>
 </ul>
 </section>
 </section>
@@ -337,8 +336,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([-0.79325974, -0.16409328, -0.90184846,  0.18910865, -0.4919401 ,
-        0.78309238,  0.1506632 , -0.32420944,  0.0124721 ,  0.14222826])</code></pre>
+<pre><code>array([ 0.21935884,  1.18761392, -0.57413664, -0.66477812,  0.17299405,
+       -1.10180763,  0.76865789, -0.12046295, -0.60854191, -0.46620331])</code></pre>
 </div>
 </div>
 </div>
@@ -349,8 +348,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -0.1964812  0.1434593  0.2083425  0.0663685  0.7075707  0.5915336
- [7]  0.6522314 -0.4850917  1.5805456 -0.9217851</code></pre>
+<pre><code> [1] -1.22609282  0.57104429  1.76724770 -0.37535771  1.41411704 -0.74545028
+ [7]  1.11755979  0.02321079  0.20211214 -0.15312385</code></pre>
 </div>
 </div>
 </div>
@@ -362,16 +361,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
-  1.1652456284854724
- -0.4523563403510944
-  0.890536820604333
- -1.660513870477934
-  0.9164436104284203
-  0.6378520219332671
-  0.22340890352025253
- -0.9571772659713036
- -0.40551512626747566
-  1.5807343075132476</code></pre>
+  1.872497126717783
+  2.141144819338968
+ -0.9095258539003622
+  0.1357260197969542
+ -0.3520296795662094
+ -1.0684715778194478
+ -0.2821373671689871
+  1.3011413665047544
+ -1.9747738728786233
+ -0.5387681256595233</code></pre>
 </div>
 </div>
 </div>
@@ -392,16 +391,16 @@ Thought: Using Probabilities
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>stats.norm.ppf(lhs(<span class="dv">10</span>), loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([[-1.88314065],
-       [ 1.40465107],
-       [-0.85873142],
-       [-0.44550013],
-       [-0.01431424],
-       [ 0.77787535],
-       [ 0.02001153],
-       [ 1.06086556],
-       [-0.72754951],
-       [ 0.28855272]])</code></pre>
+<pre><code>array([[ 1.1884514 ],
+       [-0.88739547],
+       [ 1.74898789],
+       [-0.45417922],
+       [ 0.00239496],
+       [-0.01737475],
+       [-1.38386043],
+       [ 0.32914538],
+       [-0.61371922],
+       [ 0.77650686]])</code></pre>
 </div>
 </div>
 </div>
@@ -416,8 +415,8 @@ Thought: Using Probabilities
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>(<span class="fu">lhs</span>(<span class="dv">10</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">qnorm</span>(<span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>))[,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -1.08427638 -0.70166692 -0.07117505 -0.32258729  0.68813007  1.41043064
- [7]  0.47430567 -1.73958652  0.96589275  0.17104310</code></pre>
+<pre><code> [1] -0.05712888  1.03098255  0.35896343 -0.43115970  1.32431433 -1.23310860
+ [7]  0.18329909  0.53813878 -0.80451130 -2.06470145</code></pre>
 </div>
 </div>
 </div>
@@ -443,16 +442,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
- -0.6045853465832374
+  0.6045853465832374
  -1.3351777361189363
- -0.3487556955170447
- -0.9084578685373852
-  0.3487556955170447
-  0.9084578685373853
-  0.11418529432142821
   1.3351777361189363
+ -0.6045853465832374
+  0.3487556955170447
+  0.11418529432142821
+ -0.9084578685373852
+  0.9084578685373853
  -0.11418529432142835
-  0.6045853465832374</code></pre>
+ -0.3487556955170447</code></pre>
 </div>
 </div>
 </div>
@@ -860,7 +859,7 @@ Thought: Dealing with variability
 <span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n <span class="op">&lt;</span> <span class="fl">3</span> <span class="op">||</span> n <span class="op">&gt;</span> <span class="fl">15</span></span>
 <span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">print</span>(<span class="st">"Between 3 and 15 samples required"</span>)</span>
 <span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> </span>
-<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>        MOTE <span class="op">=</span> <span class="fu">sort</span>(samples)[n <span class="op">|&gt;</span> x <span class="op">-&gt;</span> <span class="fu">Int</span>(<span class="fu">ceil</span>(x<span class="op">/</span><span class="fl">5</span>))]</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>        MOTE <span class="op">=</span> <span class="fu">sort</span>(samples)[<span class="fu">Int</span>(<span class="fu">ceil</span>(n<span class="op">/</span><span class="fl">5</span>))]</span>
 <span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">end</span></span>
 <span id="cb32-10"><a href="#cb32-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> MOTE</span>
 <span id="cb32-11"><a href="#cb32-11" aria-hidden="true" tabindex="-1"></a><span class="kw">end</span></span>
@@ -959,7 +958,7 @@ Thought: Collecting Data Reduces Uncertainty
 <p>The uncertainty that is associated with limited amounts of data is often referred to as <em>statistical</em> or <em>epistemic</em> uncertainty. It is distinct from <em>aleatory</em> uncertainty, which is the variability that is inherent in the problem, no matter how many measurements are available.</p>
 <p>Consider how the maximum likelihood estimates of distribution parameters in the above code chunk evolve, as more data is made available. As shown in <a href="#fig-MLE">Figure&nbsp;4</a>, the mean value changes significantly before converging, but the standard error does not diminish.</p>
 <div class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true" href="">R (using FitDistrPlus)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-9-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-9-1" role="tab" aria-controls="tabset-9-1" aria-selected="true" href="">R (using fitdistrplus)</a></li></ul>
 <div class="tab-content">
 <div id="tabset-9-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-9-1-tab">
 <div class="cell">
@@ -1014,7 +1013,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>ConfidenceInterval(low=379.7407347229999, high=402.3408620874999)</code></pre>
+<pre><code>ConfidenceInterval(low=378.69681319537483, high=401.26329786687484)</code></pre>
 </div>
 </div>
 </div>
@@ -1058,7 +1057,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">confint</span>(x, <span class="fu">BasicConfInt</span>(<span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>((5.965508668241968, 5.934492372265429, 5.994429442468765),)</code></pre>
+<pre><code>((5.965508668241968, 5.936359886987154, 5.994085759722825),)</code></pre>
 </div>
 </div>
 </div>
@@ -1137,7 +1136,7 @@ Thought: Collecting Data Reduces Uncertainty
 </div>
 </div>
 </div>
-<p>Processing results…</p>
+<p>After sampling from the fitted model, it is necessary to extract (and process) the results, so that they can be used to make predictions. Below are some suggested methods of achieving this.</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-13-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-1" role="tab" aria-controls="tabset-13-1" aria-selected="true" href="">Python</a></li><li class="nav-item" role="presentation"><a class="nav-link" id="tabset-13-2-tab" data-bs-toggle="tab" data-bs-target="#tabset-13-2" role="tab" aria-controls="tabset-13-2" aria-selected="false" href="">R</a></li></ul>
 <div class="tab-content">
@@ -1224,7 +1223,7 @@ Thought: Data vs.&nbsp;Information
 </div>
 </div>
 </div>
-<p>…There are many alternative PPLs available to engineers. One example is the Turing library, written for Julia users. The model can be specified using the <code>@model</code> macro, as shown below:</p>
+<p>There are many alternative probabilistic programming languages available to engineers. One example is the <code>Turing</code> library, written for <code>Julia</code> users. The model can be specified using the <code>@model</code> macro, as shown below:</p>
 <div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true" href="">Julia (using Turing)</a></li></ul>
 <div class="tab-content">
@@ -1232,7 +1231,7 @@ Thought: Data vs.&nbsp;Information
 <div class="cell">
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@model</span> <span class="kw">function</span> <span class="fu">yield_model</span>(;yield_strength<span class="op">::</span><span class="dt">Vector{Float64}</span>)</span>
+<div class="sourceCode cell-code" id="cb59"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb59-1"><a href="#cb59-1" aria-hidden="true" tabindex="-1"></a><span class="pp">@model</span> <span class="kw">function</span> <span class="fu">yield_model</span>(yield_strength<span class="op">::</span><span class="dt">Vector{Float64}</span>)</span>
 <span id="cb59-2"><a href="#cb59-2" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb59-3"><a href="#cb59-3" aria-hidden="true" tabindex="-1"></a>    σ <span class="op">~</span> <span class="fu">Exponential</span>(<span class="fl">10</span>)</span>
 <span id="cb59-4"><a href="#cb59-4" aria-hidden="true" tabindex="-1"></a>    μ <span class="op">~</span> <span class="fu">Normal</span>(<span class="fl">350</span>, <span class="fl">50</span>)</span>
@@ -1259,7 +1258,7 @@ Thought: Data vs.&nbsp;Information
 </div>
 <details>
 <summary>Code</summary>
-<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>posterior_df <span class="op">=</span> <span class="fu">yield_model</span>(yield_strength <span class="op">=</span> strength_df.yield) <span class="op">|&gt;</span></span>
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode julia code-with-copy"><code class="sourceCode julia"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>posterior_df <span class="op">=</span> <span class="fu">yield_model</span>(strength_df.yield) <span class="op">|&gt;</span></span>
 <span id="cb63-2"><a href="#cb63-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">sample</span>(x, sampler, <span class="fu">MCMCThreads</span>(), n_draws, n_chains) <span class="op">|&gt;</span></span>
 <span id="cb63-3"><a href="#cb63-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">DataFrame</span>(x) <span class="op">|&gt;</span></span>
 <span id="cb63-4"><a href="#cb63-4" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="pp">@select</span>(x, <span class="op">:</span>chain, <span class="op">:</span>iteration, <span class="op">:</span>σ, <span class="op">:</span>μ)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -1269,22 +1268,22 @@ Thought: Data vs.&nbsp;Information
   Row │ chain  iteration  σ         μ
       │ Int64  Int64      Float64   Float64
 ──────┼─────────────────────────────────────
-    1 │     1        501   4.9473   346.842
-    2 │     1        502   3.45049  344.35
-    3 │     1        503   3.45049  344.35
-    4 │     1        504   2.70012  344.113
-    5 │     1        505   3.37324  343.961
-    6 │     1        506   3.33378  343.714
-    7 │     1        507   3.33378  343.714
-    8 │     1        508   4.73876  342.055
+    1 │     1        501  18.8438   304.178
+    2 │     1        502  15.3102   348.018
+    3 │     1        503   7.56586  348.482
+    4 │     1        504  16.2361   343.855
+    5 │     1        505  15.2017   339.295
+    6 │     1        506  19.9309   352.48
+    7 │     1        507  23.1699   366.65
+    8 │     1        508   9.01912  358.684
   ⋮   │   ⋮        ⋮         ⋮         ⋮
- 3994 │     4       1494   1.79551  342.546
- 3995 │     4       1495   1.79551  342.546
- 3996 │     4       1496   1.79551  342.546
- 3997 │     4       1497   1.79551  342.546
- 3998 │     4       1498   1.79551  342.546
- 3999 │     4       1499   1.79551  342.546
- 4000 │     4       1500   1.79551  342.546
+ 3994 │     4       1494  20.1888   349.134
+ 3995 │     4       1495   5.53399  333.838
+ 3996 │     4       1496  10.5133   344.337
+ 3997 │     4       1497   6.37646  346.957
+ 3998 │     4       1498   6.80054  339.555
+ 3999 │     4       1499   3.7022   342.888
+ 4000 │     4       1500   4.74883  342.354
                            3985 rows omitted</code></pre>
 </div>
 </div>
@@ -2153,8 +2152,8 @@ Solving report
                     0 (bound viol.)
                     0 (int. viol.)
                     0 (row viol.)
-  Timing            0.00 (total)
-                    0.00 (presolve)
+  Timing            0.01 (total)
+                    0.01 (presolve)
                     0.00 (postsolve)
   Nodes             0
   LP iterations     0 (total)
@@ -3048,7 +3047,7 @@ The principles of data-centric engineering are not new. Engineers have always ha
 
 ## How to use this document
 
-This is a computational document that includes chunks of `Python` and `R` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
+This is a computational document that includes chunks of `Python`, `R`, and `Julia` code necessary to analyse the data, and solve the decision problems in the various examples. To achieve this, various libraries/packages have been used, and these will need to be installed and loaded for the code to run.
 
 ::: {#chunk_load_packages .panel-tabset}
 ## Load Python Packages
@@ -3105,11 +3104,10 @@ Some notable examples of high consequence spreadsheet errors are recorded by the
 
 ## Some other Published Guidance for Engineers
 
- - HSE document
- - BS 7910 Annex K
- - Nuclear working group
- - JCSS
- - Textbooks (Jordaan + Benjamin&amp;Cornell offer an engineering perspective)
+ - The UK Health &amp; Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@HSE2002]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of ... . It also lists various limitations of probabilistic methods, the status of which is not 
+ - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry [@NuclearWorkingGroup] has similar limitations.
+ - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@COSTActionTU1402]. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
+ - As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014, @Jordaan2005, @Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
 
 # Uncertainty in the Built Environment
 
@@ -3645,7 +3643,7 @@ The uncertainty that is associated with limited amounts of data is often referre
 Consider how the maximum likelihood estimates of distribution parameters in the above code chunk evolve, as more data is made available. As shown in @fig-MLE, the mean value changes significantly before converging, but the standard error does not diminish.
 
 ::: panel-tabset
-## R (using FitDistrPlus)
+## R (using fitdistrplus)
 
 quarto-executable-code-5450563D
 
@@ -3824,7 +3822,7 @@ strength_fit &lt;- strength_model$sample(data = strength_data, seed = 1234,
 ```
 :::
 
-Processing results...
+After sampling from the fitted model, it is necessary to extract (and process) the results, so that they can be used to make predictions. Below are some suggested methods of achieving this.
 
 ::: panel-tabset
 ## Python
@@ -3887,7 +3885,7 @@ Risk based inspection standards (such as API 580) often acknowledge this differe
 :::
 
 
-...There are many alternative PPLs available to engineers. One example is the Turing library, written for Julia users. The model can be specified using the `@model` macro, as shown below:
+There are many alternative probabilistic programming languages available to engineers. One example is the `Turing` library, written for `Julia` users. The model can be specified using the `@model` macro, as shown below:
 
 ::: panel-tabset
 ## Julia (using Turing)
@@ -3895,7 +3893,7 @@ Risk based inspection standards (such as API 580) often acknowledge this differe
 quarto-executable-code-5450563D
 
 ```julia
-@model function yield_model(;yield_strength::Vector{Float64})
+@model function yield_model(yield_strength::Vector{Float64})
     
     σ ~ Exponential(10)
     μ ~ Normal(350, 50)
@@ -3914,7 +3912,7 @@ quarto-executable-code-5450563D
 
 ```julia
 n_draws = 1000; n_chains = 4; sampler = NUTS()
-posterior_df = yield_model(yield_strength = strength_df.yield) |&gt;
+posterior_df = yield_model(strength_df.yield) |&gt;
     x -&gt; sample(x, sampler, MCMCThreads(), n_draws, n_chains) |&gt;
     x -&gt; DataFrame(x) |&gt;
     x -&gt; @select(x, :chain, :iteration, :σ, :μ)
