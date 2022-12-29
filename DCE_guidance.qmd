@@ -29,14 +29,14 @@ bibliography: references.bib
 
 ## Purpose of this Document
 
-The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in safety and efficiency of the built environment. However, understanding the quantity and quality required will continue to be a challenge to engineers. For instance:
+The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in the safety and efficiency of the built environment. However, understanding the quantity and quality of data required will continue to be a challenge to engineers. For instance:
 
- * Should a sensing systems be retrofit to an existing structure? 
+ * Should sensing systems be retrofit to existing structures? 
  * If so, how precise and how reliable do they need to be? 
  * How can we value data from smart meters? 
- * Which combinations of available data collection options can best support decision making?
+ * To what extent does measuring building occupancy help mitigate the risk of infection from airborne disease?
 
-The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the current availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
+The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the recent advancements in the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
 <q> Uncertainty accompanies our lives. Coherent modelling of uncertainties for decision-making is essential in engineering and related disciplines.
 
@@ -91,18 +91,18 @@ Such calculations could also be performed using spreadsheet software. The primar
  - Spreadsheet software has reproducibility challenges. Data can be difficult to distinguish from calculated quantities, and the sequence of calculations can also be difficult to identify. 
  - Calculations using spreadsheets are often unreliable. Errors *arise* in spreadsheets for many reasons, such as obscuring (or deleting) data, incorrect assumptions regarding data types, uninterpretable functions, and automatic filling. Errors often *remain* in spreadsheets due to the challenges associated with testing, documenting and version control.
 
-Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group [(EuSpRiG)](http://www.eusprig.org) and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) be found in a presentation from Monash University, [here](https://www.youtube.com/watch?v=-NuTlczV72Q&t=35s).
+Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group [(EuSpRiG)](http://www.eusprig.org) and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) can be found in a presentation from Monash University, [here](https://www.youtube.com/watch?v=-NuTlczV72Q&t=35s).
 
 ## Some other Published Guidance for Engineers
 
- - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@HSE2002]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of ... . It also lists various limitations of probabilistic methods, the status of which is not 
+ - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@HSE2002]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
  - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry [@NuclearWorkingGroup] has similar limitations.
  - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@COSTActionTU1402]. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
  - As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014, @Jordaan2005, @Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
 
 # Uncertainty in the Built Environment
 
-Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
+Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, (though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
 
 Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a *safe* or *characteristic* value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.
 
@@ -204,7 +204,7 @@ draw_lhs(Normal(0, 1), 10)
 ```
 :::
 
-The effect of latin hypercube sampling, when compared to standard (inverse-transform, Monte Carlo sampling) methods is shown in @fig-it_lhs.
+Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) [@Olsson2003]. The effect of this is shown in  in @fig-it_lhs.
 
 ```{R}
 #| echo: false
@@ -333,7 +333,7 @@ In the above, the resistance parameters of the components are independent. This 
 
 One method for achieving this is to use copula functions [@copula]. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.
 
-Copulas can be used to model complex dependency, for example weakly dependent at relatively low values and highly dependent at relatively high values (or vice versa). In this case a Gaussian copula is used, which can only model linear dependency using correlation coefficients $\rho$. 
+Copulas can be used to model complex dependency, for example weakly dependent at relatively low values and highly dependent at relatively high values (or vice versa). In this case a Gaussian copula is used, which can only model linear dependency using correlation coefficients $\rho$. Note that copulas (including Gaussian copulas) can be used to describe dependency between parameters, for any uni-variate (marginal) distributions. The resulting distribution may not be possible to define, and use in calculations, without copulas.
 
 $$
 \rho_{R_{1}, R_{2}} = 0.8
@@ -404,13 +404,13 @@ pof
 ```
 :::
 
-Note that the probability of failure reduces when accounting for this dependency. Since failure is defined by the resistance of the components being lower than an applied load, ensuring that low resistances occur together result in fewer simulations that predict failure. Conversely, if multiple components were connected in parallel (where system failure requires all of the components to fail) increasing the dependency in the resistance properties increases the probability of failure as weak components occurring together is relatively more common with this Gaussian copula model.
+Note that the probability of failure reduces when accounting for this dependency. Since failure is defined by the resistance of the components being lower than an applied load, ensuring that low resistances occur together result in fewer simulations that predict failure. Conversely, if multiple components were connected in parallel (where system failure requires all of the components to fail) increasing the dependency in the resistance properties increases the probability of failure as weak components occurring together is relatively more common with this model.
  
 A comprehensive introduction to structural reliability methods is presented in [@Melchers2018]. This book also includes some perceived challenges which are discussed later in this document.
 
 ## Statistical Uncertainty
 
-So far this document has introduced the use of probabilistic models to describe uncertainty inherent to simple systems (sometimes called *aleatory* uncertainty). The second key source of uncertainty in engineering calculations is the statistical uncertainty associated with small, imperfect datasets (sometimes called *epistemic* uncertainty).
+So far this document has introduced the use of probabilistic models to describe uncertainty inherent to simple systems (sometimes called *aleatory* uncertainty). The second key source of uncertainty in engineering calculations is the statistical uncertainty associated with small, or otherwise imperfect datasets (sometimes called *epistemic* uncertainty).
 
 This example considers how to interpret a set of measurements of material strength, accounting for statistical uncertainty. The data is presented in @tbl-strength_data. This data can be downloaded using the below code, which also shows the first few rows.
 
@@ -575,7 +575,9 @@ However, there may often not be a clear maximum likelihood, particularly when es
 
 :::{.callout-note collapse="true"}
 ## Thought: Collecting Data Reduces Uncertainty
-The reason engineers pay for material tests, inspection activities and sensing systems is because the data that they provide can be used to estimate some uncertain quantity of interest. In general, the more data that is available, the less uncertainty will be associated with the prediction. For instance, a linear model with a straight line that approximately goes through two or three points is much less compelling than a straight line that approximately goes through hundreds of points (when the errors are the same).
+The reason engineers pay for material tests, inspection activities and sensing systems is because the data that they provide can be used to estimate some uncertain quantity of interest. In general, the more data that is available, the less uncertainty will be associated with the prediction. 
+
+For instance, a linear model with a straight line that approximately goes through two or three points is much less compelling than a straight line that approximately goes through hundreds of points (when the errors are the same).
 
 The uncertainty that is associated with limited amounts of data is often referred to as *statistical* or *epistemic* uncertainty. It is distinct from *aleatory* uncertainty, which is the variability that is inherent in the problem, no matter how many measurements are available.
 
@@ -626,7 +628,7 @@ ggplot(data = mle_df |>
 
 A distribution based on the maximum likelihood estimates, which could be used for prediction, varies a lot. Rather than using point values of parameters that move around as more data becomes available, it is preferable to quantify the statistical uncertainty in these estimates so that the effect of collecting additional data can be accounted for, allowing for the identification of when it is expected to be worthwhile paying for more data. 
 
-The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful.
+The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful, by pushing the results through a decision analysis.
 :::
 
 Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can mean ac and this distinction is important when they are being used for decision support. 
@@ -844,6 +846,8 @@ This can be achieved using probabilistic programming, but this may require some 
 
 ## Sampling Outcomes 
 
+*Example of prior predictive sampling, and posterior predictive sampling for heat loss in buildings*
+
 <!-- prior predictive sampling - parameters may not have intuitive meaning. Outcomes generally will (particularly amongst domain experts). -->
 
 <!-- prior predictive (or push forward) sampling Recommended practice in Bayesian workflow paper [CITE].  -->
@@ -865,11 +869,11 @@ This interpretation of a calculation by a decision-maker can introduce subjectiv
 
 [@Hopkins2002]
 
-<!-- The reason an engineer will recommend a higher strength than their *best estimate* of what will be required is they are accounting for the consequences of their best estimate being too low. The cost of an in-service failure will generally be much greater than the additional cost in design of upgrading the strength requirements. But how much higher the decision-maker chooses to go will depend on their perception of the magnitude of the consequences of the various outcomes, and the reliability of the stress analysis i.e. how uncertain is the prediction. -->
+The reason an engineer will recommend a higher strength than their *best estimate* of what will be required is they are accounting for the consequences of their best estimate being too low. The cost of an in-service failure will generally be much greater than the additional cost in design of upgrading the strength requirements. But how much higher the decision-maker chooses to go will depend on their perception of the magnitude of the consequences of the various outcomes, and the reliability of the stress analysis i.e. how uncertain is the prediction.
 
-<!-- A decision analysis will not remove subjectivity, since the costs of the consequences will be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way. -->
+A decision analysis will not remove subjectivity, since the costs of the consequences may be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way.
 
-<!-- Value of information analysis is often referred to as *pre-posterior* analysis in engineering textbooks (Benjamin Cornell, Jordaan, Melchers) and some statistics textbooks too (Berger).  -->
+The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as *value of information*, but is also often referred to as *pre-posterior* analysis in engineering textbooks [@Benjamin2014, @Jordaan2005, @Melchers2018] and some statistics textbooks too [@Berger].
 
 :::{.callout-note collapse="true"}
 ## Thought: The Expected Value of Data ...*Before* Collecting it
@@ -880,21 +884,11 @@ Instead, the method considers all of the information that will be available at t
 A value of information analysis uses all of this available information and, in the context of the decision problem that the data is intended to support, quantifies on a meaningful, monetary scale, the expected value of the data to the engineer.
 :::
 
-### Decision Trees
+### Decision-Event Trees
 
-<!-- Engineering textbooks that consider uncertainty often emphasise the importance of linking analysis to decision making. Some examples of this include [@Benjamin2014c] and [@Jordaan2005]. -->
+Decision problems can be represented as decision-event trees, such as the example shown in @fig-example_tree. It is conventional for decisions to be drawn as square nodes, uncertainties as round nodes, and costs/utilities as triangle or diamond nodes.
 
-<!-- Statistics textbooks can sometimes underplay the challenge of this, for example, the below quote is taken from an excellent book on data analysis [@Gelman2014]: -->
-
-<!-- <q> -->
-<!-- Many if not most statistical analyses are performed for the ultimate goal of decision making. -->
-
-<!-- [@Gelman2014] -->
-
-
-<!-- Convention for square, round and diamond (or sometimes triangular) nodes. -->
-
-<!-- In these books, problems are presented as decision-event trees, such as the example shown in @fig-example_tree. -->
+In @fig-example_tree, two arrows are drawn from the decision node, indicating that two decision alternatives are being considered. Either $D1$ or $D2$ can be selected, but not both. The two arrows emerging from each of the uncertain nodes mean that two outcomes, $A$ or $B$, can occur. Since these are the only outcomes, the probabilities of each of them (conditional on the decision) must sum to give $1$, i.e. $\Pr(O = A | d = D1) + \Pr(O = B | d = D1) = 1$. Each outcome has a different utility, should it occur.
 
 ```{mermaid}
 %%| label: fig-example_tree
@@ -944,7 +938,7 @@ flowchart LR
 
 ```
 
-The arrows in an influence diagram are causal (like in a Bayesian network). The arrows in @fig-example_id imply that the selected decision influences the uncertain outcome, and that the utility is conditional on both of these parameters. Drawing a useful influence diagram therefore requires some knowledge of the system that it is designed to represent.
+The arrows in an influence diagram are also causal (like in a Bayesian network). The arrows in @fig-example_id imply that the selected decision influences the uncertain outcome, and that the utility is conditional on both of these parameters. Drawing a useful influence diagram therefore requires some knowledge of the system that it is designed to represent.
 
 :::{.callout-note collapse="true"}
 ## Thought: Drawing Upon Engineering Know-How
@@ -964,8 +958,6 @@ This information can be shown graphically, using the influence diagram shown in 
 
 Using a model to predict how a system will respond to various interventions, as facilitated by influence diagrams, is often described as the goal of *digital twins*.
 
-:::
-
 ```{mermaid}
 %%| label: fig-id_cr
 %%| fig-cap: "Influence Diagram Showing Factors Affecting Corrosion Rate of a Buried Pipeline"
@@ -984,6 +976,8 @@ flowchart LR
   corr --> ccorr{Corrosion \ncosts}
   
 ```
+
+:::
 
 ## Example Calculations
 
@@ -1237,7 +1231,7 @@ Recall that this represents the expected value of removing uncertainty in foreca
 
 For the near-term planning of energy system asset development, the calculated expected value of perfect cost forecasting can inform the decision maker whether it is financially worthwhile to undertake an initial asset development contracting process, such as a *contract for difference auction*, prior to the design of the energy system. Such a contracting process would provide the system designer with exact information on the cost of the assets that would be developed, via the clearing price of the auction to which the developers agree, after which an informed decision on the optimal system design could be made, but would incur a significant time and administrative cost. For the long-term planning of future energy systems, this analysis can be used to determine whether and to what extent Research and Development (R&D) and the purchase of expert opinion on future asset costs (either internal or contracted) should be used to assist the creation of energy system development strategies. 
 
-However, neither R&D or the expert opinions of consultants provide perfect information on future costs, and determining models for their efficacy is required to identify a more realistic expected value of imperfect information, which will be lower than the value predicted here. This chellenge is discussed in a different context in the below example.
+However, neither R&D or the expert opinions of consultants provide perfect information on future costs, and determining models for their efficacy is required to identify a more realistic expected value of imperfect information, which will be lower than the value predicted here. This challenge is discussed in a different context in the below example.
 
 <!-- Therefore, a system designer will not be willing to pay the full EVPI for such improvements in the estimation of future costs, though if the EVPI is sufficiently large it may provide justification for taking such actions nonetheless. For these 'measurement actions' the EVPI may be used to assist a more qualitative judgement on their economic suitability. Though, expenditure on R&D projects also has the potential to reduce the future costs of renewable generation assets, providing additional advantage. -->
 
@@ -1276,7 +1270,7 @@ $$
 $$
 \alpha \sim N(\mu = 1.6 \times 10^{-2}, \sigma = 1.6 \times 10^{-3})
 $$
-Where: $\beta_{A} = 0.073$, $\beta_{B} = 11.242$, and $\gamma = 1.307$. The cost of a heat pump is taken to be £$110472.50$, and the cost of  maintenance is equal to $1$% of this cost, multiplied by the number of activities, $N_{m}$.
+Where: $\beta_{A} = 0.05$, $\beta_{B} = 2.5$, and $\gamma = 1.4$. The cost of a heat pump is taken to be £$110472.50$, and the cost of  maintenance is equal to $1$% of this cost, multiplied by the number of activities, $N_{m}$.
 
 The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
 $$
@@ -1291,7 +1285,7 @@ The inputs for the problem are defined below. These result in a decreasing effic
 
 ```{R}
 get_beta <- function(n_maintenance){
-  a <- 0.07349026; b <- 11.24172755; gamma <- 1.30736477
+  a <- 0.05; b <- 2.5; gamma <- 1.4
   # a <- 1/4; gamma <- 2; b <- 10
   (a * n_maintenance^gamma) / (b + n_maintenance^gamma)
 }
@@ -1326,31 +1320,26 @@ tibble(x = n_maint) |>
 
 As shown in @fig-prior_heat_pump_decision, increasing the number of maintenance activities initially decreases the total cost (sum of electricity and maintenance costs), before no longer expecting to be worthwhile.
 
-Prior predictive sampling - easier to interpret variability in forecast SPF, than parameters in a Beta distribution model of an abstract degradation parameter, $\alpha$.
-
-<!-- Since Chaoqun has requested alpha be constrained as $0 \leq \alpha \leq 1$, consider a beta distribution. -->
-
 ```{r}
 #| echo: false
 alpha_sd <- 0.25
 
 lnorm_params <- DomDF::lnorm_params(norm_mean = 0.16, norm_sd = alpha_sd)
 
-alpha <- rlnorm(n = n_samples, meanlog = lnorm_params$meanlog, sdlog = lnorm_params$sdlog)
+# Often predicted from weather forecasts
+Lh_Le <- (1 + 2 * rbeta(n_samples, 6, 2))
 
-SPF <- 3
+alpha_i <- 0.16; SPF_i <- 3
 
-tibble(alpha) |>
-  mutate(SPF_new = purrr::map_dbl(.x = alpha, 
-                                  .f = function(.x) {(1 -.x) * SPF})) |>
-  ggplot(mapping = aes(x = SPF_new, y = after_stat(x = density)))+
-    geom_histogram(col = 'black', alpha = 1/2)+
-    geom_vline(mapping = aes(xintercept = SPF), alpha = 1/2, lty = 2)+
-    xlim(0, 3.5)+
-    labs(subtitle = paste("Std. Dev. of alpha:", alpha_sd))+
-  ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
-  theme(plot.background = element_rect(color = NA),
-        legend.title = element_blank(), legend.position = 'top')
+alpha_new <- function(alpha, Lh_Le){
+  Lh_Le / alpha
+}
+
+alpha_new(alpha_i, Lh_Le)
+
+SPF_new <- function(SPF, alpha){
+  (1 - alpha) * SPF
+}
 ```
 
 ::: {#chunk_load_packages .panel-tabset}
@@ -1363,7 +1352,7 @@ prior_decision_df <- function(n_maint_range){
   tibble(n_maint = n_maint_range, alpha = list(alpha)) |>
   mutate(beta = get_beta(n_maintenance = n_maint),
          SPF = SPF_initial,
-         maint_cost = n_maint * heat_pump_cost_GBP * 1.5e-2,
+         maint_cost = n_maint * heat_pump_cost_GBP * 3e-2,
          SPF_coeff = map2(.x = alpha, .y = beta,
                           .f = function(.x, .y){(1 - .x) * (1 + .y)}),
          SPF = map2(.x = SPF, .y = SPF_coeff,
@@ -1395,7 +1384,7 @@ ggplot(data = prior_df |>
   geom_line(mapping = aes(group = id), alpha = 1/50)+
   scale_x_continuous(name = 'Number of scheduled maintenance activities per year', 
                      breaks = seq(from = 0, to = 12, by = 1))+
-  scale_y_continuous(name = 'Total (annual) operational costs, £', labels = scales::comma, limits = c(0, 1e6))+
+  scale_y_continuous(name = 'Total (annual) operational costs, £', labels = scales::comma)+
   geom_vline(lty = 2, alpha = 1/2, 
              mapping = aes(color = 'Expected minimum cost',
                            xintercept = prior_df[which.min(prior_df$exp_cost),]$n_maint))+
@@ -1415,16 +1404,19 @@ How can a smart meter assist in solving this decision problem? As shown in @fig-
 
 flowchart LR
   d2[Maintenance \nfrequency] --> o2((SPF))
+  
+  o4((Electical \nload)) --> o3(("#945;"))
 
-  o0((Heating \nload)) --> o1((SPF))
   o2(("#946;")) --> o1((SPF))
-  o3(("#945;")) --> o1((SPF))
+  o3 --> o1((SPF))
+  o0((Heating \nload)) --> o3
 
   o1 --> c1{Electricity \ncost}
   d2 --> c2{Maintenance \ncost}
 
   d3[Smart \nmeter] --> c3{Meter \ncost}
-  d3 --> o3
+  d3 --> o4
+
 
 ```
 
@@ -1487,6 +1479,8 @@ VoPI_df <- prior_df |>
 
 ```
 
+In @fig-voi_smart_meter_alpha_sensitivity the effect of the prior variance on $\alpha$ is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.
+
 ```{R}
 #| echo: false
 #| label: fig-voi_smart_meter_alpha_sensitivity
@@ -1501,7 +1495,7 @@ ggplot(data = VoPI_df, mapping = aes(x = alpha_sd, y = VoPI))+
   theme(plot.background = element_rect(color = NA))
 ```
 
-The above examples have used bespoke code to represent the decision that needed to be solved. Though this can be helpful for prototyping inital calculations, small changes to the problem may require large amounts of code to be re-written.
+The above examples have used bespoke code to represent the decision that needed to be solved. Though this can be helpful for prototyping initial calculations, small changes to the problem may require large amounts of code to be re-written.
 
 ### Influence Diagram Representation
 

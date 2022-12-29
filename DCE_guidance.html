@@ -201,14 +201,14 @@ div.csl-indent {
 <h1 data-number="1"><span class="header-section-number">1</span> Introduction</h1>
 <section id="purpose-of-this-document" class="level2" data-number="1.1">
 <h2 data-number="1.1" class="anchored" data-anchor-id="purpose-of-this-document"><span class="header-section-number">1.1</span> Purpose of this Document</h2>
-<p>The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in safety and efficiency of the built environment. However, understanding the quantity and quality required will continue to be a challenge to engineers. For instance:</p>
+<p>The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in the safety and efficiency of the built environment. However, understanding the quantity and quality of data required will continue to be a challenge to engineers. For instance:</p>
 <ul>
-<li>Should a sensing systems be retrofit to an existing structure?</li>
+<li>Should sensing systems be retrofit to existing structures?</li>
 <li>If so, how precise and how reliable do they need to be?</li>
 <li>How can we value data from smart meters?</li>
-<li>Which combinations of available data collection options can best support decision making?</li>
+<li>To what extent does measuring building occupancy help mitigate the risk of infection from airborne disease?</li>
 </ul>
-<p>The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the current availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</p>
+<p>The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the recent advancements in the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.</p>
 <p><q> Uncertainty accompanies our lives. Coherent modelling of uncertainties for decision-making is essential in engineering and related disciplines.</q></p>
 <p><span class="citation" data-cites="Jordaan2005">(<a href="#ref-Jordaan2005" role="doc-biblioref">Jordaan 2005</a>)</span></p>
 </section>
@@ -274,7 +274,7 @@ Tip: Loading packages
 <li>Spreadsheet software has reproducibility challenges. Data can be difficult to distinguish from calculated quantities, and the sequence of calculations can also be difficult to identify.</li>
 <li>Calculations using spreadsheets are often unreliable. Errors <em>arise</em> in spreadsheets for many reasons, such as obscuring (or deleting) data, incorrect assumptions regarding data types, uninterpretable functions, and automatic filling. Errors often <em>remain</em> in spreadsheets due to the challenges associated with testing, documenting and version control.</li>
 </ul>
-<p>Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group <a href="http://www.eusprig.org">(EuSpRiG)</a> and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) be found in a presentation from Monash University, <a href="https://www.youtube.com/watch?v=-NuTlczV72Q&amp;t=35s">here</a>.</p>
+<p>Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group <a href="http://www.eusprig.org">(EuSpRiG)</a> and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) can be found in a presentation from Monash University, <a href="https://www.youtube.com/watch?v=-NuTlczV72Q&amp;t=35s">here</a>.</p>
 </section>
 <section id="some-other-published-guidance-for-engineers" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="some-other-published-guidance-for-engineers"><span class="header-section-number">1.3</span> Some other Published Guidance for Engineers</h2>
@@ -288,7 +288,7 @@ Tip: Loading packages
 </section>
 <section id="uncertainty-in-the-built-environment" class="level1" data-number="2">
 <h1 data-number="2"><span class="header-section-number">2</span> Uncertainty in the Built Environment</h1>
-<p>Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.</p>
+<p>Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, (though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.</p>
 <p>Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a <em>safe</em> or <em>characteristic</em> value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.</p>
 <p>This can be resolved by using probability to formally quantify uncertainty, and various examples of this are presented in this document. Statistical models of variability can describe how many uncertain quantities can be dependent, how uncertainty can increase when making predictions over various time frames, and how uncertainty can decrease when new data becomes available. Uncertainty quantification therefore allows for many other types of analysis, such as identifying where, when and how additional data should be collected, which is the focus of this document.</p>
 <p>While data will generally always provide some value, provided that it is relevant, it will not always represent a good investment. There are various costs associated with collecting engineering data, including hiring/purchasing specialised measurement equipment, the storage costs of high-volume streaming data, and occasionally the risk associated with exposing personnel to hazardous environments to collect data. Justifying these costs require engineers to link data collection to the improved decision making that it facilitates.</p>
@@ -336,8 +336,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([ 0.21935884,  1.18761392, -0.57413664, -0.66477812,  0.17299405,
-       -1.10180763,  0.76865789, -0.12046295, -0.60854191, -0.46620331])</code></pre>
+<pre><code>array([-1.43591047,  0.89226912, -0.81652289, -0.55500455,  0.09292349,
+        1.69077789,  0.0793378 , -1.10348933,  1.66641871, -0.64339027])</code></pre>
 </div>
 </div>
 </div>
@@ -348,8 +348,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -1.22609282  0.57104429  1.76724770 -0.37535771  1.41411704 -0.74545028
- [7]  1.11755979  0.02321079  0.20211214 -0.15312385</code></pre>
+<pre><code> [1] -0.1271592 -0.2658740  0.8788557 -1.2631662 -0.3267386 -0.0900240
+ [7] -0.5691145 -0.2499991  0.7033269 -0.6210382</code></pre>
 </div>
 </div>
 </div>
@@ -361,16 +361,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
-  1.872497126717783
-  2.141144819338968
- -0.9095258539003622
-  0.1357260197969542
- -0.3520296795662094
- -1.0684715778194478
- -0.2821373671689871
-  1.3011413665047544
- -1.9747738728786233
- -0.5387681256595233</code></pre>
+  0.12841758587813618
+  0.10895557013967802
+ -0.06439709185436741
+ -1.1342525248865625
+  0.7524079326623697
+  1.0353667880453772
+  0.22800130626287055
+ -0.3212717624937481
+ -0.13357101017664696
+  0.37448080473706086</code></pre>
 </div>
 </div>
 </div>
@@ -391,16 +391,16 @@ Thought: Using Probabilities
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>stats.norm.ppf(lhs(<span class="dv">10</span>), loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([[ 1.1884514 ],
-       [-0.88739547],
-       [ 1.74898789],
-       [-0.45417922],
-       [ 0.00239496],
-       [-0.01737475],
-       [-1.38386043],
-       [ 0.32914538],
-       [-0.61371922],
-       [ 0.77650686]])</code></pre>
+<pre><code>array([[ 0.47233698],
+       [ 0.52750099],
+       [ 1.24338875],
+       [-2.02430858],
+       [ 0.04207667],
+       [-1.06437124],
+       [ 1.45073629],
+       [-0.38241416],
+       [-0.72158323],
+       [-0.04330161]])</code></pre>
 </div>
 </div>
 </div>
@@ -415,8 +415,8 @@ Thought: Using Probabilities
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>(<span class="fu">lhs</span>(<span class="dv">10</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">qnorm</span>(<span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>))[,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -0.05712888  1.03098255  0.35896343 -0.43115970  1.32431433 -1.23310860
- [7]  0.18329909  0.53813878 -0.80451130 -2.06470145</code></pre>
+<pre><code> [1] -0.71242257 -0.08728209  0.68152371  0.88340860 -1.11364410  1.44414581
+ [7] -1.84286677  0.21427334  0.28376582 -0.38937988</code></pre>
 </div>
 </div>
 </div>
@@ -442,16 +442,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
-  0.6045853465832374
- -1.3351777361189363
-  1.3351777361189363
  -0.6045853465832374
-  0.3487556955170447
-  0.11418529432142821
- -0.9084578685373852
-  0.9084578685373853
  -0.11418529432142835
- -0.3487556955170447</code></pre>
+  0.3487556955170447
+  0.6045853465832374
+  0.9084578685373853
+ -0.9084578685373852
+ -0.3487556955170447
+  1.3351777361189363
+  0.11418529432142821
+ -1.3351777361189363</code></pre>
 </div>
 </div>
 </div>
@@ -1013,7 +1013,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>ConfidenceInterval(low=378.69681319537483, high=401.26329786687484)</code></pre>
+<pre><code>ConfidenceInterval(low=378.7325366202499, high=401.5593126234999)</code></pre>
 </div>
 </div>
 </div>
@@ -1057,7 +1057,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">confint</span>(x, <span class="fu">BasicConfInt</span>(<span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>((5.965508668241968, 5.936359886987154, 5.994085759722825),)</code></pre>
+<pre><code>((5.965508668241968, 5.935263905853472, 5.991734200472993),)</code></pre>
 </div>
 </div>
 </div>
@@ -1268,22 +1268,22 @@ Thought: Data vs.&nbsp;Information
   Row │ chain  iteration  σ         μ
       │ Int64  Int64      Float64   Float64
 ──────┼─────────────────────────────────────
-    1 │     1        501  18.8438   304.178
-    2 │     1        502  15.3102   348.018
-    3 │     1        503   7.56586  348.482
-    4 │     1        504  16.2361   343.855
-    5 │     1        505  15.2017   339.295
-    6 │     1        506  19.9309   352.48
-    7 │     1        507  23.1699   366.65
-    8 │     1        508   9.01912  358.684
+    1 │     1        501   9.74434  329.012
+    2 │     1        502   9.56803  327.385
+    3 │     1        503   9.56803  327.385
+    4 │     1        504   5.21277  354.069
+    5 │     1        505  23.8474   314.312
+    6 │     1        506  17.5024   326.014
+    7 │     1        507  18.75     323.605
+    8 │     1        508  10.8824   331.258
   ⋮   │   ⋮        ⋮         ⋮         ⋮
- 3994 │     4       1494  20.1888   349.134
- 3995 │     4       1495   5.53399  333.838
- 3996 │     4       1496  10.5133   344.337
- 3997 │     4       1497   6.37646  346.957
- 3998 │     4       1498   6.80054  339.555
- 3999 │     4       1499   3.7022   342.888
- 4000 │     4       1500   4.74883  342.354
+ 3994 │     4       1494  10.2877   334.781
+ 3995 │     4       1495   8.72487  341.344
+ 3996 │     4       1496   5.14468  343.89
+ 3997 │     4       1497   5.14468  343.89
+ 3998 │     4       1498   5.14468  343.89
+ 3999 │     4       1499   5.14468  343.89
+ 4000 │     4       1500   5.14468  343.89
                            3985 rows omitted</code></pre>
 </div>
 </div>
@@ -2152,8 +2152,8 @@ Solving report
                     0 (bound viol.)
                     0 (int. viol.)
                     0 (row viol.)
-  Timing            0.01 (total)
-                    0.01 (presolve)
+  Timing            0.00 (total)
+                    0.00 (presolve)
                     0.00 (postsolve)
   Nodes             0
   LP iterations     0 (total)
@@ -3032,14 +3032,14 @@ bibliography: references.bib
 
 ## Purpose of this Document
 
-The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in safety and efficiency of the built environment. However, understanding the quantity and quality required will continue to be a challenge to engineers. For instance:
+The various new methods of collecting and analysing data that are increasingly available to engineers can contribute to improvements in the safety and efficiency of the built environment. However, understanding the quantity and quality of data required will continue to be a challenge to engineers. For instance:
 
- * Should a sensing systems be retrofit to an existing structure? 
+ * Should sensing systems be retrofit to existing structures? 
  * If so, how precise and how reliable do they need to be? 
  * How can we value data from smart meters? 
- * Which combinations of available data collection options can best support decision making?
+ * To what extent does measuring building occupancy help mitigate the risk of infection from airborne disease?
 
-The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the current availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
+The principles of data-centric engineering are not new. Engineers have always had to rely on empirical models that are supported by tests to demonstrate that systems are reliable and safe. However, given the recent advancements in the availability of free, open-source software tools for data analysis and statistical inference, there is an opportunity to improve engineering workflows. The guidance presented here is intended to be pragmatic and introductory. Example problems are presented `r #(with reference to Eurocodes, Standards and Material Specifications)` alongside accompanying code implementations. There is a focus on answering meaningful questions, supporting decision making, and ensuring reproducible and reliable results.
 
 &lt;q&gt; Uncertainty accompanies our lives. Coherent modelling of uncertainties for decision-making is essential in engineering and related disciplines.
 
@@ -3100,7 +3100,7 @@ Such calculations could also be performed using spreadsheet software. The primar
  - Spreadsheet software has reproducibility challenges. Data can be difficult to distinguish from calculated quantities, and the sequence of calculations can also be difficult to identify. 
  - Calculations using spreadsheets are often unreliable. Errors *arise* in spreadsheets for many reasons, such as obscuring (or deleting) data, incorrect assumptions regarding data types, uninterpretable functions, and automatic filling. Errors often *remain* in spreadsheets due to the challenges associated with testing, documenting and version control.
 
-Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group [(EuSpRiG)](http://www.eusprig.org) and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) be found in a presentation from Monash University, [here](https://www.youtube.com/watch?v=-NuTlczV72Q&amp;t=35s).
+Some notable examples of high consequence spreadsheet errors are recorded by the European Spreadsheet Risks Interest Group [(EuSpRiG)](http://www.eusprig.org) and further discussion on the incompatibility of spreadsheets and good data management (in the context of research) can be found in a presentation from Monash University, [here](https://www.youtube.com/watch?v=-NuTlczV72Q&amp;t=35s).
 
 ## Some other Published Guidance for Engineers
 
@@ -3111,7 +3111,7 @@ Some notable examples of high consequence spreadsheet errors are recorded by the
 
 # Uncertainty in the Built Environment
 
-Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
+Engineering standards acknowledge the presence of variability in the quantities they are dealing with, but do not always provide guidance on how to apply models of variability, particularly in supporting decision making. For example, repeated strength tests of specimens from the same material, using the same machine, in the same lab will produce differing, (though hopefully similar) results. Any decision on whether a material is safe to use must therefore account for this variability somehow.
 
 Historically, structural engineers have used deterministic approaches to perform conservative assessments. In this example a *safe* or *characteristic* value of strength may be taken, such as the minimum from a set of measurements. The premise of this approach is that, if the lowest measurement meets a requirement, then it is expected to be OK. These kind of heuristics do not tell us how many tests are needed to be confident that the lowest measurement is representative, since each new measurement provides an opportunity to find a new lowest strength. As a result, unquantified and implicit margins of conservatism are introduced, making it very difficult to find the best estimates of risk that are required to justify spending consistently and coherently.
 
