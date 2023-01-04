@@ -19,28 +19,35 @@ data {
 
 parameters {
   
-  real strength;
-  real strength_m_log;
-  real <lower = 0> strength_sd_log;
+  real <lower = 0> strength [n_strength];
+  real <lower = 0> strength_m;
+  real <lower = 0> strength_sd;
 
+}
+
+transformed parameters{
+  
+  // vector <lower = 0> [n_strength] strength = strength_meas + error;
+  
 }
 
 model {
   
+  // Gaussian model for material strength
+  target += normal_lpdf(strength | strength_m, strength_sd);
+
   // Measurement error
   target += normal_lpdf(strength_meas | strength, error);
   
-  // Log normal model for material strength
-  target += lognormal_lpdf(strength | strength_m_log, strength_sd_log);
   
   // Priors
-  target += normal_lpdf(strength_m_log | m_s, sd_s);
-  target += exponential_lpdf(strength_sd_log | rate_s);
+  target += normal_lpdf(strength_m | m_s, sd_s);
+  target += exponential_lpdf(strength_sd | rate_s);
   
 }
 
 generated quantities{
 
-  real strength_post_pred = lognormal_rng(strength_m_log, strength_sd_log);
-  
+  real strength_post_pred = normal_rng(strength_m, strength_sd);
+
 }

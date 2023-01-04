@@ -50,7 +50,7 @@ This is a computational document that includes chunks of `Python`, `R`, and `Jul
 ## Load Python Packages
 
 ```{python}
-import cmdstanpy, requests, os, tempfile, multiprocessing, math
+import cmdstanpy, requests, os, multiprocessing, math
 import numpy as np, pandas as pd
 from scipy import stats
 
@@ -61,7 +61,7 @@ from scipy import stats
 ```{R}
 library(tidyverse); library(fitdistrplus); library(boot)
 library(cmdstanr); library(copula); library(ggthemes)
-library(lhs); library(parallel)
+library(lhs); library(parallel); library(TruncatedNormal)
 
 ```
 
@@ -631,7 +631,7 @@ A distribution based on the maximum likelihood estimates, which could be used fo
 The example calculations in this document, though presented in various levels of detail, are all based on the premise that collecting data reduces statistical uncertainty, and it is possible to check when this is (and is not) expected to be useful, by pushing the results through a decision analysis.
 :::
 
-Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can mean ac and this distinction is important when they are being used for decision support. 
+Statistical uncertainty in estimates of yield strength will be relatively high when only very few measurements are available. Maximum likelihood estimates will therefore not produce reliable predictions, since they could change significantly after including just a few more tests. It is especially important to understand this variability in cases like this to help distinguish a highly uncertain model with a highly informed model. Failing to do so can result in placing too much belief in a prediction, and so this distinction is important when using models for decision support. 
 
 One method of quantifying variability in a maximum likelihood estimate is to find confidence intervals. Confidence intervals can be obtained by repeating the calculation many times using different samples of the data, and identifying the range within which some proportion of results are contained in. The below code finds the 95% confidence intervals for the maximum likelihood estimate of the mean yield strength, based on the tensile test data in @tbl-strength_data.
 
@@ -716,7 +716,7 @@ The data block in the `Stan` file indicates the data that it is expecting. In `P
 #| output: false
 strength_data = {"n_strength" : strength_df.shape[0], 
                  "strength_meas" : strength_df["yield"].values,
-                 "error" : 3, "m_s" : 5, "sd_s" : 0.25, "rate_s" : 0.1}
+                 "error" : 5, "m_s" : 350, "sd_s" : 50, "rate_s" : 0.1}
 
 n_par = multiprocessing.cpu_count()
 n_chains = 4; n_draws = 1000; n_warmup = 2000
@@ -734,7 +734,7 @@ strength_fit = strength_model.sample(data = strength_data, seed = 1234,
 strength_data = list(n_strength = nrow(strength_df),
                      strength_meas = strength_df$yield,
                      error = 3,
-                     m_s = 5, sd_s = 0.1, rate_s = 0.1)
+                     m_s = 350, sd_s = 50, rate_s = 0.1)
 
 n_par <- parallel::detectCores()
 n_chains <- 4; n_draws <- 1000; n_warmup <- 2000
@@ -746,7 +746,32 @@ strength_fit <- strength_model$sample(data = strength_data, seed = 1234,
 ```
 :::
 
-After sampling from the fitted model, it is necessary to extract (and process) the results, so that they can be used to make predictions. Below are some suggested methods of achieving this.
+This model estimates the mean and standard deviation of the strength together. It also accounts for some measurement uncertainty, which is simple to incorporate. The model can be described using statistical language, as shown below.
+
+Firstly, the measured yield strength, $\sigma_{Ym}$ can be described as normally distributed with a mean equal to the true yield strength, $\sigma_{Y}$ plus some bias (which is assumed to be zero here), and a standard deviation, $\epsilon$, which describes the variation from $\sigma_{Y}$, due to the measurement process. Here, $\epsilon$ (or a similar measure) could be quoted from the tensile testing machine manufacturer, or the organisation that performed the testing. Note that in the above code, a value of $5 MPa$ has been used.
+
+$$
+\sigma_{Ym} \sim N(\sigma_{Y}, \epsilon)
+$$
+
+Secondly, $\sigma_{Y}$ is described as normally distributed, with a mean, $\mu$, and a standard deviation, $\sigma$. 
+
+$$
+\sigma_{Y} \sim N(\mu, \sigma)
+$$
+
+This could be a fully defined model, but there is also ab opportunity to provide a starting point. Rather than requiring the model to narrow down it's estimate from all possible values, engineers may wish to point it in a helpful direction since they will have some idea of what the measurements will be even before seeing them. Whilst acknowledging that there can be a lot of variation in the quality of structural steel, a yield strength of the order of hundreds of $MPa$ is far more credible than billions, or millions. Engineers may also want to constrain the values to be positive.
+
+In this example, some *prior* models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values [@Gabry2020]. An example of this is provided later in this document.
+
+$$
+\mu \sim N(\mu = 350 MPa, \sigma = 50 MPa), \mu \ge 0 MPa
+$$
+$$
+\sigma \sim \exp(\lambda = \frac{1}{10}), \sigma \ge 0 MPa
+$$
+
+Once the model has converged, samples can be drawn from the distribution of parameters ($\mu$ and $\sigma$). However, it is first necessary to extract (and process) the results. Below are some suggested methods of achieving this.
 
 ::: panel-tabset
 ## Python
@@ -792,16 +817,14 @@ tail(strength_data_df)
 ```
 :::
 
-
 :::{.callout-note collapse="true"}
 ## Thought: Data vs. Information
 It is widely acknowledged that not all data are equally informative. Engineering data often consists of some indirect measurements of a complex physical phenomena, sometimes in challenging environments. As a result, it will always be associated with some precision, bias and reliability.
 
-It may be necessary to conduct some calibration experiments to quantify these properties, and one such example is provided later in this document. Higher quality (more precise, less biased, more reliable) data will always be at least as useful as lower quality data, and will sometimes be worth paying much more for.
+It may be necessary to conduct some calibration experiments to quantify these properties. Higher quality (more precise, less biased, more reliable) data will always be at least as useful as lower quality data, and will sometimes be worth paying much more for.
 
 Risk based inspection standards (such as API 580) often acknowledge this difference in quality. A visual inspection is not considered as good as an ultrasonic inspection for damage, and is therefore recommended to be completed more frequently to manage risk. The calculations in this document account for data quality more accurately. Rather than relying on simple heuristics, statistical models are used to relate the information content to the raw data. 
 :::
-
 
 There are many alternative probabilistic programming languages available to engineers. One example is the `Turing` library, written for `Julia` users. The model can be specified using the `@model` macro, as shown below:
 
@@ -809,16 +832,21 @@ There are many alternative probabilistic programming languages available to engi
 ## Julia (using Turing)
 
 ```{julia}
-@model function yield_model(yield_strength::Vector{Float64})
+@model function yield_model(yield_strength_meas::Vector{Float64}, ϵ::Float64 = 5.0)
     
+    # Priors
     σ ~ Exponential(10)
     μ ~ Normal(350, 50)
+    
+    # Gaussian model
+    yield_strength ~ Normal(μ, σ)
 
+    # Relating yield strength to imprecise test data
     n_samples = length(yield_strength)
-
     for n ∈ n_samples
-        yield_strength[n] ~ Normal(μ, σ)
+        yield_strength_meas[n] ~ Normal(yield_strength, ϵ)
     end
+
 end
 ```
 
@@ -835,7 +863,7 @@ posterior_df = yield_model(strength_df.yield) |>
 
 :::
 
-The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. These samples can then be used in the same way that the Monte Carlo samples were used in Section *X* to approximate probabilities of failure.
+The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. Any subsequent structural reliability analysis using this distribution of yield strength will account for the statistical uncertainty due to the limited amount of test data. This additional uncertainty, particularly for probabilities of very low values of strength, may be a more principled approach for dealing with the so-called *tail-sensitivity problem* [@Melchers2018, @Palmer2012].
 
 :::{.callout-note collapse="true"}
 ## Thought: Statistical Uncertainty in Monte Carlo Sampling
@@ -844,18 +872,169 @@ Monte Carlo sampling of rare events, such as failure may require a large amount 
 This can be achieved using probabilistic programming, but this may require some re-scaling. Many MCMC sampling algorithms may find it challenging to sample from the very narrow distribution of probabilities of failure. All the values will be very small, the sampling will be highly sensitive to the parameters that govern the sampling. However, sampling from the negative index of $\beta_{R}$ will provide a more management scale, likely to be in the region of $0$ - $10$. This could be further reparameterised if required, but would then lose some immediate interpretability.
 :::
 
+The `Stan` and `Turing.jl` probabilistic models of yield strength defines a joint distribution of the mean and standard deviation of yield strength. This means that, as well as quantifying the uncertainty in both parameters, the inter-dependencies are also accounted for. 
+
+For instance, consider the samples from the `Stan` model in @fig-MCMC_post_sigmaY. All of the relatively low values of standard deviation (coloured in red) correspond to a narrow range of possible mean values, wheras the relatively high values (coloured in green) were sometimes associated with much higher or lower values for the mean. One way to rationalise this is that, whilst there is some uncertainty in the estimate of the mean value of yield strength, for low or high values to be consistent with the available data, they may need to be associated with a greater variance. A low standard deviation that was associated with a very low mean value would correspond to a narrow distribution that did not greatly overlap with the test data, which us why we do not see this combination in @fig-MCMC_post_sigmaY. 
+
+Being able to push these uncertainties and dependencies into predictions, is why modern probabilistic models can provide useful, informative results, even with small amounts of imperfect data.
+
+```{r}
+#| echo: false
+#| label: fig-MCMC_post_sigmaY
+#| fig-cap: "Samples from Joint Distribution of Parameters in Probabilistic Yield Strength Model"
+
+strength_fit |> DomDF::tidy_mcmc_draws() |>
+  dplyr::filter(grepl(pattern = "_post_pred|_m|_sd", x = Parameter)) |>
+  pivot_wider(id_cols = c(Chain, Iteration), names_from = Parameter, values_from = value) |>
+  mutate(ind = case_when(
+    strength_sd <= 20 ~ "Low",
+    strength_sd >= 35 ~ "High",
+    T ~ "Med"
+  )) |>
+  ggplot()+
+  geom_point(mapping = aes(x = strength_m, y = strength_sd, fill = ind), shape = 21, alpha = 1/2)+
+  scale_fill_manual(values = c("forestgreen", "firebrick", "white"))+
+  scale_x_continuous(name = "Mean Yield Strength, MPa")+
+  scale_y_continuous(name = "Standard Deviation of Yield Strength, MPa")+
+  ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
+  theme(legend.title = element_blank(), legend.position = "none",
+        plot.background = element_rect(colour = NA))
+
+```
+
+<!-- Heat loss (in $W$) through building elements, such as walls and windows (with cross-sectional area in $m^2$) is characterised a *U-value*, standardised to represent a $1 \deg K$ change in temperature. A low U-value indicates a better insultaed building element, that loses less heat. -->
+
+<!-- For a wall, the $U$-value can be calculated using the below equation: -->
+
+<!-- $$ -->
+<!-- U = \dfrac{1}{\frac{1}{h_{i}} + \sum_{j = 1}^{J layers} \frac{s_{j}}{\lambda_{j}} + \frac{1}{h_{e}}} -->
+<!-- $$ -->
+<!-- ...where $s_{i}$ and $\lambda_{i}$ are the thickness and thermal conductivity of each layer in the wall, and $h_{i}$ and $h_{e}$ are respectively the internal and external convective heat transfer coefficients. -->
+
+<!-- U-values are specified in building regulations [@PartL_2022]. For example for a new dwelling, the minimum U values for the roof, walls and floor are specified as $0.11$, $0.18$ and $0.13 W m^{-2} K^{-1}$, respectively. -->
+
+<!-- U-values for new buildings are typically calculated using the above equation. However for retrofit of existing buildings it may be necessary to measure U-values, particularly if construction details are not known. -->
+
 ## Sampling Outcomes 
 
 *Example of prior predictive sampling, and posterior predictive sampling for heat loss in buildings*
 
-<!-- prior predictive sampling - parameters may not have intuitive meaning. Outcomes generally will (particularly amongst domain experts). -->
+Consider a test to better understand the performance of a sensing technology. One feature that may need to be characterised is the probability of detection. Here, small signals are generally less likely to be reliably detected by the sensor and signal processing. The relationship between the size of the input $X$ and the probability of detection, $\Pr(det)$ can be modelled using a logistic regression [@HSE2006, @Harding2008], as shown below:
 
-<!-- prior predictive (or push forward) sampling Recommended practice in Bayesian workflow paper [CITE].  -->
+$$
+\Pr(det)  = \dfrac{\exp(\alpha + \beta \times X)}{1 + \exp(\alpha + \beta \times X)}
+$$
+This model has the benefit of producing values between $0$ and $1$, and the distribution parameters $\alpha$ and $\beta$ describe how $\Pr(det)$ increases (or decreases) with input size, $X$. If this was a new crack detection technology for use in inspections, $X$ may represent the extent (size) of a crack.
 
-<!-- Example: -->
 
-<!-- Posterior predictive: pr(S > some value of interest) - ref Pratt, Raiffa, Schlaiffer.... -->
-<!-- Now we can start combining the results with decision making... -->
+::: panel-tabset
+## R (using purrr, TruncatedNormal, tibble)
+```{r}
+logistic_fun <- function(alpha, beta, x){
+  exp(alpha + beta * x) / (1 + exp(alpha + beta * x))
+}
+
+n_prior_samples <- 100; x_start <- 0; x_end <- 5
+
+alpha_prior_mean <- -3; alpha_prior_sd <- 1/2
+beta_prior_mean <- 2; beta_prior_sd <- 1
+
+set.seed(seed = 1234)
+
+prior_pred_df <- tibble(alpha_prior = rnorm(n = n_prior_samples, mean = alpha_prior_mean, sd = alpha_prior_sd),
+                        beta_prior = rtnorm(n = n_prior_samples, mu = beta_prior_mean, sd = beta_prior_sd, lb = 0, ub = Inf), 
+                        X = seq(from = x_start, to = x_end, length.out = n_prior_samples)) |>
+  mutate(prior_Pr_det = purrr::pmap(.l = list(alpha_prior, beta_prior, X),
+                                    .f = ~logistic_fun(..1, ..2, ..3)) |> unlist())
+
+```
+
+## Python (using SciPy, NumPy, Math, Pandas)
+```{python}
+def logistic_fun(alpha, beta, x):
+  logistic_x = np.exp(alpha + beta * x) / (1 + np.exp(alpha + beta * x))
+  return logistic_x
+
+n_prior_samples = 100; x_start = 0; x_end = 5
+
+alpha_prior = stats.norm.rvs(loc = -3, scale = 1/2, size = n_prior_samples, random_state = 1234)
+beta_prior = stats.truncnorm.rvs(loc = 2, scale = 1, a = 0, b = math.inf, size = n_prior_samples, random_state = 1234)
+X = np.linspace(start = x_start, stop = x_end, num = n_prior_samples)
+prior_Pr_det = logistic_fun(alpha_prior, beta_prior, X)
+
+d = {'X': X, 'alpha_prior': alpha_prior, 'beta_prior': beta_prior, 'prior_Pr_det': prior_Pr_det}
+prior_pred_df = pd.DataFrame(data = d)
+
+```
+
+## Julia (using Random, Distributions, DataFrames, DataFramesMeta)
+```{julia}
+function logistic_fun(α::Float64, β::Float64, X::Float64)
+    return exp(α + β * X) / (1 + exp(α + β * X))
+end
+
+logistic_fun(-3.0, 2.0, 1.0)
+
+n_prior_samples = 100; x_start = 0; x_end = 5; prng = MersenneTwister(1234)
+
+α_pr = Normal(-3, 1/2); β_pr = Normal(2, 1); x = LinRange(x_start, x_end, n_prior_samples)
+
+prior_df = DataFrame(X = x,
+                     α_pr = rand(prng, α_pr, n_prior_samples),
+                     β_pr = rand(prng, β_pr, n_prior_samples)) |>
+    x -> @rtransform(x, :prior_Pr_det = logistic_fun(:α_pr, :β_pr, :X))
+
+```
+:::
+
+The reason for sampling from the priors of the parameters is to better understand their meaning in the context of the full model. It is not necessarily intuitive to find helpful values for $\alpha$ and $\beta$ in the above logistic function, but there will be some intuition regarding what predictions from a probability of detection model will look like.
+
+For instance, the plots in @fig-prior_pred_PoD show how higher variance priors (on the left) and lower variance, more informative priors (on the right) compare in their associated predictions after being pushed through the model. Some features of the predictions from the more informative priors include:
+
+ * The probability of detection increases as the size of the damage increases.
+ * There remains significant uncertainty in the predictions, which is expected to decrease as data is added to the model.
+
+This kind of graphical check, where the results are shown on an understandable outcome scale, can be used to find helpful starting points for probabilistic models.
+
+```{r}
+#| echo: false
+#| label: fig-prior_pred_PoD
+#| fig-cap: "Prior Predictive Checks for a Probability of Detection Model"
+
+set.seed(seed = 1234)
+unsuitable_prior_df <- tibble(alpha_prior = rnorm(n = n_prior_samples, mean = 0, sd = 100),
+                              beta_prior = rnorm(n = n_prior_samples, mean = 0, sd = 100))
+
+prior_pred_plot <- ggplot(NULL)+
+  scale_x_continuous(name = "Crack depth, mm", limits = c(0, 5), breaks = scales::pretty_breaks())+
+  scale_y_continuous(name = "Prior Probability of Detection", limits = c(0, 1), breaks = scales::pretty_breaks())+
+  ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
+  theme(legend.title = element_blank(), plot.background = element_rect(colour = NA),
+        legend.text = element_text(family = "Cambria"), legend.position = "top") -> unsuitable_prior_plot
+
+prior_pred_plot <- prior_pred_plot + labs(subtitle = "More informative priors: a useful start")+
+  theme(axis.title.y = element_blank(), axis.ticks.y = element_blank(), axis.text.y = element_blank())
+unsuitable_prior_plot <-  unsuitable_prior_plot + labs(subtitle = "Uninformative priors: an unhelpful start")
+
+for (i in seq(from = 1, to = n_prior_samples, by = 1)){
+  prior_pred_plot <- prior_pred_plot +
+    stat_function(alpha = 1/5, fun = logistic_fun, 
+                  args = list(alpha = prior_pred_df$alpha_prior[i], 
+                              beta = prior_pred_df$beta_prior[i]),
+                  mapping = aes(lty = "Prior Predictive Samples \n \u03b1 ~ N(-3, 1/2), \u03b2 ~ N (2, 1)"))
+  
+  unsuitable_prior_plot <- unsuitable_prior_plot +
+    stat_function(alpha = 1/5, fun = logistic_fun, 
+                  args = list(alpha = unsuitable_prior_df$alpha_prior[i], 
+                              beta = unsuitable_prior_df$beta_prior[i]),
+                  mapping = aes(lty = "Prior Predictive Samples \n \u03b1 ~ N(-3, 100), \u03b2 ~ N (2, 100)"))
+  
+}
+
+library(patchwork)
+(unsuitable_prior_plot + prior_pred_plot)
+
+```
 
 # Supporting Decision Making
 
@@ -1322,6 +1501,8 @@ As shown in @fig-prior_heat_pump_decision, increasing the number of maintenance 
 
 ```{r}
 #| echo: false
+#| output: false
+
 alpha_sd <- 0.25
 
 lnorm_params <- DomDF::lnorm_params(norm_mean = 0.16, norm_sd = alpha_sd)
@@ -1334,8 +1515,6 @@ alpha_i <- 0.16; SPF_i <- 3
 alpha_new <- function(alpha, Lh_Le){
   Lh_Le / alpha
 }
-
-alpha_new(alpha_i, Lh_Le)
 
 SPF_new <- function(SPF, alpha){
   (1 - alpha) * SPF
