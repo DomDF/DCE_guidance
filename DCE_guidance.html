@@ -336,8 +336,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([-0.77496971,  0.25156678,  0.17371759, -0.51318248,  0.13868069,
-       -0.21008511, -0.1379053 ,  0.10459732, -0.66422831,  0.70192651])</code></pre>
+<pre><code>array([ 0.92326814,  1.0350539 ,  0.72822124,  1.07597249, -0.40602578,
+        1.21285018,  0.73978325, -0.22831955, -1.04289276,  0.70313327])</code></pre>
 </div>
 </div>
 </div>
@@ -348,8 +348,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -9.406094e-02  1.453696e+00  1.460606e-05 -1.303826e+00 -9.353616e-01
- [6] -1.944961e-02 -4.712980e-01  6.446884e-02  6.096430e-01 -1.129729e+00</code></pre>
+<pre><code> [1]  0.08550655  0.60216297 -0.20969907  3.09873955  2.01296682 -1.04539500
+ [7] -0.89053424 -0.66653247  0.35001124 -0.56725525</code></pre>
 </div>
 </div>
 </div>
@@ -361,16 +361,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
-  0.6364964837068027
-  0.3801614434420128
-  0.952776619301223
-  0.14783956388752983
- -0.690303527830458
-  0.827060429674124
-  1.6023215366084285
-  0.681664369515958
- -0.6621343592497708
-  0.5087437987360216</code></pre>
+ -0.3560509440288681
+  0.40228723234550806
+  1.250173694709602
+ -1.9249661716080106
+  0.22724030538210024
+ -0.43157394172547486
+  0.17954092081473094
+ -0.25023253088333125
+  0.7843191528444862
+ -1.620585340878406</code></pre>
 </div>
 </div>
 </div>
@@ -391,16 +391,16 @@ Thought: Using Probabilities
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>stats.norm.ppf(lhs(<span class="dv">10</span>), loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([[ 1.52803244],
-       [-1.69017387],
-       [-1.2699435 ],
-       [ 0.01537224],
-       [ 0.44421043],
-       [ 0.88662968],
-       [ 0.54227088],
-       [-0.4813072 ],
-       [-0.14332042],
-       [-0.64299133]])</code></pre>
+<pre><code>array([[-1.08218068],
+       [-0.32658313],
+       [-0.11237304],
+       [ 0.19490564],
+       [-0.73193094],
+       [ 1.46998926],
+       [ 0.66308655],
+       [ 0.39172906],
+       [-2.18376289],
+       [ 1.04516428]])</code></pre>
 </div>
 </div>
 </div>
@@ -415,8 +415,8 @@ Thought: Using Probabilities
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>(<span class="fu">lhs</span>(<span class="dv">10</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">qnorm</span>(<span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>))[,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1]  1.28535258  0.18621174 -0.31074494 -0.08945298 -1.99530694 -0.60963848
- [7]  0.96574816  0.37343140 -0.94659550  0.61348818</code></pre>
+<pre><code> [1] -0.7559042  0.2730949 -0.3390298  0.1013449 -1.2123176  0.6225567
+ [7] -1.4653633  1.1133565 -0.1929787  1.9974250</code></pre>
 </div>
 </div>
 </div>
@@ -443,15 +443,15 @@ Thought: Using Probabilities
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
  -0.3487556955170447
-  0.6045853465832374
+  0.3487556955170447
   0.9084578685373853
- -0.9084578685373852
- -0.11418529432142835
   0.11418529432142821
-  1.3351777361189363
+ -0.11418529432142835
+  0.6045853465832374
  -1.3351777361189363
+  1.3351777361189363
  -0.6045853465832374
-  0.3487556955170447</code></pre>
+ -0.9084578685373852</code></pre>
 </div>
 </div>
 </div>
@@ -1014,7 +1014,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb41-9"><a href="#cb41-9" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>ConfidenceInterval(low=379.0440261238749, high=402.0748204127499)</code></pre>
+<pre><code>ConfidenceInterval(low=379.3259440017499, high=401.99877560787485)</code></pre>
 </div>
 </div>
 </div>
@@ -1058,7 +1058,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">confint</span>(x, <span class="fu">BasicConfInt</span>(<span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>((5.965508668241968, 5.935547087937118, 5.995188301285937),)</code></pre>
+<pre><code>((5.965508668241968, 5.93686931073122, 5.993966098479889),)</code></pre>
 </div>
 </div>
 </div>
@@ -1291,22 +1291,22 @@ Thought: Data vs.&nbsp;Information
   Row │ chain  iteration  σ         μ
       │ Int64  Int64      Float64   Float64
 ──────┼─────────────────────────────────────
-    1 │     1        501   5.9534   406.606
-    2 │     1        502   5.9534   406.606
-    3 │     1        503  11.81     409.534
-    4 │     1        504   8.3846   419.508
-    5 │     1        505  16.0698   417.299
-    6 │     1        506  10.6308   404.885
-    7 │     1        507  10.6308   404.885
-    8 │     1        508   8.41507  426.427
+    1 │     1        501   7.60388  414.031
+    2 │     1        502  21.7568   410.287
+    3 │     1        503   4.9074   411.312
+    4 │     1        504   5.48725  410.706
+    5 │     1        505   5.85818  416.116
+    6 │     1        506  12.5036   410.475
+    7 │     1        507  10.1901   412.924
+    8 │     1        508  14.6782   395.908
   ⋮   │   ⋮        ⋮         ⋮         ⋮
- 3994 │     4       1494   4.77915  414.231
- 3995 │     4       1495  10.5444   423.677
- 3996 │     4       1496  11.9651   427.171
- 3997 │     4       1497   9.26959  398.804
- 3998 │     4       1498  10.3112   405.356
- 3999 │     4       1499   8.23927  409.4
- 4000 │     4       1500   9.63805  411.218
+ 3994 │     4       1494  11.5036   419.176
+ 3995 │     4       1495  13.3807   406.22
+ 3996 │     4       1496  18.9634   393.053
+ 3997 │     4       1497   5.03992  419.225
+ 3998 │     4       1498   4.56622  418.551
+ 3999 │     4       1499   7.03583  408.227
+ 4000 │     4       1500  16.0588   434.611
                            3985 rows omitted</code></pre>
 </div>
 </div>
@@ -2977,19 +2977,20 @@ d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 <h1 data-number="5"><span class="header-section-number">5</span> Summary</h1>
 <p>Key concepts:</p>
 <ul>
-<li>quantify uncertainty using probability distributions</li>
-<li>quantify dependency using multi-variate distributions</li>
-<li>discretise (simplify) probabilistic analysis using sampling (simulation) methods</li>
-<li>link this analysis (and available data) to decision making</li>
-<li>arrive at consistent and coherent decisions, that can be understood, justified, and repeated</li>
-<li>Example applications here are focused on identifying data requirements</li>
-<li>subject matter expertise can be combined with data, and becomes especially important when data is limited. <!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. --></li>
+<li>Due to the complexity of materials, geometries, system inter-dependencies, and the limitations in measurement technologies, there will inevitably be uncertainties associated with engineering calculations.</li>
+<li>These uncertainties can be described using probability distributions, which combine and interact in probabilistic models. Giving these models starting points (priors) based on existing knowledge within engineering teams can greatly benefit these models, particularly when there is limited information in available data.</li>
+<li>After defining, checking, fitting (and evaluating) these models, they can be used to help formally identify expected optimal risk management decisions, using computational tools, such as influence diagrams.</li>
+<li>These methods explicitly link the engineering models and data analysis, to the underlying decision problem that they are intended to solve. This results in a transparent and replicable (auditable) workflow, and allows for some useful calculations to be performed, such as quantifying the expected value of further data collection.</li>
+<li>The expected value of, for instance; installing a sensor, performing a measurement, or completing a calculation, can then be compared to the associated cost for the activity. When the expected value to an organisation exceeds the cost they are required to pay for the data, the investment can be justified.</li>
+<li>The calculations provided in this document show examples that can broadly be categorised as data requirements for risk management of the built environment. However, the principles are generic, as demonstrated by the variety of methods that have been used to solve them using relatively small amounts of code in freely available software.</li>
+<li>Moving towards principled, quantitative, replicable engineering decision support is expected to be an important step in integrating computational statistics in data-centric engineering.</li>
 </ul>
-<p>To discuss further, please contact <a href="ddifrancesc@turing.ac.uk">Domenic Di Francesco</a></p>
+<p><!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. --></p>
+<p>Please feel free to contact <a href="ddifrancesc@turing.ac.uk">Domenic Di Francesco</a>, or in the <a href="">Github page</a> if you have any queries or comments.</p>
 </section>
 <section id="acknowledgements" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Acknowledgements</h1>
-<p>list all contributors list all reviewers list any funding</p>
+<p>list all contributors, reviewers, and funding</p>
 <p>…</p>
 <!-- -->
 
@@ -5693,26 +5694,23 @@ VoInsp = prior_exp_cost - prepost_df.cost.mean()
 
 Key concepts:
 
- - quantify uncertainty using probability distributions
- - quantify dependency using multi-variate distributions
- - discretise (simplify) probabilistic analysis using sampling (simulation) methods
- - link this analysis (and available data) to decision making
- - arrive at consistent and coherent decisions, that can be understood, justified, and repeated
- - Example applications here are focused on identifying data requirements
- - subject matter expertise can be combined with data, and becomes especially important when data is limited.
+ - Due to the complexity of materials, geometries, system inter-dependencies, and the limitations in measurement technologies, there will inevitably be uncertainties associated with engineering calculations.
+ - These uncertainties can be described using probability distributions, which combine and interact in probabilistic models. Giving these models starting points (priors) based on existing knowledge within engineering teams can greatly benefit these models, particularly when there is limited information in available data.
+ - After defining, checking, fitting (and evaluating) these models, they can be used to help formally identify expected optimal risk management decisions, using computational tools, such as influence diagrams.
+ - These methods explicitly link the engineering models and data analysis, to the underlying decision problem that they are intended to solve. This results in a transparent and replicable (auditable) workflow, and allows for some useful calculations to be performed, such as quantifying the expected value of further data collection.
+ - The expected value of, for instance; installing a sensor, performing a measurement, or completing a calculation, can then be compared to the associated cost for the activity. When the expected value to an organisation exceeds the cost they are required to pay for the data, the investment can be justified.
+ - The calculations provided in this document show examples that can broadly be categorised as data requirements for risk management of the built environment. However, the principles are generic, as demonstrated by the variety of methods that have been used to solve them using relatively small amounts of code in freely available software.
+ - Moving towards principled, quantitative, replicable engineering decision support is expected to be an important step in integrating computational statistics in data-centric engineering.
+
  &lt;!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. --&gt;
  
- To discuss further, please contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk)
+Please feel free to contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk), or in the [Github page]() if you have any queries or comments.
 
 # Acknowledgements
 
-list all contributors
-list all reviewers
-list any funding
+list all contributors, reviewers, and funding
 
 ...
-
-
 </code></pre>
 </div></div></div></div></div>
 </div> <!-- /content -->

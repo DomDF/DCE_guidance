@@ -2320,24 +2320,21 @@ VoInsp = prior_exp_cost - prepost_df.cost.mean()
 
 Key concepts:
 
- - quantify uncertainty using probability distributions
- - quantify dependency using multi-variate distributions
- - discretise (simplify) probabilistic analysis using sampling (simulation) methods
- - link this analysis (and available data) to decision making
- - arrive at consistent and coherent decisions, that can be understood, justified, and repeated
- - Example applications here are focused on identifying data requirements
- - subject matter expertise can be combined with data, and becomes especially important when data is limited.
+ - Due to the complexity of materials, geometries, system inter-dependencies, and the limitations in measurement technologies, there will inevitably be uncertainties associated with engineering calculations.
+ - These uncertainties can be described using probability distributions, which combine and interact in probabilistic models. Giving these models starting points (priors) based on existing knowledge within engineering teams can greatly benefit these models, particularly when there is limited information in available data.
+ - After defining, checking, fitting (and evaluating) these models, they can be used to help formally identify expected optimal risk management decisions, using computational tools, such as influence diagrams.
+ - These methods explicitly link the engineering models and data analysis, to the underlying decision problem that they are intended to solve. This results in a transparent and replicable (auditable) workflow, and allows for some useful calculations to be performed, such as quantifying the expected value of further data collection.
+ - The expected value of, for instance; installing a sensor, performing a measurement, or completing a calculation, can then be compared to the associated cost for the activity. When the expected value to an organisation exceeds the cost they are required to pay for the data, the investment can be justified.
+ - The calculations provided in this document show examples that can broadly be categorised as data requirements for risk management of the built environment. However, the principles are generic, as demonstrated by the variety of methods that have been used to solve them using relatively small amounts of code in freely available software.
+ - Moving towards principled, quantitative, replicable engineering decision support is expected to be an important step in integrating computational statistics in data-centric engineering.
+
  <!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. -->
  
- To discuss further, please contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk)
+Please feel free to contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk), or in the [Github page]() if you have any queries or comments.
 
 # Acknowledgements
 
-list all contributors
-list all reviewers
-list any funding
+list all contributors, reviewers, and funding
 
 ...
-
-
 
