@@ -7,7 +7,7 @@ format:
   html:
     knitr: true 
     theme: 
-      - simplex
+      - simplex, styles.css
     highlight-style: atom-one
     html-math-mathod: mathjax
     toc: true
@@ -194,9 +194,10 @@ lhs <- function(n_samples, dim){
 ```{julia}
 function draw_lhs(dist, n::Int)
     samples = randomLHC(n + 2, 1) |>
-        x -> scaleLHC(x, [(0, 1)]) |>
-        x -> quantile(dist, x)[:,1] |>
-        x -> filter(!∈((-Inf, Inf)), x)
+        x -> scaleLHC(x, [(0, 1)])[:, 1] |>
+        x -> filter(∉((0, 1)), x) |>
+        x -> sort(x) |>
+        x -> quantile(dist, x)
     return samples
 end
 
@@ -1447,9 +1448,9 @@ $$
 \beta = \frac{\beta_{A} * N_{m}^\gamma}{\beta_{B} + N_{m}^{\gamma}}
 $$
 $$
-\alpha \sim N(\mu = 1.6 \times 10^{-2}, \sigma = 1.6 \times 10^{-3})
+\alpha \sim Beta(\alpha = 2, \beta = 20)
 $$
-Where: $\beta_{A} = 0.05$, $\beta_{B} = 2.5$, and $\gamma = 1.4$. The cost of a heat pump is taken to be £$110472.50$, and the cost of  maintenance is equal to $1$% of this cost, multiplied by the number of activities, $N_{m}$.
+Where: $\beta_{A} = 0.10$, $\beta_{B} = 1.0$, and $\gamma = 1.50$. The cost of a maintenance activity is equal to $\$2,000$, and is assumed to scale linearly, i.e. $N$ maintenance activities would cost $N \times \$2, 000$.
 
 The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
 $$
@@ -1463,19 +1464,18 @@ The inputs for the problem are defined below. These result in a decreasing effic
 ## R
 
 ```{R}
-get_beta <- function(n_maintenance){
-  a <- 0.05; b <- 2.5; gamma <- 1.4
-  # a <- 1/4; gamma <- 2; b <- 10
+get_beta <- function(n_maintenance, a = 0.15, b = 1.5, gamma = 2.0){
   (a * n_maintenance^gamma) / (b + n_maintenance^gamma)
 }
 
-n_samples <- 1e3; alpha <- rnorm(n = n_samples, mean = 1.6e-2, sd = 1.6e-3)
-
-SPF_initial <- 3
+n_samples <- 1e3
+heat_load_kWh <- 1e6; cost_per_kWh <- 0.50; cost_maint <- 2e3
 
 max_n_maint <- 12; n_maint <- seq(from = 0, to = max_n_maint, by = 1)
 
-heat_pump_cost_GBP <- 441890/4; heating_load_kWh <- 1753914; GBP_per_kWh <- 0.51
+alpha_prior_samples <- (lhs(n_samples, 1) |> qbeta(shape1 = 2, shape2 = 20))[,1]
+
+SPF_initial <- 3.0
 ```
 
 :::
@@ -1503,48 +1503,36 @@ As shown in @fig-prior_heat_pump_decision, increasing the number of maintenance 
 #| echo: false
 #| output: false
 
-alpha_sd <- 0.25
-
-lnorm_params <- DomDF::lnorm_params(norm_mean = 0.16, norm_sd = alpha_sd)
-
 # Often predicted from weather forecasts
-Lh_Le <- (1 + 2 * rbeta(n_samples, 6, 2))
-
-alpha_i <- 0.16; SPF_i <- 3
-
-alpha_new <- function(alpha, Lh_Le){
-  Lh_Le / alpha
-}
-
-SPF_new <- function(SPF, alpha){
-  (1 - alpha) * SPF
-}
 ```
 
 ::: {#chunk_load_packages .panel-tabset}
 
-## R (using purrr)
+## R (using tidyverse)
 
 ```{R}
-prior_decision_df <- function(n_maint_range){
+prior_decision <- function(n_maint_range = n_maint, alpha = list(alpha_prior_samples)){
   
-  tibble(n_maint = n_maint_range, alpha = list(alpha)) |>
-  mutate(beta = get_beta(n_maintenance = n_maint),
+  tibble(n_maint_range, alpha) |>
+  mutate(beta = get_beta(n_maintenance = n_maint_range),
          SPF = SPF_initial,
-         maint_cost = n_maint * heat_pump_cost_GBP * 3e-2,
+         maint_cost = n_maint_range * cost_maint,
          SPF_coeff = map2(.x = alpha, .y = beta,
                           .f = function(.x, .y){(1 - .x) * (1 + .y)}),
          SPF = map2(.x = SPF, .y = SPF_coeff,
-                    .f = function(.x, .y){lag(x = .x, n = 1, default = SPF_initial) * .y}),
+                    .f = function(.x, .y){(lag(x = .x, n = 1, default = SPF_initial) * .y)}),
+         SPF = map(.x = SPF, .f = function(.x){
+           lapply(X = .x, FUN = function(x){ifelse(x <= SPF_initial, x, SPF_initial)}) |> unlist()}),
          elec_cost = map(.x = SPF,
-                         .f = function(.x){GBP_per_kWh * heating_load_kWh / .x}),
+                         .f = function(.x){cost_per_kWh * heat_load_kWh / .x}),
          total_cost = map2(.x = elec_cost, .y = maint_cost,
                            .f = function(.x, .y){ .x + .y})) |> 
-    group_by(n_maint) |>
+    group_by(n_maint_range) |>
     mutate(exp_cost = mean(unlist(total_cost))) |>
     ungroup()
+  
+}
 
-  }
 ```
 
 :::
@@ -1554,23 +1542,20 @@ prior_decision_df <- function(n_maint_range){
 #| label: fig-prior_heat_pump_decision
 #| fig-cap: "Identification of Number of Expected Optimal Heat Pump Maintenance Activities"
 
-prior_df <- prior_decision_df(n_maint_range = n_maint)
+prior_df <- prior_decision()
 
-ggplot(data = prior_df |>  
-              tidyr::unnest(cols = total_cost) |>
-              mutate(id = rep(x = seq(from = 1, to = n_samples, by = 1), times = max_n_maint + 1)), 
-       mapping = aes(x = n_maint, y = total_cost))+
-  geom_line(mapping = aes(group = id), alpha = 1/50)+
+ggplot(data = prior_df, mapping = aes(x = n_maint_range, y = exp_cost))+
+  geom_line(mapping = aes(lty = "Expected cost"))+
   scale_x_continuous(name = 'Number of scheduled maintenance activities per year', 
                      breaks = seq(from = 0, to = 12, by = 1))+
-  scale_y_continuous(name = 'Total (annual) operational costs, £', labels = scales::comma)+
-  geom_vline(lty = 2, alpha = 1/2, 
-             mapping = aes(color = 'Expected minimum cost',
-                           xintercept = prior_df[which.min(prior_df$exp_cost),]$n_maint))+
+  scale_y_continuous(name = 'Total (annual) operational costs', labels = scales::dollar)+
+  geom_vline(mapping = aes(lty = 'Expected optimal number \nof maintenance activities',
+                           xintercept = prior_df[which.min(prior_df$exp_cost),]$n_maint_range))+
+  scale_linetype_manual(values = c(1, 2))+
   ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
   theme(plot.background = element_rect(color = NA),
         legend.title = element_blank(), legend.position = 'top')
-
+  
 ```
 
 The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is `r prior_df[which.min(prior_df$exp_cost),]$n_maint`, with an associated expected cost of £`r prior_df[which.min(prior_df$exp_cost),]$exp_cost |> signif(digits = 4)`.
@@ -1596,65 +1581,69 @@ flowchart LR
   d3[Smart \nmeter] --> c3{Meter \ncost}
   d3 --> o4
 
-
 ```
 
 ::: {#chunk_load_packages .panel-tabset}
 
-## R (using purrr)
+## R (using tidyverse)
 
 ```{R}
-prepost_decision_df <- function(n_maint_range){
+prepost_decision <- function(n_maint_range = n_maint, alpha){
   
-  tibble(alpha = alpha, n_maint = list(n_maint_range)) |>
-  mutate(beta = map(.x = n_maint, 
-                    .f = function(.x){get_beta(.x)}),
-         SPF = SPF_initial,
-         maint_cost = map(.x = n_maint,
-                          .f = function(.x) {.x * heat_pump_cost_GBP * 1e-2}),
-         SPF_coeff = map2(.x = alpha, .y = beta,
-                          .f = function(.x, .y){(1 - .x) * (1 + .y)}),
-         SPF = map2(.x = SPF, .y = SPF_coeff,
-                    .f = function(.x, .y){
-                      lag(x = .x, n = 1, default = SPF_initial) * .y}),
-         elec_cost = map(.x = SPF,
-                         .f = function(.x){GBP_per_kWh * heating_load_kWh / .x}),
-         total_cost = map2(.x = elec_cost, .y = maint_cost,
-                           .f = function(.x, .y){ .x + .y})) |>
-    mutate(exp_cost = map(.x = total_cost, 
-                          .f = function(.x) {min(unlist(.x))}),
-           exp_cost = unlist(exp_cost))
+  prepost_df <- tibble()
+  for (a in alpha){
+    prepost_df <- bind_rows(prepost_df,
+                            (prior_decision(alpha = a) |> dplyr::arrange(exp_cost))[1, ] |>
+                              dplyr::select(c(n_maint_range, exp_cost)) |> mutate(alpha = a))
+  }
+  return(prepost_df)
 }
+```
+
+
+```{R}
+
+prior_cost <- ((prior_df |> dplyr::arrange(exp_cost))[1, ] |> dplyr::select(c(n_maint_range, exp_cost)))$exp_cost
+prepost_df <- prepost_decision(alpha = alpha_prior_samples)
+
+VoPI <- prior_cost - mean(prepost_df$exp_cost) 
+
 ```
 
 :::
 
 ```{R}
 #| echo: false
-prior_df <- tibble(alpha_sd = double(), ec_pr = double(), a_pr = integer())
-prepost_df <- tibble(alpha_sd = double(), ec_prepost = double())
 
-for (alpha_sd in c(0.01, 0.05, 0.1, 0.125, 0.15, 0.175, 0.2, 0.25)){
+beta_dist_summary <- function(shape_1, shape_2, C = 1){
   
-  set.seed(seed = 240819)
+  var <- C^2 * shape_1 * shape_2 / ((shape_1 + shape_2)^2 * (shape_1 + shape_2 + 1))
+  mean <- C * shape_1 / (shape_1 + shape_2)
   
-  alpha <- randomLHS(n = n_samples, k = 1) |> qnorm(mean = 1/2, sd = alpha_sd)
-  
-  df_pr <- prior_decision_df(n_maint_range = n_maint)
-  
-  prior_df <- bind_rows(prior_df, 
-                        tibble(alpha_sd = alpha_sd, ec_pr = df_pr[which.min(df_pr$exp_cost),]$exp_cost, a_pr = df_pr[which.min(df_pr$exp_cost),]$n_maint))
-    
-  df_pp <- prepost_decision_df(n_maint_range = n_maint)
-  
-  prepost_df <- bind_rows(prepost_df, 
-                          tibble(alpha_sd = alpha_sd, ec_prepost = df_pp$exp_cost |> mean()))
+  return(list("mean" = mean, "variance" = var))
   
 }
+
+VoPI_SA_df <- tibble()
+for (shape_1 in c(1/2, 1, 2, 5, 10, 20, 50)){
+
+  shape_2 <- 10 * shape_1; set.seed(seed = 240819)
+  alpha_prior_samples <- (lhs(n_samples, 1) |> qbeta(shape1 = shape_1, shape2 = shape_2))[,1]
   
-VoPI_df <- prior_df |>
-  left_join(y = prepost_df, by = 'alpha_sd') |>
-  mutate(VoPI = ec_pr - ec_prepost)
+  var_alpha <- beta_dist_summary(shape_1 = shape_1, shape_2 = shape_2)["variance"] |> unlist()
+  
+  prior_cost <- ((prior_decision(alpha = list(alpha_prior_samples)) |> 
+                    dplyr::arrange(exp_cost))[1, ] |> 
+                   dplyr::select(c(n_maint_range, exp_cost)))$exp_cost
+  
+  prepost_cost <- prepost_decision(alpha = alpha_prior_samples)$exp_cost |> mean()
+
+  VoPI_SA_df <- bind_rows(VoPI_SA_df, 
+                          tibble(alpha = shape_1,
+                                 alpha_var = var_alpha,
+                                 VoPI = prior_cost - prepost_cost))
+  
+}
 
 ```
 
@@ -1664,12 +1653,13 @@ In @fig-voi_smart_meter_alpha_sensitivity the effect of the prior variance on $\
 #| echo: false
 #| label: fig-voi_smart_meter_alpha_sensitivity
 #| fig-cap: "Effect of Prior Uncertainty on Expected Value of Smart Meter Data"
-ggplot(data = VoPI_df, mapping = aes(x = alpha_sd, y = VoPI))+
+ggplot(data = VoPI_SA_df, mapping = aes(x = alpha_var, y = VoPI))+
   geom_point(shape = 1, size = 1) + geom_line(alpha = 1/4)+
-  geom_text(mapping = aes(label = paste("£", VoPI |> signif(digits = 3))), 
+  geom_text(mapping = aes(label = paste("$", VoPI |> signif(digits = 3))), 
             family = "Atkinson Hyperlegible", size = 3, vjust = -1)+
-  scale_x_continuous(name = expression(paste('Uncertainty (std. dev.) in prior model of ', alpha)))+
-  scale_y_continuous(name = 'Expected value of (perfect) smart meter data, £', labels = scales::comma, limits = c(0, VoPI_df$VoPI |> max() + 3e3))+
+  scale_x_continuous(name = expression(paste('Uncertainty (variance) in prior model of ', alpha)))+
+  scale_y_continuous(name = 'Expected value of (perfect) smart meter data', labels = scales::dollar, 
+                     limits = c(0, VoPI_SA_df$VoPI |> max() + 3e2))+
   ggthemes::theme_base(base_size = 12, base_family = "Atkinson Hyperlegible")+
   theme(plot.background = element_rect(color = NA))
 ```
@@ -1793,16 +1783,6 @@ $$
 #| output: false
 
 prior_temp = Normal(10, 5)
-
-function draw_lhs(dist, n::Int; reprod::Int = 240819)
-    Random.seed!(reprod)
-    samples = randomLHC(n + 2, 1) |>
-        x -> scaleLHC(x, [(0, 1)]) |>
-        x -> quantile(dist, x)[:,1] |>
-        x -> filter(!∈((-Inf, Inf)), x) |>
-        x -> [x[i] for i ∈ 1:length(x) if abs(x[i]) >= 10^-10]
-    return samples
-end
 
 temp_df = DataFrame(temp = draw_lhs(prior_temp, 1_000)) |>
     x -> @rtransform(x, :surv = crop_survival(:temp)) |>
@@ -2052,6 +2032,218 @@ VoI = prior_cost - prepost_cost
 ```
 
 :::
+
+#### Example C: Measuring Building Occupany to Mitigate Risk of Airborne Infections
+
+In this example, an office building has a ventilation system with multiple settings. Increasing the ventilation rate, measured as Air Changes per Hour (ACH), is increasingly expensive, but reduces the risk of infection from airborne pathogens.
+
+Probability of infection $\Pr(inf)$ is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment [@airborne-cam2021, @Oliveira2020], as shown below:
+
+\[
+\Pr(inf) = 1 - \exp \bigg( \dfrac{-n_{inh}}{C_{r}} \bigg)
+\]
+
+Where $n_{inh}$ is iteratively calculated:
+
+\[
+n_{inh}[i] = n_{inh}[i-1] + i_{r} \times \Delta{t} \times C[i] \\
+C[i] = \dfrac{N * N_{r}}{Vol \times loss} + \dfrac{C[i-1] - N \times Nᵣ}{(Vol \times loss))} \times \exp(-loss \times Δt)
+\]
+
+The above equations are detailed in [@airborne-cam2021], but the dependence on the number of individuals using the office, $N$, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.
+
+This problem is described in the influence diagram in @fig-vent_id.
+
+```{mermaid}
+%%| label: fig-vent_id
+%%| fig-cap: "Influence Diagram for Office Ventiliation Setting"
+
+  flowchart LR
+  occ((Occupancy)) --> ir((Infection \nRate))
+
+  ir --> c_inf{Cost of \nInfection}
+
+  m_occ[Measure \nOccupancy] --> occ((Occupancy))
+
+  vent[Ventilation \nSetting] --> ir
+
+  vent --> c_vent{Cost of \nVentilation}
+  
+```
+
+Firstly, setting up the infection rate model:
+
+::: {#chunk_load_packages .panel-tabset}
+
+The below functions define the probability of infection and, given this, the probabilities that each number (up to the total number of occupants) are infected.
+
+## Julia (using Distributions)
+```{julia}
+venting = [1, 3, 5, 10] ./ 3600; κ = 0.39 / 3600; λ = 0.636 / 3600
+loss_rate = venting .+ κ .+ λ; tₘ = 8 * 3600; n_step = 100
+
+function Pr_infection(occupancy::Int64, Vol::Float64, loss::Float64, Δt = tₘ / (n_step - 1), infection_rate = 0.02, iᵣ = 5.21 * 10^-4, Cᵣ = 410, Nᵣ = 0.453)
+    C = zeros(n_step); nᵢₙₕ = zeros(n_step); Prᵢ = zeros(n_step); t = zeros(n_step); 
+    N = occupancy * infection_rate
+    for i in 2:(n_step)
+        t[i] = t[i-1] + Δt
+        C[i] = N * Nᵣ / (Vol * loss) + (C[i-1] - N * Nᵣ / (Vol * loss)) * exp(-1 * loss * Δt)
+        nᵢₙₕ[i] = nᵢₙₕ[i-1] + iᵣ * Δt * C[i]
+        Prᵢ[i] = 1 - exp(-1 * nᵢₙₕ[i] / Cᵣ)
+    end
+    return last(Prᵢ)
+end
+
+function pr_inf_pop(pr_inf::Float64, occupants::Int64)
+    return Binomial(occupants, pr_inf) |> x -> pdf.(x, collect(0:occupants))
+end
+
+```
+
+:::
+
+Then defining a prior model for building occupancy, and the costs associated with the various outcomes:
+
+::: {#chunk_load_packages .panel-tabset}
+
+A Poisson distribution is proposed as a prior model for occupancy, with a mean value of 30 people. This was selected since samples from Poisson distributions are positive and integer. An alternative model is a negative binomial distribution. Prior predictive sampling should be used to ensure that the selection represents a suitable estimate for the number of occupants on a given day.
+
+## Julia (using Distributions)
+```{julia}
+occupancy_model = Poisson(30)
+occupancy_samples = occupancy_model |> 
+    x -> draw_lhs(x, 1000)
+
+vent_options = Dict("Low" => 5, "Standard" => 30, "Well_Ventilated" => 45, "High" => 90)
+vent_states = keys(vent_options) |> x -> collect(x)
+vent_costs = [vent_options[state] for state in vent_states]
+
+infection_states = ["Infected", "Uninfected"]
+
+sickness_costs = Dict("Sick_Day" => 115 * 3)
+
+```
+
+:::
+
+Finally, setting up the influence diagram, with these inputs.
+
+::: {#chunk_load_packages .panel-tabset}
+
+The below function defines and solves the influence diagram.
+
+## Julia (using DecisionProgramming, JuMP, HiGHS)
+```{julia}
+function exp_opt_venting(occupants::Vector{Int64} = occupancy_samples, optimiser = HiGHS.Optimizer)
+
+    occupancy_states = append!(["0"], string.(occupants))
+
+    # Initialise the influence diagram
+    occupancy_decision = InfluenceDiagram()
+
+    # Create structure of influence diagram
+    add_node!(occupancy_decision, DecisionNode("Ventilation", [], vent_states))
+    add_node!(occupancy_decision, ChanceNode("Occupancy", [], occupancy_states))
+    add_node!(occupancy_decision, ValueNode("Cost_Infection", ["Ventilation", "Occupancy"]))
+    add_node!(occupancy_decision, ValueNode("Cost_Ventilation", ["Ventilation"]))
+
+    generate_arcs!(occupancy_decision)
+
+    # Calculate the probability of infection for each ventilation option
+    pr_inf = [Pr_infection.(o, 2000.0, loss_rate) for o in occupants] |>
+        x -> [v[i] for i in 1:4 for v in x] |>
+        x -> [x[1:length(occupants)], 
+              x[length(occupants)+1:2*length(occupants)], 
+              x[2*length(occupants)+1:3*length(occupants)], 
+              x[3*length(occupants)+1:4*length(occupants)]]
+    pr_low = pr_inf[1]; pr_std = pr_inf[2]; pr_well = pr_inf[3]; pr_high = pr_inf[4]
+
+    # Calculate the probability of each possible number of total infections in the building
+    # ...and the associated expected costs due to sickness
+    infection_df = DataFrame(occupants = occupants, 
+                             pr_inf_low = pr_inf_pop.(pr_low, occupants),
+                             pr_inf_std = pr_inf_pop.(pr_std, occupants),
+                             pr_inf_well = pr_inf_pop.(pr_well, occupants),
+                             pr_inf_high = pr_inf_pop.(pr_high, occupants)) |>
+        x -> @rtransform(x, :cost_sick = [sickness_costs["Sick_Day"] * o for o in reverse(:occupants:-1:0)]) |>
+        x -> @rtransform(x, :EC_low = :pr_inf_low .* :cost_sick |> x -> sum(x)) |>
+        x -> @rtransform(x, :EC_std = :pr_inf_std .* :cost_sick |> x -> sum(x)) |>
+        x -> @rtransform(x, :EC_well = :pr_inf_well .* :cost_sick |> x -> sum(x)) |>
+        x -> @rtransform(x, :EC_high = :pr_inf_high .* :cost_sick |> x -> sum(x)) |>
+        x -> @rselect(x, :occupants, :EC_low, :EC_std, :EC_well, :EC_high)
+
+    # Assigning probabilities and utilities to diagram
+    Pr_occ = ProbabilityMatrix(occupancy_decision, "Occupancy")
+    C_inf = UtilityMatrix(occupancy_decision, "Cost_Infection")
+    C_vent = UtilityMatrix(occupancy_decision, "Cost_Ventilation")
+
+    Pr_occ = append!([0.0], repeat([1/length(occupants)], length(occupants)))
+
+    C_inf["Low", :] = append!([0.0], infection_df.EC_low)
+    C_inf["Standard", :] = append!([0.0], infection_df.EC_std)
+    C_inf["Well_Ventilated", :] = append!([0.0], infection_df.EC_well)
+    C_inf["High", :] = append!([0.0], infection_df.EC_high)
+
+    C_vent["Low"] = vent_options["Low"]; C_vent["Standard"] = vent_options["Standard"]
+    C_vent["Well_Ventilated"] = vent_options["Well_Ventilated"]; C_vent["High"] = vent_options["High"]
+
+    add_probabilities!(occupancy_decision, "Occupancy", Pr_occ)
+    add_utilities!(occupancy_decision, "Cost_Infection", C_inf)
+    add_utilities!(occupancy_decision, "Cost_Ventilation", C_vent)
+
+    # generate the full influence diagram
+    generate_diagram!(occupancy_decision)
+
+    # Define and run solver
+    decision_model = JuMP.Model(optimiser); set_silent(decision_model)
+
+    z = DecisionVariables(decision_model, occupancy_decision)
+    x_s = PathCompatibilityVariables(decision_model, occupancy_decision, z)
+
+    Exp_Cost = expected_value(decision_model, occupancy_decision, x_s)
+
+    @objective(decision_model, Min, Exp_Cost)
+    optimize!(decision_model)
+
+    # Process results
+    Z = DecisionStrategy(z)
+    U_dist = UtilityDistribution(occupancy_decision, DecisionStrategy(z))
+
+    exp_opt_decision = DataFrame(u_opt = LinearAlgebra.dot(U_dist.p, U_dist.u),
+                                 a_opt = vent_states[argmax(Z.Z_d[1])])
+
+    return exp_opt_decision
+    
+end
+
+```
+
+:::
+
+The expected value of measuring occupancy is defined as the difference between the expected utility with and without the data. 
+
+::: {#chunk_load_packages .panel-tabset}
+
+## Julia (using DataFrames)
+```{julia}
+
+prior_ventilation_decision = exp_opt_venting()
+
+measure_occupancy_df = DataFrame()
+for o in occupancy_samples
+    append!(measure_occupancy_df, exp_opt_venting([o]))
+end
+
+prior_cost = prior_ventilation_decision.u_opt[1] 
+prepost_cost = mean(measure_occupancy_df.u_opt)
+
+VoPI = prior_cost - prepost_cost
+
+```
+
+:::
+
+Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches $£1,000$ after $1$ year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together [@DiFrancesco2022_SEinVoI], but these have not been included in the examples in this document.
 
 ### Expected Value of Imprecise (Imperfect) Information: 
 

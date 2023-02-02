@@ -1,0 +1,11 @@
+,anomaly,PoF,cost,action
+0,1,0.0,0.0,No action
+1,2,0.0,0.0,No action
+2,3,1.0,10000.0,Repair
+3,4,0.042,4200.0,No action
+4,5,1.0,10000.0,Repair
+5,6,0.0,0.0,No action
+6,7,0.0,0.0,No action
+7,8,0.056,5600.0,No action
+8,9,0.001,100.0,No action
+9,10,0.034,3400.0000000000005,No action
