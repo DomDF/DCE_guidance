@@ -18,7 +18,8 @@ format:
     code-tools: true
     code-overflow: scroll
     monofont: Fira Code
-    mermaid-format: js
+    mermaid:
+      theme: forest
 execute:
   message: false
   warning: false
@@ -95,10 +96,13 @@ Some notable examples of high consequence spreadsheet errors are recorded by the
 
 ## Some other Published Guidance for Engineers
 
- - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@HSE2002]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
- - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry [@NuclearWorkingGroup] has similar limitations.
- - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@COSTActionTU1402]. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
- - As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014, @Jordaan2005, @Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
+ - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [Health&SafetyExecutive2001]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
+ - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way.
+ - Similarly, a guidance document for the nuclear industry [@Martin2019] has similar limitations. This document makes reference to Bayesian methods and structural reliability, but does not provide any guidance on how to interpret the analysis. For instance, the use of "*conservative defined distributions*" to calculate a "*conservative failure probability*" is discussed. Conservative modelling assumptions have traditionally be applied instead of quantifying uncertainty, and attempts to combine these two approaches (perhaps as some sort of compromise or stepping stone) can lead to confusion, since they have different use cases. This explanation is detaukled further in [@DiFrancesco2022].
+ - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS2001]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@Straub2017], which has lead to many demonstrations of this approach in scientific literature in recent years.
+  - There are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014c], [@Jordaan2005], and [@Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
+ 
+This document is intended to provide an update to the aforementioned industrial guidance and more accessible examples than those included by other publications by making all data and all code available, and inviting contributions from readers. It also addresses some of the challenges that were associated with computational statistics in previous decades, such as characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
 
 # Uncertainty in the Built Environment
 
@@ -205,7 +209,7 @@ draw_lhs(Normal(0, 1), 10)
 ```
 :::
 
-Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) [@Olsson2003]. The effect of this is shown in  in @fig-it_lhs.
+Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) [@Olsson2003]. The effect of this is shown in @fig-it_lhs.
 
 ```{R}
 #| echo: false
@@ -332,7 +336,7 @@ pof
 
 In the above, the resistance parameters of the components are independent. This means that knowing that the resistance of Component A is relatively high, does not provide any information about the likely resistance of the other components. However, if the factors influencing the resistance were common, then a relatively high value for one component would suggest that a relatively high value for the other components were more likely. In such cases, this dependency should be accounted for in the probabilistic model.
 
-One method for achieving this is to use copula functions [@copula]. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.
+One method for achieving this is to use copula functions [@Joe2015]. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.
 
 Copulas can be used to model complex dependency, for example weakly dependent at relatively low values and highly dependent at relatively high values (or vice versa). In this case a Gaussian copula is used, which can only model linear dependency using correlation coefficients $\rho$. Note that copulas (including Gaussian copulas) can be used to describe dependency between parameters, for any uni-variate (marginal) distributions. The resulting distribution may not be possible to define, and use in calculations, without copulas.
 
@@ -763,7 +767,7 @@ $$
 
 This could be a fully defined model, but there is also ab opportunity to provide a starting point. Rather than requiring the model to narrow down it's estimate from all possible values, engineers may wish to point it in a helpful direction since they will have some idea of what the measurements will be even before seeing them. Whilst acknowledging that there can be a lot of variation in the quality of structural steel, a yield strength of the order of hundreds of $MPa$ is far more credible than billions, or millions. Engineers may also want to constrain the values to be positive.
 
-In this example, some *prior* models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values [@Gabry2020]. An example of this is provided later in this document.
+In this example, some *prior* models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values [@Gelman2020a]. An example of this is provided later in this document.
 
 $$
 \mu \sim N(\mu = 350 MPa, \sigma = 50 MPa), \mu \ge 0 MPa
@@ -1053,7 +1057,7 @@ The reason an engineer will recommend a higher strength than their *best estimat
 
 A decision analysis will not remove subjectivity, since the costs of the consequences may be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way.
 
-The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as *value of information*, but is also often referred to as *pre-posterior* analysis in engineering textbooks [@Benjamin2014, @Jordaan2005, @Melchers2018] and some statistics textbooks too [@Berger].
+The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as *value of information*, but is also often referred to as *pre-posterior* analysis in engineering textbooks [@Benjamin2014, @Jordaan2005, @Melchers2018] and some statistics textbooks too [@Berger1985].
 
 :::{.callout-note collapse="true"}
 ## Thought: The Expected Value of Data ...*Before* Collecting it
@@ -1138,6 +1142,8 @@ This information can be shown graphically, using the influence diagram shown in 
 
 Using a model to predict how a system will respond to various interventions, as facilitated by influence diagrams, is often described as the goal of *digital twins*.
 
+:::
+
 ```{mermaid}
 %%| label: fig-id_cr
 %%| fig-cap: "Influence Diagram Showing Factors Affecting Corrosion Rate of a Buried Pipeline"
@@ -1157,8 +1163,6 @@ flowchart LR
   
 ```
 
-:::
-
 ## Example Calculations
 
 ### Expected Value of Perfect Information
@@ -1172,7 +1176,7 @@ In designing an energy system for a region, using some combination of nearshore 
 
 This problem is based on (normalised) power time series data for the three assets, which are read below.
 
-::: {#chunk_load_packages .panel-tabset}
+::: {.panel-tabset}
 
 ## Julia (using DataFrames)
 
@@ -1198,7 +1202,7 @@ first(power_df, 3)
 
 Due to land availability, solar power can only supply either $0\%$ or $20\%$ of the total capacity. Similarly, nearshore wind can only provide either $0\%$, $25\%$  or $50\%$. The offshore wind asset is sufficiently flexible to be able to provide the remaining capacity. This leads to $6$ competing strategies, which can be evaluated, subject to the aforementioned constraints to identify how much power each asset is required to provide for each option.
 
-::: {#chunk_load_packages .panel-tabset}
+::: {#chunk .panel-tabset}
 
 ## Julia (using JuMP, HiGHS)
 
@@ -1284,7 +1288,8 @@ $$
 $$
 \rho = 0.6
 $$
-::: {#chunk .panel-tabset}
+
+::: {.panel-tabset}
 
 ## Julia
 
@@ -1344,7 +1349,7 @@ flowchart LR
 ```
 
 
-::: {#chunk_load_packages .panel-tabset}
+::: {#chunk .panel-tabset}
 
 ## Julia
 
@@ -1422,9 +1427,7 @@ However, neither R&D or the expert opinions of consultants provide perfect infor
 
 Consider the problem of heating a residential building. Inefficiencies in ageing heaters can result in increased electricity costs to deliver energy requirements. This performance degradation can be mitigated by maintenance work.
 
-The problem is described by the influence diagram in @fig-prior_id_heat_pumps. Here, heat pump parameters, $\alpha$ and $\beta$ describe the degradation and improvements to the performance of a heat pump, respectively.
-
-Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activities can improve, or restore, the performance (using $\beta$).
+The problem is described by the influence diagram in @fig-prior_id_heat_pumps. Here, heat pump parameters, $\alpha$ and $\beta$ describe the degradation and improvements to the performance of a heat pump, respectively. Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activities can improve, or restore, the performance (using $\beta$).
 
 ```{mermaid}
 %%| label: fig-prior_id_heat_pumps
@@ -1450,9 +1453,8 @@ $$
 $$
 \alpha \sim Beta(\alpha = 2, \beta = 20)
 $$
-Where: $\beta_{A} = 0.10$, $\beta_{B} = 1.0$, and $\gamma = 1.50$. The cost of a maintenance activity is equal to $\$2,000$, and is assumed to scale linearly, i.e. $N$ maintenance activities would cost $N \times \$2, 000$.
+Where: $\beta_{A} = 0.15$, $\beta_{B} = 1.5$, and $\gamma = 2.0$. The cost of a maintenance activity is equal to $\$2,000$, and is assumed to scale linearly, i.e. $N$ maintenance activities would cost $N \times \$2, 000$. The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
 
-The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
 $$
 C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 $$
@@ -1558,7 +1560,7 @@ ggplot(data = prior_df, mapping = aes(x = n_maint_range, y = exp_cost))+
   
 ```
 
-The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is `r prior_df[which.min(prior_df$exp_cost),]$n_maint`, with an associated expected cost of £`r prior_df[which.min(prior_df$exp_cost),]$exp_cost |> signif(digits = 4)`.
+The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is `r prior_df[which.min(prior_df$exp_cost),]$n_maint_range`, with an associated expected cost of £`r prior_df[which.min(prior_df$exp_cost),]$exp_cost |> signif(digits = 4)`.
 
 How can a smart meter assist in solving this decision problem? As shown in @fig-prepost_id_heat_pumps, the data that a smart meter provides can be used to reduce uncertainty about the degradation parameter, $\alpha$.
 
@@ -1647,7 +1649,7 @@ for (shape_1 in c(1/2, 1, 2, 5, 10, 20, 50)){
 
 ```
 
-In @fig-voi_smart_meter_alpha_sensitivity the effect of the prior variance on $\alpha$ is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.
+In @fig-voi_smart_meter_alpha_sensitivity the effect of the prior variance in $\alpha$ ,on the expected value of smart meter data is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.
 
 ```{R}
 #| echo: false
@@ -1670,7 +1672,7 @@ The above examples have used bespoke code to represent the decision that needed 
 
 #### Example A: Measuring Temperature for Forecasting Crop Sales
 
-An environment for growing various produce, such as the underground farm project [@Ward2022], requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.
+An environment for growing various produce, such as the underground farm project [@Jans-Singh2020], requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.
 
 In this challenge, a buyer is willing to purchase at one of multiple levels. In response, the operator can agree to sell at one of these levels (earning payment for sufficient delivery, or paying a penalty if insufficient crops are available), or to not engage with the market at this time (at no risk, with no reward). 
 
@@ -2037,7 +2039,7 @@ VoI = prior_cost - prepost_cost
 
 In this example, an office building has a ventilation system with multiple settings. Increasing the ventilation rate, measured as Air Changes per Hour (ACH), is increasingly expensive, but reduces the risk of infection from airborne pathogens.
 
-Probability of infection $\Pr(inf)$ is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment [@airborne-cam2021, @Oliveira2020], as shown below:
+Probability of infection $\Pr(inf)$ is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment [@DeOliveira2021], as shown below:
 
 \[
 \Pr(inf) = 1 - \exp \bigg( \dfrac{-n_{inh}}{C_{r}} \bigg)
@@ -2050,7 +2052,7 @@ n_{inh}[i] = n_{inh}[i-1] + i_{r} \times \Delta{t} \times C[i] \\
 C[i] = \dfrac{N * N_{r}}{Vol \times loss} + \dfrac{C[i-1] - N \times Nᵣ}{(Vol \times loss))} \times \exp(-loss \times Δt)
 \]
 
-The above equations are detailed in [@airborne-cam2021], but the dependence on the number of individuals using the office, $N$, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.
+The above equations are detailed in [@Gkantonas2021], but the dependence on the number of individuals using the office, $N$, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.
 
 This problem is described in the influence diagram in @fig-vent_id.
 
@@ -2243,7 +2245,7 @@ VoPI = prior_cost - prepost_cost
 
 :::
 
-Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches $£1,000$ after $1$ year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together [@DiFrancesco2022_SEinVoI], but these have not been included in the examples in this document.
+Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches $£1,000$ after $1$ year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together [@DiFrancescoa], but these have not been included in the examples in this document.
 
 ### Expected Value of Imprecise (Imperfect) Information: 
 
@@ -2439,7 +2441,7 @@ $$
 d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 $$
 
-This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation @Reg&OtherStories.
+This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation [@Gelman2020].
 
 ```{r}
 #| echo: false
@@ -2461,7 +2463,7 @@ Quantifying the expected value of returning the location of anomaly 4 and comple
 
 Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.
 
-This example is based on a published calculation @DiFrancesco2022, which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for *better quality* data. 
+This example is based on a published calculation [@DiFrancesco], which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for *better quality* data. 
 
 ```{python}
 #| output: false
@@ -2507,7 +2509,6 @@ VoInsp = prior_exp_cost - prepost_df.cost.mean()
 
 :::
 
-
 # Summary
 
 Key concepts:
@@ -2520,13 +2521,17 @@ Key concepts:
  - The calculations provided in this document show examples that can broadly be categorised as data requirements for risk management of the built environment. However, the principles are generic, as demonstrated by the variety of methods that have been used to solve them using relatively small amounts of code in freely available software.
  - Moving towards principled, quantitative, replicable engineering decision support is expected to be an important step in integrating computational statistics in data-centric engineering.
 
+This document will exist online, alongside all necessary data in a Github repository. By making the code and data entirely available, based on principles of Open science @TuringWay and accessibility @Dogucu2022, it is hoped that readers will be able to investigate the contents more thoroughly, understand the methods more deeply, and even propose contributions that can be reviewed and incorporated in future revisions. A final proposition of this document is that other engineering standards consider publishing similarly, whenever and however possible.
+
  <!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. -->
  
 Please feel free to contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk), or in the [Github page]() if you have any queries or comments.
 
 # Acknowledgements
 
-list all contributors, reviewers, and funding
+This work was supported by Wave 1 of The UKRI Strategic Priorities Fund under the EPSRC Grant EP/W006022/1, particularly the ‘Ecosystems of Digital Twins’ theme within that grant, and The Alan Turing Institute. 
+
+The following individuals kindly agreed to review this work and provided helpful comments: Andrew Duncan, Jennifer Ding (both Alan Turing Institute), Lawrence Bull (Cambridge University).
 
 ...
 

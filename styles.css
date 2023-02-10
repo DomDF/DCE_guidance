@@ -1,8 +1,11 @@
 /*-- scss:defaults --*/
 
-@import 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap';
+@import 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap'; */
 @import url('https://fonts.googleapis.com/css2?family=Delius+Unicase&display=swap');
 
-$font-family-sans-serif: "Atkinson Hyperlegible", "Atkinson Hyperlegible", "FiraCode",
-  FreeSerif, serif !default;
+$font-family-sans-serif: "Atkinson Hyperlegible", "Atkinson Hyperlegible", "FiraCode", */
+  FreeSerif, serif !default; */
 $font-family-monospace: "Fira Code";
+
+/* Mermaid diagrams */
+$mermaid-font-family: "Fira Code"

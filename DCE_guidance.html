@@ -117,6 +117,7 @@ div.csl-indent {
 <script src="DCE_guidance_files/libs/bootstrap/bootstrap.min.js"></script>
 <link href="DCE_guidance_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
 <link href="DCE_guidance_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<meta name="mermaid-theme" content="forest">
 <script src="DCE_guidance_files/libs/quarto-diagram/mermaid.min.js"></script>
 <script src="DCE_guidance_files/libs/quarto-diagram/mermaid-init.js"></script>
 <link href="DCE_guidance_files/libs/quarto-diagram/mermaid.css" rel="stylesheet">
@@ -161,12 +162,9 @@ div.csl-indent {
   <li><a href="#example-calculations" id="toc-example-calculations" class="nav-link" data-scroll-target="#example-calculations"><span class="toc-section-number">4.2</span>  Example Calculations</a>
   <ul class="collapse">
   <li><a href="#expected-value-of-perfect-information" id="toc-expected-value-of-perfect-information" class="nav-link" data-scroll-target="#expected-value-of-perfect-information"><span class="toc-section-number">4.2.1</span>  Expected Value of Perfect Information</a></li>
-  </ul></li>
-  <li><a href="#julia" id="toc-julia" class="nav-link" data-scroll-target="#julia"><span class="toc-section-number">4.3</span>  Julia</a>
-  <ul class="collapse">
-  <li><a href="#sensitivity-analysis-influence-of-prior-knowledge" id="toc-sensitivity-analysis-influence-of-prior-knowledge" class="nav-link" data-scroll-target="#sensitivity-analysis-influence-of-prior-knowledge"><span class="toc-section-number">4.3.1</span>  Sensitivity Analysis: Influence of Prior Knowledge</a></li>
-  <li><a href="#influence-diagram-representation" id="toc-influence-diagram-representation" class="nav-link" data-scroll-target="#influence-diagram-representation"><span class="toc-section-number">4.3.2</span>  Influence Diagram Representation</a></li>
-  <li><a href="#expected-value-of-imprecise-imperfect-information" id="toc-expected-value-of-imprecise-imperfect-information" class="nav-link" data-scroll-target="#expected-value-of-imprecise-imperfect-information"><span class="toc-section-number">4.3.3</span>  Expected Value of Imprecise (Imperfect) Information:</a></li>
+  <li><a href="#sensitivity-analysis-influence-of-prior-knowledge" id="toc-sensitivity-analysis-influence-of-prior-knowledge" class="nav-link" data-scroll-target="#sensitivity-analysis-influence-of-prior-knowledge"><span class="toc-section-number">4.2.2</span>  Sensitivity Analysis: Influence of Prior Knowledge</a></li>
+  <li><a href="#influence-diagram-representation" id="toc-influence-diagram-representation" class="nav-link" data-scroll-target="#influence-diagram-representation"><span class="toc-section-number">4.2.3</span>  Influence Diagram Representation</a></li>
+  <li><a href="#expected-value-of-imprecise-imperfect-information" id="toc-expected-value-of-imprecise-imperfect-information" class="nav-link" data-scroll-target="#expected-value-of-imprecise-imperfect-information"><span class="toc-section-number">4.2.4</span>  Expected Value of Imprecise (Imperfect) Information:</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#summary" id="toc-summary" class="nav-link" data-scroll-target="#summary"><span class="toc-section-number">5</span>  Summary</a></li>
@@ -288,11 +286,13 @@ Tip: Loading packages
 <section id="some-other-published-guidance-for-engineers" class="level2" data-number="1.3">
 <h2 data-number="1.3" class="anchored" data-anchor-id="some-other-published-guidance-for-engineers"><span class="header-section-number">1.3</span> Some other Published Guidance for Engineers</h2>
 <ul>
-<li>The UK Health &amp; Safety Executive produced a guidance document on the use of probabilistic methods in engineering <span class="citation" data-cites="HSE2002">(<a href="#ref-HSE2002" role="doc-biblioref"><strong>HSE2002?</strong></a>)</span>. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.</li>
-<li>BS 7910 is a widely used industrial standard for assessing damage in welded steel structures <span class="citation" data-cites="BSI2015">(<a href="#ref-BSI2015" role="doc-biblioref"><strong>BSI2015?</strong></a>)</span>. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry <span class="citation" data-cites="NuclearWorkingGroup">(<a href="#ref-NuclearWorkingGroup" role="doc-biblioref"><strong>NuclearWorkingGroup?</strong></a>)</span> has similar limitations.</li>
-<li>The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety <span class="citation" data-cites="JCSS">(<a href="#ref-JCSS" role="doc-biblioref"><strong>JCSS?</strong></a>)</span>. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems <span class="citation" data-cites="COSTActionTU1402">(<a href="#ref-COSTActionTU1402" role="doc-biblioref"><strong>COSTActionTU1402?</strong></a>)</span>. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.</li>
-<li>As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges <span class="citation" data-cites="Benjamin2014">(<a href="#ref-Faber2012" role="doc-biblioref"><strong>Faber2012?</strong></a>)</span>. These books all consider, to some extent, quantification of the expected value of data to engineers.</li>
+<li>The UK Health &amp; Safety Executive produced a guidance document on the use of probabilistic methods in engineering [Health&amp;SafetyExecutive2001]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.</li>
+<li>BS 7910 is a widely used industrial standard for assessing damage in welded steel structures <span class="citation" data-cites="BSI2015">(<a href="#ref-BSI2015" role="doc-biblioref">BSI 2019</a>)</span>. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way.</li>
+<li>Similarly, a guidance document for the nuclear industry <span class="citation" data-cites="Martin2019">(<a href="#ref-Martin2019" role="doc-biblioref">Martin and Marshall 2019</a>)</span> has similar limitations. This document makes reference to Bayesian methods and structural reliability, but does not provide any guidance on how to interpret the analysis. For instance, the use of “<em>conservative defined distributions</em>” to calculate a “<em>conservative failure probability</em>” is discussed. Conservative modelling assumptions have traditionally be applied instead of quantifying uncertainty, and attempts to combine these two approaches (perhaps as some sort of compromise or stepping stone) can lead to confusion, since they have different use cases. This explanation is detaukled further in <span class="citation" data-cites="DiFrancesco2022">(<a href="#ref-DiFrancesco2022" role="doc-biblioref">Di Francesco et al. 2022</a>)</span>.</li>
+<li>The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety <span class="citation" data-cites="JCSS2001">(<a href="#ref-JCSS2001" role="doc-biblioref">JCSS 2001</a>)</span>. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems <span class="citation" data-cites="Straub2017">(<a href="#ref-Straub2017" role="doc-biblioref">Straub et al. 2017</a>)</span>, which has lead to many demonstrations of this approach in scientific literature in recent years.</li>
+<li>There are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges <span class="citation" data-cites="Benjamin2014c">(<a href="#ref-Benjamin2014c" role="doc-biblioref">Benjamin and Cornell 2014</a>)</span>, <span class="citation" data-cites="Jordaan2005">(<a href="#ref-Jordaan2005" role="doc-biblioref">Jordaan 2005</a>)</span>, and <span class="citation" data-cites="Faber2012">(<a href="#ref-Faber2012" role="doc-biblioref">Faber 2012</a>)</span>. These books all consider, to some extent, quantification of the expected value of data to engineers.</li>
 </ul>
+<p>This document is intended to provide an update to the aforementioned industrial guidance and more accessible examples than those included by other publications by making all data and all code available, and inviting contributions from readers. It also addresses some of the challenges that were associated with computational statistics in previous decades, such as characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.</p>
 </section>
 </section>
 <section id="uncertainty-in-the-built-environment" class="level1" data-number="2">
@@ -318,7 +318,7 @@ Thought: Using Probabilities
 </div>
 <div id="callout-2" class="callout-2-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
-<p>It has been proposed that since probability is the mathematical language of randomness, it should be used to model the uncertainties that arise <span class="citation" data-cites="Gelman2014">(<a href="#ref-Gelman2014" role="doc-biblioref">Gelman et al. 2014</a>)</span>. Another compelling argument is that the practical meaning of probability is intuitive. Probabilities can be assigned to possible (uncertain) outcomes in decision problems.</p>
+<p>It has been proposed that since probability is the mathematical language of randomness, it should be used to model the uncertainties that arise <span class="citation" data-cites="Gelman2014">(<a href="#ref-Gelman2014" role="doc-biblioref"><strong>Gelman2014?</strong></a>)</span>. Another compelling argument is that the practical meaning of probability is intuitive. Probabilities can be assigned to possible (uncertain) outcomes in decision problems.</p>
 <p>Understanding how to estimate these probabilities as well as how to use them allows for coherent and replicable (auditable) decision making. The statistics presented in this document are with the intention of providing this kind of pragmatic guidance.</p>
 </div>
 </div>
@@ -345,8 +345,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>stats.norm.rvs(size <span class="op">=</span> <span class="dv">10</span>, loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([ 1.52163538, -0.50567786, -0.76235689,  0.23072042, -0.49891441,
-        0.37338665, -1.33204063, -0.18632419,  1.109764  ,  0.1709365 ])</code></pre>
+<pre><code>array([-0.78261017, -0.28198359, -1.06390801,  0.3371509 , -0.15475915,
+        0.13001453, -0.07394107, -1.55063059, -2.34678938, -0.15906338])</code></pre>
 </div>
 </div>
 </div>
@@ -357,8 +357,8 @@ Thought: Using Probabilities
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">rnorm</span>(<span class="at">n =</span> <span class="dv">10</span>, <span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -0.855866369 -0.051724315 -2.043632067  0.072554260  0.344439719
- [6]  1.347974234 -0.002039634 -1.370463498  0.661103482  0.349693277</code></pre>
+<pre><code> [1] -1.2208566 -1.9517296 -0.2418844  0.2920517 -1.1679887  1.5169099
+ [7] -1.3160989 -1.3148255 -0.3892913  1.1019225</code></pre>
 </div>
 </div>
 </div>
@@ -370,16 +370,16 @@ Thought: Using Probabilities
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>10-element Vector{Float64}:
- -1.5940965629759267
- -1.1711592566083484
- -0.666931552284428
-  0.2490421851147853
-  0.9288994584804026
- -0.4648857341554635
- -0.03611131799141024
-  0.5843552857699462
- -1.5732838175475177
-  1.5019175025087335</code></pre>
+ -0.23837428113943301
+  0.1325090285676439
+  0.061194617627210804
+ -3.907475371299615
+  2.504955725478646
+  0.0400653766238896
+  0.8736042024381198
+ -0.3035050165634151
+ -0.04938136986619651
+ -0.21425601445499667</code></pre>
 </div>
 </div>
 </div>
@@ -400,16 +400,16 @@ Thought: Using Probabilities
 <span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>stats.norm.ppf(lhs(<span class="dv">10</span>), loc <span class="op">=</span> <span class="dv">0</span>, scale <span class="op">=</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>array([[-0.58526722],
-       [-0.15197035],
-       [-0.49406748],
-       [-1.08393641],
-       [ 1.26486558],
-       [ 0.47302996],
-       [ 1.45194628],
-       [ 0.0207021 ],
-       [ 0.65173221],
-       [-2.13618002]])</code></pre>
+<pre><code>array([[ 1.98380868],
+       [-0.77361519],
+       [-0.5081488 ],
+       [-1.1044577 ],
+       [-2.37580963],
+       [ 0.70558439],
+       [ 0.39840082],
+       [ 1.07866105],
+       [-0.0115296 ],
+       [ 0.08143636]])</code></pre>
 </div>
 </div>
 </div>
@@ -424,8 +424,8 @@ Thought: Using Probabilities
 <span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>(<span class="fu">lhs</span>(<span class="dv">10</span>, <span class="dv">1</span>) <span class="sc">|&gt;</span> <span class="fu">qnorm</span>(<span class="at">mean =</span> <span class="dv">0</span>, <span class="at">sd =</span> <span class="dv">1</span>))[,<span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code> [1] -0.87560464 -2.84328616  1.28082660  0.66787734  0.47662778 -0.80640582
- [7] -0.05831546  0.05740768  1.82895757 -0.44381474</code></pre>
+<pre><code> [1]  0.3491107  1.1158086 -0.5604882 -0.9537126  0.1168740  0.6100793
+ [7] -1.9935976 -0.3096342  1.4903729 -0.2299321</code></pre>
 </div>
 </div>
 </div>
@@ -467,7 +467,7 @@ Thought: Using Probabilities
 </div>
 </div>
 </div>
-<p>Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) <span class="citation" data-cites="Olsson2003">(<a href="#ref-Olsson2003" role="doc-biblioref"><strong>Olsson2003?</strong></a>)</span>. The effect of this is shown in in <a href="#fig-it_lhs">Figure&nbsp;1</a>.</p>
+<p>Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) <span class="citation" data-cites="Olsson2003">(<a href="#ref-Olsson2003" role="doc-biblioref">Olsson, Sandberg, and Dahlblom 2003</a>)</span>. The effect of this is shown in <a href="#fig-it_lhs">Figure&nbsp;1</a>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-it_lhs" class="quarto-figure quarto-figure-center anchored">
@@ -571,7 +571,7 @@ R_{3} \sim LogNormal(log\mu = 2.7, log\sigma = 0.07)
 <section id="multi-variate-distributions" class="level2" data-number="3.2">
 <h2 data-number="3.2" class="anchored" data-anchor-id="multi-variate-distributions"><span class="header-section-number">3.2</span> Multi-Variate Distributions</h2>
 <p>In the above, the resistance parameters of the components are independent. This means that knowing that the resistance of Component A is relatively high, does not provide any information about the likely resistance of the other components. However, if the factors influencing the resistance were common, then a relatively high value for one component would suggest that a relatively high value for the other components were more likely. In such cases, this dependency should be accounted for in the probabilistic model.</p>
-<p>One method for achieving this is to use copula functions <span class="citation" data-cites="copula">(<a href="#ref-copula" role="doc-biblioref">Hofert et al. 2022</a>)</span>. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.</p>
+<p>One method for achieving this is to use copula functions <span class="citation" data-cites="Joe2015">(<a href="#ref-Joe2015" role="doc-biblioref">Joe 2015</a>)</span>. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.</p>
 <p>Copulas can be used to model complex dependency, for example weakly dependent at relatively low values and highly dependent at relatively high values (or vice versa). In this case a Gaussian copula is used, which can only model linear dependency using correlation coefficients <span class="math inline">\(\rho\)</span>. Note that copulas (including Gaussian copulas) can be used to describe dependency between parameters, for any uni-variate (marginal) distributions. The resulting distribution may not be possible to define, and use in calculations, without copulas.</p>
 <p><span class="math display">\[
 \rho_{R_{1}, R_{2}} = 0.8
@@ -848,7 +848,7 @@ Thought: Dealing with variability
 <div id="callout-3" class="callout-3-contents callout-collapse collapse">
 <div class="callout-body-container callout-body">
 <p>Engineers need to incorporate uncertainty in quantities like material properties to ensure safety and efficiency. Using a <em>worst-case</em> or <em>conservative</em> value as as a threshold is convenient as it does not complicate the calculation, but it doesn’t fully solve the problem because there may not be an obvious threshold value to take. Using the lowest yield strength value measured so far may incentivise minimal testing, as the value will only decrease (or remain constant) as more data is collected.</p>
-<p>One attempt to get around this, is provided in the guidance on identifying a suitable value of fracture toughness in a widely used structural integrity management standard <span class="citation" data-cites="BSI2015">(<a href="#ref-BSI2015" role="doc-biblioref"><strong>BSI2015?</strong></a>)</span>. It introduces the procedure for a Minimum Of Three Equivalent (MOTE), estimate. When <span class="math inline">\(3 \to 5\)</span> measurements are available, engineers are advised to take the lowest value, then the second lowest value of <span class="math inline">\(6 \to 10\)</span> measurements, and the third lowest of <span class="math inline">\(10 \to 15\)</span> values.</p>
+<p>One attempt to get around this, is provided in the guidance on identifying a suitable value of fracture toughness in a widely used structural integrity management standard <span class="citation" data-cites="BSI2015">(<a href="#ref-BSI2015" role="doc-biblioref">BSI 2019</a>)</span>. It introduces the procedure for a Minimum Of Three Equivalent (MOTE), estimate. When <span class="math inline">\(3 \to 5\)</span> measurements are available, engineers are advised to take the lowest value, then the second lowest value of <span class="math inline">\(6 \to 10\)</span> measurements, and the third lowest of <span class="math inline">\(10 \to 15\)</span> values.</p>
 <p>By running some simulations of fracture toughness tests, below, it can be shown that even by using the MOTE value, there is generally more uncertainty with fewer tests. This results in relatively higher probabilities of non-conservative values such as those greater than the mean (indicated by the dashed line in <a href="#fig-MOTE">Figure&nbsp;3</a>) being selected.</p>
 
 <div class="cell">
@@ -952,7 +952,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a>bootstrap_mean.confidence_interval</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>ConfidenceInterval(low=379.32903835387486, high=401.94395404462483)</code></pre>
+<pre><code>ConfidenceInterval(low=378.71758618112494, high=401.6480462528749)</code></pre>
 </div>
 </div>
 </div>
@@ -996,7 +996,7 @@ Thought: Collecting Data Reduces Uncertainty
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    x <span class="op">-&gt;</span> <span class="fu">confint</span>(x, <span class="fu">BasicConfInt</span>(<span class="fl">0.95</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-stdout">
-<pre><code>((5.965508668241968, 5.936194109590141, 5.993463232067746),)</code></pre>
+<pre><code>((5.965508668241968, 5.9399042890787666, 5.996306205515462),)</code></pre>
 </div>
 </div>
 </div>
@@ -1085,7 +1085,7 @@ Thought: Collecting Data Reduces Uncertainty
 \sigma_{Y} \sim N(\mu, \sigma)
 \]</span></p>
 <p>This could be a fully defined model, but there is also ab opportunity to provide a starting point. Rather than requiring the model to narrow down it’s estimate from all possible values, engineers may wish to point it in a helpful direction since they will have some idea of what the measurements will be even before seeing them. Whilst acknowledging that there can be a lot of variation in the quality of structural steel, a yield strength of the order of hundreds of <span class="math inline">\(MPa\)</span> is far more credible than billions, or millions. Engineers may also want to constrain the values to be positive.</p>
-<p>In this example, some <em>prior</em> models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values <span class="citation" data-cites="Gabry2020">(<a href="#ref-Gabry2020" role="doc-biblioref"><strong>Gabry2020?</strong></a>)</span>. An example of this is provided later in this document.</p>
+<p>In this example, some <em>prior</em> models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values <span class="citation" data-cites="Gelman2020a">(<a href="#ref-Gelman2020a" role="doc-biblioref">Gelman et al. 2020</a>)</span>. An example of this is provided later in this document.</p>
 <p><span class="math display">\[
 \mu \sim N(\mu = 350 MPa, \sigma = 50 MPa), \mu \ge 0 MPa
 \]</span> <span class="math display">\[
@@ -1228,29 +1228,29 @@ Thought: Data vs.&nbsp;Information
   Row │ chain  iteration  σ         μ
       │ Int64  Int64      Float64   Float64
 ──────┼─────────────────────────────────────
-    1 │     1        501   6.26625  393.426
-    2 │     1        502  15.9013   413.281
-    3 │     1        503  17.4577   396.301
-    4 │     1        504   9.74067  421.577
-    5 │     1        505   5.64253  426.325
-    6 │     1        506   7.85684  412.401
-    7 │     1        507  18.6754   400.579
-    8 │     1        508  27.1242   383.045
+    1 │     1        501  13.4408   402.105
+    2 │     1        502   8.09705  403.679
+    3 │     1        503  10.2117   400.914
+    4 │     1        504  17.5969   407.445
+    5 │     1        505  32.2261   429.603
+    6 │     1        506  12.3209   428.932
+    7 │     1        507  30.6168   406.167
+    8 │     1        508  27.487    394.35
   ⋮   │   ⋮        ⋮         ⋮         ⋮
- 3994 │     4       1494   2.05103  427.107
- 3995 │     4       1495  38.932    416.816
- 3996 │     4       1496  33.5859   418.61
- 3997 │     4       1497  40.3348   420.766
- 3998 │     4       1498  11.6375   414.431
- 3999 │     4       1499   2.64455  413.12
- 4000 │     4       1500   2.64455  413.12
+ 3994 │     4       1494   2.77912  414.999
+ 3995 │     4       1495   2.77912  414.999
+ 3996 │     4       1496   2.78382  412.419
+ 3997 │     4       1497   2.78382  412.419
+ 3998 │     4       1498   2.78382  412.419
+ 3999 │     4       1499   2.78382  412.419
+ 4000 │     4       1500   2.78382  412.419
                            3985 rows omitted</code></pre>
 </div>
 </div>
 </div>
 </div>
 </div>
-<p>The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. Any subsequent structural reliability analysis using this distribution of yield strength will account for the statistical uncertainty due to the limited amount of test data. This additional uncertainty, particularly for probabilities of very low values of strength, may be a more principled approach for dealing with the so-called <em>tail-sensitivity problem</em> <span class="citation" data-cites="Melchers2018">(<a href="#ref-Palmer2012" role="doc-biblioref"><strong>Palmer2012?</strong></a>)</span>.</p>
+<p>The joint distribution of parameters can then be used to sample from predictive distributions of other quantities. Any subsequent structural reliability analysis using this distribution of yield strength will account for the statistical uncertainty due to the limited amount of test data. This additional uncertainty, particularly for probabilities of very low values of strength, may be a more principled approach for dealing with the so-called <em>tail-sensitivity problem</em> <span class="citation" data-cites="Melchers2018">Palmer (<a href="#ref-Palmer2012" role="doc-biblioref">2012</a>)</span>.</p>
 <div class="callout callout-style-default callout-note callout-captioned">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-6-contents" aria-controls="callout-6" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1294,7 +1294,7 @@ Thought: Statistical Uncertainty in Monte Carlo Sampling
 <section id="sampling-outcomes" class="level2" data-number="3.5">
 <h2 data-number="3.5" class="anchored" data-anchor-id="sampling-outcomes"><span class="header-section-number">3.5</span> Sampling Outcomes</h2>
 <p><em>Example of prior predictive sampling, and posterior predictive sampling for heat loss in buildings</em></p>
-<p>Consider a test to better understand the performance of a sensing technology. One feature that may need to be characterised is the probability of detection. Here, small signals are generally less likely to be reliably detected by the sensor and signal processing. The relationship between the size of the input <span class="math inline">\(X\)</span> and the probability of detection, <span class="math inline">\(\Pr(det)\)</span> can be modelled using a logistic regression <span class="citation" data-cites="HSE2006">(<a href="#ref-Harding2008" role="doc-biblioref"><strong>Harding2008?</strong></a>)</span>, as shown below:</p>
+<p>Consider a test to better understand the performance of a sensing technology. One feature that may need to be characterised is the probability of detection. Here, small signals are generally less likely to be reliably detected by the sensor and signal processing. The relationship between the size of the input <span class="math inline">\(X\)</span> and the probability of detection, <span class="math inline">\(\Pr(det)\)</span> can be modelled using a logistic regression <span class="citation" data-cites="HSE2006">Harding (<a href="#ref-Harding2008" role="doc-biblioref">2008</a>)</span>, as shown below:</p>
 <p><span class="math display">\[
 \Pr(det)  = \dfrac{\exp(\alpha + \beta \times X)}{1 + \exp(\alpha + \beta \times X)}
 \]</span> This model has the benefit of producing values between <span class="math inline">\(0\)</span> and <span class="math inline">\(1\)</span>, and the distribution parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> describe how <span class="math inline">\(\Pr(det)\)</span> increases (or decreases) with input size, <span class="math inline">\(X\)</span>. If this was a new crack detection technology for use in inspections, <span class="math inline">\(X\)</span> may represent the extent (size) of a crack.</p>
@@ -1441,10 +1441,10 @@ Thought: Statistical Uncertainty in Monte Carlo Sampling
 <p>Engineering analysis, whether it is a fracture mechanics assessment, a stress analysis, or an environmental forecast is completed with the intention of supporting decision making. And yet, these calculations are often performed separately from the underlying decision problem, and by a different team.</p>
 <p>This interpretation of a calculation by a decision-maker can introduce subjective judgement that is not formally reported. As a result, it may be difficult to repeatedly arrive at the same decision (conditional on the same information), or even explain how the decision was made in an audit. This message is made in the below extract, in the context of pipeline engineering:</p>
 <p><q> …you don’t need anything at all! You don’t need qualified engineers, you don’t need quality systems, you don’t need risk management, you don’t need safety audits, you don’t need inspections, you don’t need training. You don’t need anything! Until something happens… then you need everything…. Got the message?</q></p>
-<p><span class="citation" data-cites="Hopkins2002">(<a href="#ref-Hopkins2002" role="doc-biblioref"><strong>Hopkins2002?</strong></a>)</span></p>
+<p><span class="citation" data-cites="Hopkins2002">(<a href="#ref-Hopkins2002" role="doc-biblioref">Hopkins 2002</a>)</span></p>
 <p>The reason an engineer will recommend a higher strength than their <em>best estimate</em> of what will be required is they are accounting for the consequences of their best estimate being too low. The cost of an in-service failure will generally be much greater than the additional cost in design of upgrading the strength requirements. But how much higher the decision-maker chooses to go will depend on their perception of the magnitude of the consequences of the various outcomes, and the reliability of the stress analysis i.e.&nbsp;how uncertain is the prediction.</p>
 <p>A decision analysis will not remove subjectivity, since the costs of the consequences may be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way.</p>
-<p>The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as <em>value of information</em>, but is also often referred to as <em>pre-posterior</em> analysis in engineering textbooks <span class="citation" data-cites="Benjamin2014">Melchers and Beck (<a href="#ref-Melchers2018" role="doc-biblioref">2018</a>)</span> and some statistics textbooks too <span class="citation" data-cites="Berger">(<a href="#ref-Berger" role="doc-biblioref"><strong>Berger?</strong></a>)</span>.</p>
+<p>The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as <em>value of information</em>, but is also often referred to as <em>pre-posterior</em> analysis in engineering textbooks <span class="citation" data-cites="Benjamin2014">Melchers and Beck (<a href="#ref-Melchers2018" role="doc-biblioref">2018</a>)</span> and some statistics textbooks too <span class="citation" data-cites="Berger1985">(<a href="#ref-Berger1985" role="doc-biblioref">Berger 1985</a>)</span>.</p>
 <div class="callout callout-style-default callout-note callout-captioned">
 <div class="callout-header d-flex align-content-center" data-bs-toggle="collapse" data-bs-target=".callout-7-contents" aria-controls="callout-7" aria-expanded="false" aria-label="Toggle callout">
 <div class="callout-icon-container">
@@ -1545,6 +1545,9 @@ Thought: Drawing Upon Engineering Know-How
 </ul>
 <p>This information can be shown graphically, using the influence diagram shown in <a href="#fig-id_cr">Figure&nbsp;9</a>. This representation allows for information on any of the uncertain parameter can be propagated through the network. It also describes how decision/actions can affect specific parameters in a model (and therefore also in the outcomes of interest, i.e.&nbsp;external corrosion rate).</p>
 <p>Using a model to predict how a system will respond to various interventions, as facilitated by influence diagrams, is often described as the goal of <em>digital twins</em>.</p>
+</div>
+</div>
+</div>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-id_cr" class="quarto-figure quarto-figure-center anchored">
@@ -1570,9 +1573,6 @@ Thought: Drawing Upon Engineering Know-How
 </div>
 </div>
 </div>
-</div>
-</div>
-</div>
 </section>
 </section>
 <section id="example-calculations" class="level2" data-number="4.2">
@@ -1587,9 +1587,9 @@ Thought: Drawing Upon Engineering Know-How
 <li>Fewer than <span class="math inline">\(\gamma\)</span> GWhrs can be dropped below the threshold of <span class="math inline">\(\beta\)</span> GW</li>
 </ul>
 <p>This problem is based on (normalised) power time series data for the three assets, which are read below.</p>
-<div id="chunk_load_packages" class="panel-tabset">
+<div class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-14-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-14-1" role="tab" aria-controls="tabset-14-1" aria-selected="true" href="">Julia (using DataFrames)</a></li></ul>
-<div id="chunk_load_packages" class="tab-content">
+<div class="tab-content">
 <div id="tabset-14-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-14-1-tab">
 <div class="cell">
 <details>
@@ -1622,9 +1622,9 @@ Thought: Drawing Upon Engineering Know-How
 </div>
 </div>
 <p>Due to land availability, solar power can only supply either <span class="math inline">\(0\%\)</span> or <span class="math inline">\(20\%\)</span> of the total capacity. Similarly, nearshore wind can only provide either <span class="math inline">\(0\%\)</span>, <span class="math inline">\(25\%\)</span> or <span class="math inline">\(50\%\)</span>. The offshore wind asset is sufficiently flexible to be able to provide the remaining capacity. This leads to <span class="math inline">\(6\)</span> competing strategies, which can be evaluated, subject to the aforementioned constraints to identify how much power each asset is required to provide for each option.</p>
-<div id="chunk_load_packages" class="panel-tabset">
+<div id="chunk" class="panel-tabset">
 <ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-15-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-15-1" role="tab" aria-controls="tabset-15-1" aria-selected="true" href="">Julia (using JuMP, HiGHS)</a></li></ul>
-<div id="chunk_load_packages" class="tab-content">
+<div id="chunk" class="tab-content">
 <div id="tabset-15-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-15-1-tab">
 <div class="cell">
 <details>
@@ -1709,12 +1709,11 @@ C_{wind} \sim MVN \Bigg( \mu = \begin{pmatrix} \mu_{nearshore} \\ \mu_{offshore}
 \sigma_{nearshore}  = 75 \times 10^{6}, \: \sigma_{offshore}  = 75 \times 10^{6}
 \]</span> <span class="math display">\[
 \rho = 0.6
-\]</span> ::: {#chunk .panel-tabset}</p>
-</section>
-</section>
-</section>
-<section id="julia" class="level2" data-number="4.3">
-<h2 data-number="4.3" class="anchored" data-anchor-id="julia"><span class="header-section-number">4.3</span> Julia</h2>
+\]</span></p>
+<div class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true" href="">Julia</a></li></ul>
+<div class="tab-content">
+<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1748,7 +1747,9 @@ C_{wind} \sim MVN \Bigg( \mu = \begin{pmatrix} \mu_{nearshore} \\ \mu_{offshore}
    1 │ [0.2 0.3 0.5]   2.77064      4.15596       6.92661    3.60184e9</code></pre>
 </div>
 </div>
-<p>:::</p>
+</div>
+</div>
+</div>
 <p>If forecasting models could be improved, so that the uncertainty could be removed, what would this mean for the expected cost of delivering the identified strategies? This question can be answered using a value of information analysis.</p>
 <p>In this case, this is achieved by sampling from the prior distributions of costs. Here each sample provides an imagined result of a study to identify the costs more precisely. For each result the expected optimal strategy (and associated cost) is evaluated, and an average of the samples are required, to account for the various possible results of the study.</p>
 <div class="cell">
@@ -1777,10 +1778,10 @@ C_{wind} \sim MVN \Bigg( \mu = \begin{pmatrix} \mu_{nearshore} \\ \mu_{offshore}
 </div>
 </div>
 </div>
-<div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-16-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-16-1" role="tab" aria-controls="tabset-16-1" aria-selected="true" href="">Julia</a></li></ul>
-<div id="chunk_load_packages" class="tab-content">
-<div id="tabset-16-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-16-1-tab">
+<div id="chunk" class="panel-tabset">
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true" href="">Julia</a></li></ul>
+<div id="chunk" class="tab-content">
+<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1868,13 +1869,14 @@ C_{wind} \sim MVN \Bigg( \mu = \begin{pmatrix} \mu_{nearshore} \\ \mu_{offshore}
 <p>For the near-term planning of energy system asset development, the calculated expected value of perfect cost forecasting can inform the decision maker whether it is financially worthwhile to undertake an initial asset development contracting process, such as a <em>contract for difference auction</em>, prior to the design of the energy system. Such a contracting process would provide the system designer with exact information on the cost of the assets that would be developed, via the clearing price of the auction to which the developers agree, after which an informed decision on the optimal system design could be made, but would incur a significant time and administrative cost. For the long-term planning of future energy systems, this analysis can be used to determine whether and to what extent Research and Development (R&amp;D) and the purchase of expert opinion on future asset costs (either internal or contracted) should be used to assist the creation of energy system development strategies.</p>
 <p>However, neither R&amp;D or the expert opinions of consultants provide perfect information on future costs, and determining models for their efficacy is required to identify a more realistic expected value of imperfect information, which will be lower than the value predicted here. This challenge is discussed in a different context in the below example.</p>
 <!-- Therefore, a system designer will not be willing to pay the full EVPI for such improvements in the estimation of future costs, though if the EVPI is sufficiently large it may provide justification for taking such actions nonetheless. For these 'measurement actions' the EVPI may be used to assist a more qualitative judgement on their economic suitability. Though, expenditure on R&D projects also has the potential to reduce the future costs of renewable generation assets, providing additional advantage. -->
-<section id="sensitivity-analysis-influence-of-prior-knowledge" class="level3" data-number="4.3.1">
-<h3 data-number="4.3.1" class="anchored" data-anchor-id="sensitivity-analysis-influence-of-prior-knowledge"><span class="header-section-number">4.3.1</span> Sensitivity Analysis: Influence of Prior Knowledge</h3>
-<section id="example-energy-use-in-buildings" class="level4" data-number="4.3.1.1">
-<h4 data-number="4.3.1.1" class="anchored" data-anchor-id="example-energy-use-in-buildings"><span class="header-section-number">4.3.1.1</span> Example: Energy Use in Buildings</h4>
+</section>
+</section>
+<section id="sensitivity-analysis-influence-of-prior-knowledge" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="sensitivity-analysis-influence-of-prior-knowledge"><span class="header-section-number">4.2.2</span> Sensitivity Analysis: Influence of Prior Knowledge</h3>
+<section id="example-energy-use-in-buildings" class="level4" data-number="4.2.2.1">
+<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="example-energy-use-in-buildings"><span class="header-section-number">4.2.2.1</span> Example: Energy Use in Buildings</h4>
 <p>Consider the problem of heating a residential building. Inefficiencies in ageing heaters can result in increased electricity costs to deliver energy requirements. This performance degradation can be mitigated by maintenance work.</p>
-<p>The problem is described by the influence diagram in <a href="#fig-prior_id_heat_pumps">Figure&nbsp;11</a>. Here, heat pump parameters, <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> describe the degradation and improvements to the performance of a heat pump, respectively.</p>
-<p>Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using <span class="math inline">\(\alpha\)</span>), and how maintenance activities can improve, or restore, the performance (using <span class="math inline">\(\beta\)</span>).</p>
+<p>The problem is described by the influence diagram in <a href="#fig-prior_id_heat_pumps">Figure&nbsp;11</a>. Here, heat pump parameters, <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> describe the degradation and improvements to the performance of a heat pump, respectively. Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using <span class="math inline">\(\alpha\)</span>), and how maintenance activities can improve, or restore, the performance (using <span class="math inline">\(\beta\)</span>).</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-prior_id_heat_pumps" class="quarto-figure quarto-figure-center anchored">
@@ -1902,15 +1904,15 @@ C_{wind} \sim MVN \Bigg( \mu = \begin{pmatrix} \mu_{nearshore} \\ \mu_{offshore}
 \beta = \frac{\beta_{A} * N_{m}^\gamma}{\beta_{B} + N_{m}^{\gamma}}
 \]</span> <span class="math display">\[
 \alpha \sim Beta(\alpha = 2, \beta = 20)
-\]</span> Where: <span class="math inline">\(\beta_{A} = 0.10\)</span>, <span class="math inline">\(\beta_{B} = 1.0\)</span>, and <span class="math inline">\(\gamma = 1.50\)</span>. The cost of a maintenance activity is equal to <span class="math inline">\(\$2,000\)</span>, and is assumed to scale linearly, i.e.&nbsp;<span class="math inline">\(N\)</span> maintenance activities would cost <span class="math inline">\(N \times \$2, 000\)</span>.</p>
-<p>The cost of electricity for the system, <span class="math inline">\(C_{e}\)</span> is calculated, using the heating load in kWh, <span class="math inline">\(L_{H}\)</span>, the price per kWh, in GBP <span class="math inline">\(p_{e}\)</span>, and the SPF: <span class="math display">\[
+\]</span> Where: <span class="math inline">\(\beta_{A} = 0.15\)</span>, <span class="math inline">\(\beta_{B} = 1.5\)</span>, and <span class="math inline">\(\gamma = 2.0\)</span>. The cost of a maintenance activity is equal to <span class="math inline">\(\$2,000\)</span>, and is assumed to scale linearly, i.e.&nbsp;<span class="math inline">\(N\)</span> maintenance activities would cost <span class="math inline">\(N \times \$2, 000\)</span>. The cost of electricity for the system, <span class="math inline">\(C_{e}\)</span> is calculated, using the heating load in kWh, <span class="math inline">\(L_{H}\)</span>, the price per kWh, in GBP <span class="math inline">\(p_{e}\)</span>, and the SPF:</p>
+<p><span class="math display">\[
 C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 \]</span></p>
 <p>The inputs for the problem are defined below. These result in a decreasing efficacy of maintenance activities, when many are scheduled, see <a href="#fig-n_maint_beta">Figure&nbsp;12</a>.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-17-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-17-1" role="tab" aria-controls="tabset-17-1" aria-selected="true" href="">R</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true" href="">R</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-17-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-17-1-tab">
+<div id="tabset-18-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-18-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1946,9 +1948,9 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 
 </div>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-18-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-18-1" role="tab" aria-controls="tabset-18-1" aria-selected="true" href="">R (using tidyverse)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true" href="">R (using tidyverse)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-18-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-18-1-tab">
+<div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -1988,7 +1990,7 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 </div>
 </div>
 </div>
-<p>The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is , with an associated expected cost of £1.749^{5}.</p>
+<p>The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is 2, with an associated expected cost of £1.749^{5}.</p>
 <p>How can a smart meter assist in solving this decision problem? As shown in <a href="#fig-prepost_id_heat_pumps">Figure&nbsp;14</a>, the data that a smart meter provides can be used to reduce uncertainty about the degradation parameter, <span class="math inline">\(\alpha\)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2018,9 +2020,9 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 </div>
 </div>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-19-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-19-1" role="tab" aria-controls="tabset-19-1" aria-selected="true" href="">R (using tidyverse)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true" href="">R (using tidyverse)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-19-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-19-1-tab">
+<div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2051,7 +2053,7 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 <div class="cell">
 
 </div>
-<p>In <a href="#fig-voi_smart_meter_alpha_sensitivity">Figure&nbsp;15</a> the effect of the prior variance on <span class="math inline">\(\alpha\)</span> is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.</p>
+<p>In <a href="#fig-voi_smart_meter_alpha_sensitivity">Figure&nbsp;15</a> the effect of the prior variance in <span class="math inline">\(\alpha\)</span> ,on the expected value of smart meter data is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-voi_smart_meter_alpha_sensitivity" class="quarto-figure quarto-figure-center anchored">
@@ -2065,11 +2067,11 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 <p>The above examples have used bespoke code to represent the decision that needed to be solved. Though this can be helpful for prototyping initial calculations, small changes to the problem may require large amounts of code to be re-written.</p>
 </section>
 </section>
-<section id="influence-diagram-representation" class="level3" data-number="4.3.2">
-<h3 data-number="4.3.2" class="anchored" data-anchor-id="influence-diagram-representation"><span class="header-section-number">4.3.2</span> Influence Diagram Representation</h3>
-<section id="example-a-measuring-temperature-for-forecasting-crop-sales" class="level4" data-number="4.3.2.1">
-<h4 data-number="4.3.2.1" class="anchored" data-anchor-id="example-a-measuring-temperature-for-forecasting-crop-sales"><span class="header-section-number">4.3.2.1</span> Example A: Measuring Temperature for Forecasting Crop Sales</h4>
-<p>An environment for growing various produce, such as the underground farm project <span class="citation" data-cites="Ward2022">(<a href="#ref-Ward2022" role="doc-biblioref"><strong>Ward2022?</strong></a>)</span>, requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.</p>
+<section id="influence-diagram-representation" class="level3" data-number="4.2.3">
+<h3 data-number="4.2.3" class="anchored" data-anchor-id="influence-diagram-representation"><span class="header-section-number">4.2.3</span> Influence Diagram Representation</h3>
+<section id="example-a-measuring-temperature-for-forecasting-crop-sales" class="level4" data-number="4.2.3.1">
+<h4 data-number="4.2.3.1" class="anchored" data-anchor-id="example-a-measuring-temperature-for-forecasting-crop-sales"><span class="header-section-number">4.2.3.1</span> Example A: Measuring Temperature for Forecasting Crop Sales</h4>
+<p>An environment for growing various produce, such as the underground farm project <span class="citation" data-cites="Jans-Singh2020">(<a href="#ref-Jans-Singh2020" role="doc-biblioref">Jans-Singh et al. 2020</a>)</span>, requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.</p>
 <p>In this challenge, a buyer is willing to purchase at one of multiple levels. In response, the operator can agree to sell at one of these levels (earning payment for sufficient delivery, or paying a penalty if insufficient crops are available), or to not engage with the market at this time (at no risk, with no reward).</p>
 <p>A model predicting crop availability from the local temperature can be linked to this decision making under uncertainty problem, as shown in the influence diagram in <a href="#fig-prior_id_farm">Figure&nbsp;16</a>.</p>
 <div class="cell">
@@ -2091,9 +2093,9 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 </div>
 </div>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-20-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-20-1" role="tab" aria-controls="tabset-20-1" aria-selected="true" href="">Julia</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true" href="">Julia</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-20-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-20-1-tab">
+<div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2120,9 +2122,9 @@ C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 </div>
 <p>The <a href="https://gamma-opt.github.io/DecisionProgramming.jl/stable/">DecisionProgramming.jl</a> Julia library includes intuitive syntax for creating an influence diagram, and populating the nodes with the appropriate probability, utility and decision inputs. Expected optimal actions can then be identified using one of many compatible solvers. Note that the <a href="https://jump.dev">JuMP.jl</a> library used here, was also used to solve the optimisation problem in the energy generation problem.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-21-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-21-1" role="tab" aria-controls="tabset-21-1" aria-selected="true" href="">Julia (using DecisionProgramming, JuMP, HiGHS)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-22-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-22-1" role="tab" aria-controls="tabset-22-1" aria-selected="true" href="">Julia (using DecisionProgramming, JuMP, HiGHS)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-21-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-21-1-tab">
+<div id="tabset-22-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-22-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2219,8 +2221,8 @@ Solving report
                     0 (bound viol.)
                     0 (int. viol.)
                     0 (row viol.)
-  Timing            0.00 (total)
-                    0.00 (presolve)
+  Timing            0.01 (total)
+                    0.01 (presolve)
                     0.00 (postsolve)
   Nodes             0
   LP iterations     0 (total)
@@ -2266,8 +2268,8 @@ Solving report
 </div>
 </div>
 </section>
-<section id="example-b-verification-of-a-digital-twin-for-maintenance-planning" class="level4" data-number="4.3.2.2">
-<h4 data-number="4.3.2.2" class="anchored" data-anchor-id="example-b-verification-of-a-digital-twin-for-maintenance-planning"><span class="header-section-number">4.3.2.2</span> Example B: Verification of a Digital Twin for Maintenance Planning</h4>
+<section id="example-b-verification-of-a-digital-twin-for-maintenance-planning" class="level4" data-number="4.2.3.2">
+<h4 data-number="4.2.3.2" class="anchored" data-anchor-id="example-b-verification-of-a-digital-twin-for-maintenance-planning"><span class="header-section-number">4.2.3.2</span> Example B: Verification of a Digital Twin for Maintenance Planning</h4>
 <p>Another source of data that can be considered, is that which is obtained from verifying an existing model. There may be many reasons to complete such a study, such as to demonstrate compliance with a quality standard, or to obtain some certification, and though these can also be quantified and incorporated, this example will only consider the benefits in terms of risk management.</p>
 <p>The source of value of verification studies arises from the propagation of the reduced uncertainty through a decision analysis i.e.&nbsp;the information from verification studies facilitate improved risk management.</p>
 <p>Consider the representation in <a href="#fig-dt_id">Figure&nbsp;18</a> of the decision problem regarding whether to send maintenance personnel to investigate a component. An investigation includes the repair of any defect(s), and is expected to be worthwhile if the cost of the activity is less than that associated with the risk of failure. The state/condition of the component can be estimated based on the knowledge of the operations engineers, as well as data from a digital twin, which is being used in this context to support a condition assessment.</p>
@@ -2346,9 +2348,9 @@ Solving report
 </div>
 </div>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-23-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-23-1" role="tab" aria-controls="tabset-23-1" aria-selected="true" href="">Julia</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-24-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-24-1" role="tab" aria-controls="tabset-24-1" aria-selected="true" href="">Julia</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-23-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-23-1-tab">
+<div id="tabset-24-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-24-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2372,9 +2374,9 @@ Solving report
 </div>
 </div>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-24-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-24-1" role="tab" aria-controls="tabset-24-1" aria-selected="true" href="">Julia (using DecisionProgramming, JuMP, HiGHS)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-25-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-25-1" role="tab" aria-controls="tabset-25-1" aria-selected="true" href="">Julia (using DecisionProgramming, JuMP, HiGHS)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-24-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-24-1-tab">
+<div id="tabset-25-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-25-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2541,14 +2543,14 @@ Solving report
 </div>
 </div>
 </section>
-<section id="example-c-measuring-building-occupany-to-mitigate-risk-of-airborne-infections" class="level4" data-number="4.3.2.3">
-<h4 data-number="4.3.2.3" class="anchored" data-anchor-id="example-c-measuring-building-occupany-to-mitigate-risk-of-airborne-infections"><span class="header-section-number">4.3.2.3</span> Example C: Measuring Building Occupany to Mitigate Risk of Airborne Infections</h4>
+<section id="example-c-measuring-building-occupany-to-mitigate-risk-of-airborne-infections" class="level4" data-number="4.2.3.3">
+<h4 data-number="4.2.3.3" class="anchored" data-anchor-id="example-c-measuring-building-occupany-to-mitigate-risk-of-airborne-infections"><span class="header-section-number">4.2.3.3</span> Example C: Measuring Building Occupany to Mitigate Risk of Airborne Infections</h4>
 <p>In this example, an office building has a ventilation system with multiple settings. Increasing the ventilation rate, measured as Air Changes per Hour (ACH), is increasingly expensive, but reduces the risk of infection from airborne pathogens.</p>
-<p>Probability of infection <span class="math inline">\(\Pr(inf)\)</span> is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment <span class="citation" data-cites="airborne-cam2021">(<a href="#ref-Oliveira2020" role="doc-biblioref"><strong>Oliveira2020?</strong></a>)</span>, as shown below:</p>
+<p>Probability of infection <span class="math inline">\(\Pr(inf)\)</span> is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment <span class="citation" data-cites="DeOliveira2021">(<a href="#ref-DeOliveira2021" role="doc-biblioref"><strong>DeOliveira2021?</strong></a>)</span>, as shown below:</p>
 <p>[ (inf) = 1 - ( ) ]</p>
 <p>Where <span class="math inline">\(n_{inh}\)</span> is iteratively calculated:</p>
 <p>[ n_{inh}[i] = n_{inh}[i-1] + i_{r} C[i] \ C[i] = + (-loss Δt) ]</p>
-<p>The above equations are detailed in <span class="citation" data-cites="airborne-cam2021">(<a href="#ref-airborne-cam2021" role="doc-biblioref"><strong>airborne-cam2021?</strong></a>)</span>, but the dependence on the number of individuals using the office, <span class="math inline">\(N\)</span>, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.</p>
+<p>The above equations are detailed in <span class="citation" data-cites="Gkantonas2021">(<a href="#ref-Gkantonas2021" role="doc-biblioref">Gkantonas et al. 2021</a>)</span>, but the dependence on the number of individuals using the office, <span class="math inline">\(N\)</span>, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.</p>
 <p>This problem is described in the influence diagram in <a href="#fig-vent_id">Figure&nbsp;19</a>.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2575,9 +2577,9 @@ Solving report
 </div>
 <p>Firstly, setting up the infection rate model:</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-25-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-25-1" role="tab" aria-controls="tabset-25-1" aria-selected="true" href="">Julia (using Distributions)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-26-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-26-1" role="tab" aria-controls="tabset-26-1" aria-selected="true" href="">Julia (using Distributions)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-25-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-25-1-tab">
+<div id="tabset-26-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-26-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2627,9 +2629,9 @@ Solving report
 </div>
 <p>Then defining a prior model for building occupancy, and the costs associated with the various outcomes:</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-26-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-26-1" role="tab" aria-controls="tabset-26-1" aria-selected="true" href="">Julia (using Distributions)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-27-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-27-1" role="tab" aria-controls="tabset-27-1" aria-selected="true" href="">Julia (using Distributions)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-26-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-26-1-tab">
+<div id="tabset-27-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-27-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2725,9 +2727,9 @@ Solving report
 </div>
 <p>Finally, setting up the influence diagram, with these inputs.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-27-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-27-1" role="tab" aria-controls="tabset-27-1" aria-selected="true" href="">Julia (using DecisionProgramming, JuMP, HiGHS)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-28-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-28-1" role="tab" aria-controls="tabset-28-1" aria-selected="true" href="">Julia (using DecisionProgramming, JuMP, HiGHS)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-27-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-27-1-tab">
+<div id="tabset-28-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-28-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2822,9 +2824,9 @@ Solving report
 </div>
 <p>The expected value of measuring occupancy is defined as the difference between the expected utility with and without the data.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-28-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-28-1" role="tab" aria-controls="tabset-28-1" aria-selected="true" href="">Julia (using DataFrames)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-29-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-29-1" role="tab" aria-controls="tabset-29-1" aria-selected="true" href="">Julia (using DataFrames)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-28-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-28-1-tab">
+<div id="tabset-29-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-29-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2876,13 +2878,13 @@ Solving report
 </div>
 </div>
 </div>
-<p>Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches <span class="math inline">\(£1,000\)</span> after <span class="math inline">\(1\)</span> year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together <span class="citation" data-cites="DiFrancesco2022_SEinVoI">(<a href="#ref-DiFrancesco2022_SEinVoI" role="doc-biblioref"><strong>DiFrancesco2022_SEinVoI?</strong></a>)</span>, but these have not been included in the examples in this document.</p>
+<p>Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches <span class="math inline">\(£1,000\)</span> after <span class="math inline">\(1\)</span> year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together <span class="citation" data-cites="DiFrancescoa">(<a href="#ref-DiFrancescoa" role="doc-biblioref">Di Francesco, n.d.</a>)</span>, but these have not been included in the examples in this document.</p>
 </section>
 </section>
-<section id="expected-value-of-imprecise-imperfect-information" class="level3" data-number="4.3.3">
-<h3 data-number="4.3.3" class="anchored" data-anchor-id="expected-value-of-imprecise-imperfect-information"><span class="header-section-number">4.3.3</span> Expected Value of Imprecise (Imperfect) Information:</h3>
-<section id="example-inspecting-for-corrosion" class="level4" data-number="4.3.3.1">
-<h4 data-number="4.3.3.1" class="anchored" data-anchor-id="example-inspecting-for-corrosion"><span class="header-section-number">4.3.3.1</span> Example: Inspecting for Corrosion</h4>
+<section id="expected-value-of-imprecise-imperfect-information" class="level3" data-number="4.2.4">
+<h3 data-number="4.2.4" class="anchored" data-anchor-id="expected-value-of-imprecise-imperfect-information"><span class="header-section-number">4.2.4</span> Expected Value of Imprecise (Imperfect) Information:</h3>
+<section id="example-inspecting-for-corrosion" class="level4" data-number="4.2.4.1">
+<h4 data-number="4.2.4.1" class="anchored" data-anchor-id="example-inspecting-for-corrosion"><span class="header-section-number">4.2.4.1</span> Example: Inspecting for Corrosion</h4>
 <p>One method of estimating corrosion growth rates is by comparing repeated measurements of damage at sites of active corrosion. In this example, inspection data for <span class="math inline">\(10\)</span> sites of corrosion can be analysed, so that future degradation can be forecast. Predicting when these locations will fail will inform the decision of whether to invest in repairs. An influence diagram representation of this challenge is shown in <a href="#fig-prepost_id_voi">Figure&nbsp;20</a>.</p>
 <div class="cell">
 <div class="cell-output-display">
@@ -2907,9 +2909,9 @@ Solving report
 </div>
 <p>The available inspection data is loaded in the below <code>Python</code> code. As well as the measurement, identifiers for the inspection, and anomaly are listed. Note that the second inspection was not completed at anomaly <span class="math inline">\(4\)</span>. Sometimes inspections cannot be completed due to time, weather (or other safety constraints). In this case, this instance is labelled as missing data.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-29-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-29-1" role="tab" aria-controls="tabset-29-1" aria-selected="true" href="">Python (using Pandas)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-30-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-30-1" role="tab" aria-controls="tabset-30-1" aria-selected="true" href="">Python (using Pandas)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-29-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-29-1-tab">
+<div id="tabset-30-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-30-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2934,9 +2936,9 @@ Solving report
 <p>A <code>Stan</code> model has been written that estimates the corrosion growth rate, in <span class="math inline">\(mm/year\)</span> for this population as the difference in the measured extent (depth) of the damage in <span class="math inline">\(mm\)</span>, divided by the time interval between the measurements, in <span class="math inline">\(years\)</span>. This probabilistic estimate is then use to forecast future growth for a defined time window, so that the probabilities of failure for each of the anomalies can be calculated, for the purpose of identifying where repairs are expected to be required.</p>
 <p>The model is set loaded below, along with some options for the sampling.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-30-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-30-1" role="tab" aria-controls="tabset-30-1" aria-selected="true" href="">Python (using CmdStanPy)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-31-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-31-1" role="tab" aria-controls="tabset-31-1" aria-selected="true" href="">Python (using CmdStanPy)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-30-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-30-1-tab">
+<div id="tabset-31-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-31-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -2979,9 +2981,9 @@ Solving report
 </div>
 <p>The below functions are used to extract results from the model:</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-31-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-31-1" role="tab" aria-controls="tabset-31-1" aria-selected="true" href="">Python (using NumPy, Pandas, CmdStanPy)</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-32-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-32-1" role="tab" aria-controls="tabset-32-1" aria-selected="true" href="">Python (using NumPy, Pandas, CmdStanPy)</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-31-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-31-1-tab">
+<div id="tabset-32-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-32-1-tab">
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -3021,9 +3023,9 @@ Solving report
 </div>
 <p>The decision analysis consists of identifying the expected optimal repairs to perform, based on an expected repair cost of <span class="math inline">\(\$10,000\)</span> and an expected failure cost, per anomaly of <span class="math inline">\(\$100,000\)</span>.</p>
 <div id="chunk_load_packages" class="panel-tabset">
-<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-32-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-32-1" role="tab" aria-controls="tabset-32-1" aria-selected="true" href="">Python</a></li></ul>
+<ul class="nav nav-tabs" role="tablist"><li class="nav-item" role="presentation"><a class="nav-link active" id="tabset-33-1-tab" data-bs-toggle="tab" data-bs-target="#tabset-33-1" role="tab" aria-controls="tabset-33-1" aria-selected="true" href="">Python</a></li></ul>
 <div id="chunk_load_packages" class="tab-content">
-<div id="tabset-32-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-32-1-tab">
+<div id="tabset-33-1" class="tab-pane active" role="tabpanel" aria-labelledby="tabset-33-1-tab">
 <p>Solving the prior decision problem identifies for which anomalies a repair is expected to be worthwhile, as shown in <strong>?@tbl-corrosion_model_inputs</strong>. The total cost is the prior expected cost.</p>
 <div class="cell">
 <details>
@@ -3118,7 +3120,7 @@ Solving report
 <p><span class="math display">\[
 d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 \]</span></p>
-<p>This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation <span class="citation" data-cites="Reg&amp;OtherStories">(<a href="#ref-Reg&amp;OtherStories" role="doc-biblioref"><strong>Reg&amp;OtherStories?</strong></a>)</span>.</p>
+<p>This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation <span class="citation" data-cites="Gelman2020">(<a href="#ref-Gelman2020" role="doc-biblioref">Gelman, Hill, and Vehtari 2020</a>)</span>.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-corrosion_depths" class="quarto-figure quarto-figure-center anchored">
@@ -3131,7 +3133,7 @@ d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 </div>
 <p>Quantifying the expected value of returning the location of anomaly 4 and completing this measurement, requires sampling from the imputed prior model which effectively describes what is expected to be measured.</p>
 <p>Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.</p>
-<p>This example is based on a published calculation <span class="citation" data-cites="DiFrancesco2022">(<a href="#ref-DiFrancesco2022" role="doc-biblioref"><strong>DiFrancesco2022?</strong></a>)</span>, which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for <em>better quality</em> data.</p>
+<p>This example is based on a published calculation <span class="citation" data-cites="DiFrancesco">(<a href="#ref-DiFrancesco" role="doc-biblioref">Di Francesco et al. 2021</a>)</span>, which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for <em>better quality</em> data.</p>
 <div class="cell">
 <details>
 <summary>Code</summary>
@@ -3186,12 +3188,14 @@ d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 <li>The calculations provided in this document show examples that can broadly be categorised as data requirements for risk management of the built environment. However, the principles are generic, as demonstrated by the variety of methods that have been used to solve them using relatively small amounts of code in freely available software.</li>
 <li>Moving towards principled, quantitative, replicable engineering decision support is expected to be an important step in integrating computational statistics in data-centric engineering.</li>
 </ul>
+<p>This document will exist online, alongside all necessary data in a Github repository. By making the code and data entirely available, based on principles of Open science <span class="citation" data-cites="TuringWay">(<a href="#ref-TuringWay" role="doc-biblioref"><strong>TuringWay?</strong></a>)</span> and accessibility <span class="citation" data-cites="Dogucu2022">(<a href="#ref-Dogucu2022" role="doc-biblioref"><strong>Dogucu2022?</strong></a>)</span>, it is hoped that readers will be able to investigate the contents more thoroughly, understand the methods more deeply, and even propose contributions that can be reviewed and incorporated in future revisions. A final proposition of this document is that other engineering standards consider publishing similarly, whenever and however possible.</p>
 <p><!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. --></p>
 <p>Please feel free to contact <a href="ddifrancesc@turing.ac.uk">Domenic Di Francesco</a>, or in the <a href="">Github page</a> if you have any queries or comments.</p>
 </section>
 <section id="acknowledgements" class="level1" data-number="6">
 <h1 data-number="6"><span class="header-section-number">6</span> Acknowledgements</h1>
-<p>list all contributors, reviewers, and funding</p>
+<p>This work was supported by Wave 1 of The UKRI Strategic Priorities Fund under the EPSRC Grant EP/W006022/1, particularly the ‘Ecosystems of Digital Twins’ theme within that grant, and The Alan Turing Institute.</p>
+<p>The following individuals kindly agreed to review this work and provided helpful comments: Andrew Duncan, Jennifer Ding (both Alan Turing Institute), Lawrence Bull (Cambridge University).</p>
 <p>…</p>
 <!-- -->
 
@@ -3199,23 +3203,62 @@ d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 </section>
 
 <div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="doc-bibliography">
-<div id="ref-Gelman2014" class="csl-entry" role="doc-biblioentry">
-Gelman, Andrew, John B B Carlin, Hal S S Stern, and Donald B B Rubin. 2014. <em><span>Bayesian Data Analysis</span></em>. Edited by Francesca Dominici, Julian J. Faraway, Martin Tanner, and Jim Zidek. 3rd ed. Chapman &amp; Hall / CRC. <a href="https://doi.org/10.1007/s13398-014-0173-7.2">https://doi.org/10.1007/s13398-014-0173-7.2</a>.
+<div id="ref-Benjamin2014c" class="csl-entry" role="doc-biblioentry">
+Benjamin, Jack R., and C. Allin Cornell. 2014. <em><span class="nocase">Probability, Statistics and Decision for Civil Engineers</span></em>. Dover. Mineola, New York: Dover Publications, Inc.
+</div>
+<div id="ref-Berger1985" class="csl-entry" role="doc-biblioentry">
+Berger, James O. 1985. <em><span class="nocase">Statistical Decision Theory and Bayesian Analysis</span></em>. 2nd ed. New York: Springer.
+</div>
+<div id="ref-BSI2015" class="csl-entry" role="doc-biblioentry">
+BSI. 2019. <em><span class="nocase">BS 7910:2019 Guide to methods for assessing the acceptability of flaws in metallic structures</span></em>. London: British Standards Institution.
+</div>
+<div id="ref-DiFrancescoa" class="csl-entry" role="doc-biblioentry">
+Di Francesco, Domenic. n.d. <span>“<span class="nocase">System Effects in Value of Information Analysis (in preparation)</span>.”</span> <em>TBC</em>.
+</div>
+<div id="ref-DiFrancesco" class="csl-entry" role="doc-biblioentry">
+Di Francesco, Domenic, Marios Chryssanthopoulos, Michael Havbro Faber, and Ujjwal Bharadwaj. 2021. <span>“<span class="nocase">Decision-Theoretic Inspection Planning Using Imperfect and Incomplete Data</span>.”</span> <em>Data Centric Engineering</em> 2 (18). <a href="https://doi.org/10.1017/dce.2021.18">https://doi.org/10.1017/dce.2021.18</a>.
+</div>
+<div id="ref-DiFrancesco2022" class="csl-entry" role="doc-biblioentry">
+Di Francesco, Domenic, Mark Girolami, Andrew B. Duncan, and Marios Chryssanthopoulos. 2022. <span>“<span class="nocase">A probabilistic model for quantifying uncertainty in the failure assessment diagram</span>.”</span> <em>Structural Safety</em> 99 (November). <a href="https://doi.org/10.1016/j.strusafe.2022.102262">https://doi.org/10.1016/j.strusafe.2022.102262</a>.
+</div>
+<div id="ref-Faber2012" class="csl-entry" role="doc-biblioentry">
+Faber, Michael Havbro. 2012. <em><span class="nocase">Statistics and Probability Theory In Pursuit of Engineering Decision Support</span></em>. Edited by Adrian V. Gheorghe. Vol. 18. Springer. <a href="https://doi.org/10.1007/978-94-007-4056-3">https://doi.org/10.1007/978-94-007-4056-3</a>.
 </div>
 <div id="ref-Gelman2020" class="csl-entry" role="doc-biblioentry">
 Gelman, Andrew, Jennifer Hill, and Aki Vehtari. 2020. <em><span class="nocase">Regression and Other Stories</span></em>. Edited by R. Michael Alvarez, Nathaniel L. Beck, Stephen L. Morgan, and Lawrence L. Wu. First. Cambridge University Press. <a href="https://doi.org/10.1017/9781139161879">https://doi.org/10.1017/9781139161879</a>.
 </div>
+<div id="ref-Gelman2020a" class="csl-entry" role="doc-biblioentry">
+Gelman, Andrew, Aki Vehtari, Daniel Simpson, Charles C. Margossian, Bob Carpenter, Yuling Yao, Lauren Kennedy, Jonah Gabry, Paul-Christian Bürkner, and Martin Modrák. 2020. <span>“<span>Bayesian Workflow</span>.”</span> <a href="https://arxiv.org/abs/2011.01808">https://arxiv.org/abs/2011.01808</a>.
+</div>
 <div id="ref-Ghahramani2015" class="csl-entry" role="doc-biblioentry">
 Ghahramani, Zoubin. 2015. <span>“<span class="nocase">Probabilistic machine learning and artificial intelligence</span>.”</span> <em>Nature</em> 521 (7553): 452–59. <a href="https://doi.org/10.1038/nature14541">https://doi.org/10.1038/nature14541</a>.
 </div>
-<div id="ref-copula" class="csl-entry" role="doc-biblioentry">
-Hofert, Marius, Ivan Kojadinovic, Martin Maechler, and Jun Yan. 2022. <span>“Copula: Multivariate Dependence with Copulas.”</span> <a href="https://CRAN.R-project.org/package=copula">https://CRAN.R-project.org/package=copula</a>.
+<div id="ref-Gkantonas2021" class="csl-entry" role="doc-biblioentry">
+Gkantonas, Savvas, Daniel Zabotti, Leo CC Mesquita, Epaminodas Mastorakos, and Pedro M DeOlivera. 2021. <span>“<span>No Title</span>.”</span> https://doi.org/<a href="https://doi.org/10.17863/CAM.72192">https://doi.org/10.17863/CAM.72192</a>.
+</div>
+<div id="ref-Harding2008" class="csl-entry" role="doc-biblioentry">
+Harding, Catherine Ann. 2008. <span>“<span class="nocase">Methods for Assessment of Probability of Detection for Nondestructive Inspections</span>.”</span> PhD thesis, University of Melbourne.
+</div>
+<div id="ref-Hopkins2002" class="csl-entry" role="doc-biblioentry">
+Hopkins, Phil. 2002. <span>“<span class="nocase">Training Engineers in Pipeline Integrity</span>.”</span> In <em>Western Regional Gas Conference</em>. Tempe, Arizona.
+</div>
+<div id="ref-Jans-Singh2020" class="csl-entry" role="doc-biblioentry">
+Jans-Singh, Melanie, Kathryn Leeming, Ruchi Choudhary, and Mark Girolami. 2020. <span>“<span class="nocase">Digital twin of an urban-integrated hydroponic farm</span>.”</span> <em>Data-Centric Engineering</em> 1 (2). <a href="https://doi.org/10.1017/dce.2020.21">https://doi.org/10.1017/dce.2020.21</a>.
 </div>
 <div id="ref-Jaynes2003" class="csl-entry" role="doc-biblioentry">
 Jaynes, Edwin T. 2003. <em><span class="nocase">Probability Theory: The Logic of Science</span></em>. First. New York: Cambridge University Press.
 </div>
+<div id="ref-JCSS2001" class="csl-entry" role="doc-biblioentry">
+JCSS. 2001. <em><span>Probabilistic Model Code</span></em>. Joint Committee on Structural Safety. <a href="https://www.jcss-lc.org/jcss-probabilistic-model-code/">https://www.jcss-lc.org/jcss-probabilistic-model-code/</a>.
+</div>
+<div id="ref-Joe2015" class="csl-entry" role="doc-biblioentry">
+Joe, Harry. 2015. <em><span class="nocase">Dependence Modeling with Copulas</span></em>. <a href="https://doi.org/10.1007/0-387-28678-0">https://doi.org/10.1007/0-387-28678-0</a>.
+</div>
 <div id="ref-Jordaan2005" class="csl-entry" role="doc-biblioentry">
 Jordaan, Ian. 2005. <em><span class="nocase">Decisions under Uncertainty</span></em>. Cambridge University Press. <a href="https://doi.org/10.1017/CBO9780511804861">https://doi.org/10.1017/CBO9780511804861</a>.
+</div>
+<div id="ref-Martin2019" class="csl-entry" role="doc-biblioentry">
+Martin, Mike, and Rob Marshall. 2019. <span>“<span>Nuclear Structural Integrity Probabilistic Working Principles</span>.”</span> April. The Nuclear Structural Integrity Probabilistics Working Group. <a href="https://www.fesi.org.uk/news/nuclear-structural-integrity-probabilistics-working-principles/">https://www.fesi.org.uk/news/nuclear-structural-integrity-probabilistics-working-principles/</a>.
 </div>
 <div id="ref-McElreath2019" class="csl-entry" role="doc-biblioentry">
 McElreath, Richard. 2020. <em><span class="nocase">Statistical Rethinking : A Bayesian Course with Examples in R and Stan</span></em>. 2nd ed. Chapman &amp; Hall / CRC. <a href="https://xcelab.net/rm/statistical-rethinking/">https://xcelab.net/rm/statistical-rethinking/</a>.
@@ -3223,8 +3266,17 @@ McElreath, Richard. 2020. <em><span class="nocase">Statistical Rethinking : A Ba
 <div id="ref-Melchers2018" class="csl-entry" role="doc-biblioentry">
 Melchers, Robert E., and André T. Beck. 2018. <em><span class="nocase">Structural Reliability Analysis and Prediction</span></em>. Third Edit. John Wiley &amp; Sons Ltd.
 </div>
+<div id="ref-Olsson2003" class="csl-entry" role="doc-biblioentry">
+Olsson, A., G. Sandberg, and O. Dahlblom. 2003. <span>“<span class="nocase">On Latin hypercube sampling for structural reliability analysis</span>.”</span> <em>Structural Safety</em>. <a href="https://doi.org/10.1016/S0167-4730(02)00039-5">https://doi.org/10.1016/S0167-4730(02)00039-5</a>.
+</div>
+<div id="ref-Palmer2012" class="csl-entry" role="doc-biblioentry">
+Palmer, Andrew. 2012. <span>“10**-6 and All That: What Do Failure Probabilities Mean?”</span> <em>Journal of Pipeline Engineering</em> 12 (4): 269–73.
+</div>
 <div id="ref-Rainforth2017" class="csl-entry" role="doc-biblioentry">
 Rainforth, Tom. 2017. <span>“<span class="nocase">Automating Inference, Learning, and Design using Probabilistic Programming</span>.”</span> PhD thesis, University of Oxford. <a href="http://www.robots.ox.ac.uk/$\sim$twgr/assets/pdf/rainforth2017thesis.pdf">http://www.robots.ox.ac.uk/$\sim$twgr/assets/pdf/rainforth2017thesis.pdf</a>.
+</div>
+<div id="ref-Straub2017" class="csl-entry" role="doc-biblioentry">
+Straub, Daniel, Eleni Chatzi, Elizabeth Bismut, Wim Courage, Michael Dohler, Michael Havbro Faber, Jochen Kohler, et al. 2017. <span>“<span class="nocase">Value of information: A roadmap to quantifying the benefit of structural health monitoring</span>.”</span> <em>ICOSSAR – 12th International Conference on Structural Safety &amp; Reliability</em>, no. August: 13 p. <a href="https://hal.inria.fr/hal-01577257/document">https://hal.inria.fr/hal-01577257/document</a>.
 </div>
 </div></section></div></main>
 <!-- /main column -->
@@ -3518,7 +3570,8 @@ format:
     code-tools: true
     code-overflow: scroll
     monofont: Fira Code
-    mermaid-format: js
+    mermaid:
+      theme: forest
 execute:
   message: false
   warning: false
@@ -3601,10 +3654,13 @@ Some notable examples of high consequence spreadsheet errors are recorded by the
 
 ## Some other Published Guidance for Engineers
 
- - The UK Health &amp; Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@HSE2002]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
- - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way. Similarly, a guidance document for the nuclear industry [@NuclearWorkingGroup] has similar limitations.
- - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@COSTActionTU1402]. This document is intended to provide some more interactive examples than those included by the JCSS, by including example code. It also addresses some of the challenges identified by the JCSS, specifically regarding characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
- - As well as documents that are intended to be used in industry, there are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014, @Jordaan2005, @Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
+ - The UK Health &amp; Safety Executive produced a guidance document on the use of probabilistic methods in engineering [Health&amp;SafetyExecutive2001]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
+ - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way.
+ - Similarly, a guidance document for the nuclear industry [@Martin2019] has similar limitations. This document makes reference to Bayesian methods and structural reliability, but does not provide any guidance on how to interpret the analysis. For instance, the use of "*conservative defined distributions*" to calculate a "*conservative failure probability*" is discussed. Conservative modelling assumptions have traditionally be applied instead of quantifying uncertainty, and attempts to combine these two approaches (perhaps as some sort of compromise or stepping stone) can lead to confusion, since they have different use cases. This explanation is detaukled further in [@DiFrancesco2022].
+ - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS2001]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@Straub2017], which has lead to many demonstrations of this approach in scientific literature in recent years.
+  - There are also several engineering textbooks that introduce concepts in uncertainty quantification, and decision support in the context of engineering challenges [@Benjamin2014c], [@Jordaan2005], and [@Faber2012]. These books all consider, to some extent, quantification of the expected value of data to engineers.
+ 
+This document is intended to provide an update to the aforementioned industrial guidance and more accessible examples than those included by other publications by making all data and all code available, and inviting contributions from readers. It also addresses some of the challenges that were associated with computational statistics in previous decades, such as characterisation of dependencies in multi-variate probabilistic models, and interpretation of results of structural reliability analysis.
 
 # Uncertainty in the Built Environment
 
@@ -3723,7 +3779,7 @@ draw_lhs(Normal(0, 1), 10)
 ```
 :::
 
-Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) [@Olsson2003]. The effect of this is shown in  in @fig-it_lhs.
+Latin hypercube sampling ensures more evenly spaced samples than standard (inverse-transform, Monte Carlo sampling) [@Olsson2003]. The effect of this is shown in @fig-it_lhs.
 
 quarto-executable-code-5450563D
 
@@ -3861,7 +3917,7 @@ pof
 
 In the above, the resistance parameters of the components are independent. This means that knowing that the resistance of Component A is relatively high, does not provide any information about the likely resistance of the other components. However, if the factors influencing the resistance were common, then a relatively high value for one component would suggest that a relatively high value for the other components were more likely. In such cases, this dependency should be accounted for in the probabilistic model.
 
-One method for achieving this is to use copula functions [@copula]. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.
+One method for achieving this is to use copula functions [@Joe2015]. There are various types of copula, but in each case they describe the dependency between the different constituent (marginal) components of a multi-variate probabilistic model.
 
 Copulas can be used to model complex dependency, for example weakly dependent at relatively low values and highly dependent at relatively high values (or vice versa). In this case a Gaussian copula is used, which can only model linear dependency using correlation coefficients $\rho$. Note that copulas (including Gaussian copulas) can be used to describe dependency between parameters, for any uni-variate (marginal) distributions. The resulting distribution may not be possible to define, and use in calculations, without copulas.
 
@@ -4338,7 +4394,7 @@ $$
 
 This could be a fully defined model, but there is also ab opportunity to provide a starting point. Rather than requiring the model to narrow down it's estimate from all possible values, engineers may wish to point it in a helpful direction since they will have some idea of what the measurements will be even before seeing them. Whilst acknowledging that there can be a lot of variation in the quality of structural steel, a yield strength of the order of hundreds of $MPa$ is far more credible than billions, or millions. Engineers may also want to constrain the values to be positive.
 
-In this example, some *prior* models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values [@Gabry2020]. An example of this is provided later in this document.
+In this example, some *prior* models (starting points) for the mean and standard deviation of the yield strength are shown below. These, like all other details about the structure of this model, are a subjective feature, but sampling from these priors can be a helpful tool in agreeing suitable values [@Gelman2020a]. An example of this is provided later in this document.
 
 $$
 \mu \sim N(\mu = 350 MPa, \sigma = 50 MPa), \mu \ge 0 MPa
@@ -4648,7 +4704,7 @@ The reason an engineer will recommend a higher strength than their *best estimat
 
 A decision analysis will not remove subjectivity, since the costs of the consequences may be different, depending on who is asked, and the analysis should reflect the beliefs of the personnel responsible for making the decision. However, what decision analysis does offer is the formalisation of propagating uncertain predictions from engineering models through various possible outcomes, so that expected consequences can be quantified, and decision alternatives can be ranked, in a transparent, and replicable way.
 
-The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as *value of information*, but is also often referred to as *pre-posterior* analysis in engineering textbooks [@Benjamin2014, @Jordaan2005, @Melchers2018] and some statistics textbooks too [@Berger].
+The decision problems that this document focusses on, is whether or not to pay to collect some data. The method is commonly described as *value of information*, but is also often referred to as *pre-posterior* analysis in engineering textbooks [@Benjamin2014, @Jordaan2005, @Melchers2018] and some statistics textbooks too [@Berger1985].
 
 :::{.callout-note collapse="true"}
 ## Thought: The Expected Value of Data ...*Before* Collecting it
@@ -4737,6 +4793,8 @@ This information can be shown graphically, using the influence diagram shown in 
 
 Using a model to predict how a system will respond to various interventions, as facilitated by influence diagrams, is often described as the goal of *digital twins*.
 
+:::
+
 quarto-executable-code-5450563D
 
 ```mermaid
@@ -4758,8 +4816,6 @@ flowchart LR
   
 ```
 
-:::
-
 ## Example Calculations
 
 ### Expected Value of Perfect Information
@@ -4773,7 +4829,7 @@ In designing an energy system for a region, using some combination of nearshore 
 
 This problem is based on (normalised) power time series data for the three assets, which are read below.
 
-::: {#chunk_load_packages .panel-tabset}
+::: {.panel-tabset}
 
 ## Julia (using DataFrames)
 
@@ -4803,7 +4859,7 @@ first(power_df, 3)
 
 Due to land availability, solar power can only supply either $0\%$ or $20\%$ of the total capacity. Similarly, nearshore wind can only provide either $0\%$, $25\%$  or $50\%$. The offshore wind asset is sufficiently flexible to be able to provide the remaining capacity. This leads to $6$ competing strategies, which can be evaluated, subject to the aforementioned constraints to identify how much power each asset is required to provide for each option.
 
-::: {#chunk_load_packages .panel-tabset}
+::: {#chunk .panel-tabset}
 
 ## Julia (using JuMP, HiGHS)
 
@@ -4895,7 +4951,8 @@ $$
 $$
 \rho = 0.6
 $$
-::: {#chunk .panel-tabset}
+
+::: {.panel-tabset}
 
 ## Julia
 
@@ -4961,7 +5018,7 @@ flowchart LR
 ```
 
 
-::: {#chunk_load_packages .panel-tabset}
+::: {#chunk .panel-tabset}
 
 ## Julia
 
@@ -5047,9 +5104,7 @@ However, neither R&amp;D or the expert opinions of consultants provide perfect i
 
 Consider the problem of heating a residential building. Inefficiencies in ageing heaters can result in increased electricity costs to deliver energy requirements. This performance degradation can be mitigated by maintenance work.
 
-The problem is described by the influence diagram in @fig-prior_id_heat_pumps. Here, heat pump parameters, $\alpha$ and $\beta$ describe the degradation and improvements to the performance of a heat pump, respectively.
-
-Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activities can improve, or restore, the performance (using $\beta$).
+The problem is described by the influence diagram in @fig-prior_id_heat_pumps. Here, heat pump parameters, $\alpha$ and $\beta$ describe the degradation and improvements to the performance of a heat pump, respectively. Heat pump efficiency, characterised by a Seasonal Performance Factor (SPF), is calculated based on how the system degrades with age (using $\alpha$), and how maintenance activities can improve, or restore, the performance (using $\beta$).
 
 quarto-executable-code-5450563D
 
@@ -5077,9 +5132,8 @@ $$
 $$
 \alpha \sim Beta(\alpha = 2, \beta = 20)
 $$
-Where: $\beta_{A} = 0.10$, $\beta_{B} = 1.0$, and $\gamma = 1.50$. The cost of a maintenance activity is equal to $\$2,000$, and is assumed to scale linearly, i.e. $N$ maintenance activities would cost $N \times \$2, 000$.
+Where: $\beta_{A} = 0.15$, $\beta_{B} = 1.5$, and $\gamma = 2.0$. The cost of a maintenance activity is equal to $\$2,000$, and is assumed to scale linearly, i.e. $N$ maintenance activities would cost $N \times \$2, 000$. The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
 
-The cost of electricity for the system, $C_{e}$ is calculated, using the heating load in kWh, $L_{H}$, the price per kWh, in GBP $p_{e}$, and the SPF:
 $$
 C_{e} = \frac{L_{H} \times p_{e}}{SPF}
 $$
@@ -5195,7 +5249,7 @@ ggplot(data = prior_df, mapping = aes(x = n_maint_range, y = exp_cost))+
   
 ```
 
-The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is `r prior_df[which.min(prior_df$exp_cost),]$n_maint`, with an associated expected cost of £`r prior_df[which.min(prior_df$exp_cost),]$exp_cost |&gt; signif(digits = 4)`.
+The expected optimal number of maintenance activities to schedule (that which is associated with the lowest expected cost) is `r prior_df[which.min(prior_df$exp_cost),]$n_maint_range`, with an associated expected cost of £`r prior_df[which.min(prior_df$exp_cost),]$exp_cost |&gt; signif(digits = 4)`.
 
 How can a smart meter assist in solving this decision problem? As shown in @fig-prepost_id_heat_pumps, the data that a smart meter provides can be used to reduce uncertainty about the degradation parameter, $\alpha$.
 
@@ -5291,7 +5345,7 @@ for (shape_1 in c(1/2, 1, 2, 5, 10, 20, 50)){
 
 ```
 
-In @fig-voi_smart_meter_alpha_sensitivity the effect of the prior variance on $\alpha$ is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.
+In @fig-voi_smart_meter_alpha_sensitivity the effect of the prior variance in $\alpha$ ,on the expected value of smart meter data is shown. Moving from left to right along the x-axis indicates an increase in prior uncertainty about how the heat pumps will degrade. The less well this is known, the more value there is expected to be in collecting data from a smart meter.
 
 quarto-executable-code-5450563D
 
@@ -5316,7 +5370,7 @@ The above examples have used bespoke code to represent the decision that needed 
 
 #### Example A: Measuring Temperature for Forecasting Crop Sales
 
-An environment for growing various produce, such as the underground farm project [@Ward2022], requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.
+An environment for growing various produce, such as the underground farm project [@Jans-Singh2020], requires monitoring of features that will impact crop survival. Being able to forecast availability of crops is important when agreeing future sales.
 
 In this challenge, a buyer is willing to purchase at one of multiple levels. In response, the operator can agree to sell at one of these levels (earning payment for sufficient delivery, or paying a penalty if insufficient crops are available), or to not engage with the market at this time (at no risk, with no reward). 
 
@@ -5713,7 +5767,7 @@ VoI = prior_cost - prepost_cost
 
 In this example, an office building has a ventilation system with multiple settings. Increasing the ventilation rate, measured as Air Changes per Hour (ACH), is increasingly expensive, but reduces the risk of infection from airborne pathogens.
 
-Probability of infection $\Pr(inf)$ is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment [@airborne-cam2021, @Oliveira2020], as shown below:
+Probability of infection $\Pr(inf)$ is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment [@DeOliveira2021], as shown below:
 
 \[
 \Pr(inf) = 1 - \exp \bigg( \dfrac{-n_{inh}}{C_{r}} \bigg)
@@ -5726,7 +5780,7 @@ n_{inh}[i] = n_{inh}[i-1] + i_{r} \times \Delta{t} \times C[i] \\
 C[i] = \dfrac{N * N_{r}}{Vol \times loss} + \dfrac{C[i-1] - N \times Nᵣ}{(Vol \times loss))} \times \exp(-loss \times Δt)
 \]
 
-The above equations are detailed in [@airborne-cam2021], but the dependence on the number of individuals using the office, $N$, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.
+The above equations are detailed in [@Gkantonas2021], but the dependence on the number of individuals using the office, $N$, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.
 
 This problem is described in the influence diagram in @fig-vent_id.
 
@@ -5928,7 +5982,7 @@ VoPI = prior_cost - prepost_cost
 
 :::
 
-Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches $£1,000$ after $1$ year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together [@DiFrancesco2022_SEinVoI], but these have not been included in the examples in this document.
+Although this value is low, it is expected to scale with the number of days that the ventilation rate can be controlled. For instance, this value approaches $£1,000$ after $1$ year. In such a forecast, the prior distribution would have to be a suitable estimate for each day in the upcoming time window. Note that influence diagrams can be extended to introduce time-varying features and opportunities to collect multiple data together [@DiFrancescoa], but these have not been included in the examples in this document.
 
 ### Expected Value of Imprecise (Imperfect) Information: 
 
@@ -6138,7 +6192,7 @@ $$
 d_{A 4, insp. 2} \sim LogNormal(\mu = 10, \sigma = 6)
 $$
 
-This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation @Reg&amp;OtherStories.
+This is an example of how a prior can be identified for a value that is intended to be measured by using other available, relevant information. This method is known as missing data imputation [@Gelman2020].
 
 quarto-executable-code-5450563D
 
@@ -6162,7 +6216,7 @@ Quantifying the expected value of returning the location of anomaly 4 and comple
 
 Another important feature of this model is that there is some defined precision of the measurement activity. The data that will be obtained is imperfect. The impact of this on the calculation is that for each hypothesised measurement (sample from the prior model), the imperfect data is combined with the prior to produce a probabilistic posterior distribution of the extent of the damage at anomaly 4. The associated corrosion growth rate is also calculated, now using the updated inspection data, and the subsequent forecasting and decision analysis is completed.
 
-This example is based on a published calculation @DiFrancesco2022, which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for *better quality* data. 
+This example is based on a published calculation [@DiFrancesco], which also considers other imperfect features of inspection data, such as reliability. Imperfect data will always be less valuable than perfect data, but perfect data is never available in practice. Increasingly precise and reliable data will have a higher (or at least an equivalent) expected value to a decision-maker and value of information analysis can be used to identify when it is expected to be worth paying more for *better quality* data. 
 
 quarto-executable-code-5450563D
 
@@ -6214,7 +6268,6 @@ VoInsp = prior_exp_cost - prepost_df.cost.mean()
 
 :::
 
-
 # Summary
 
 Key concepts:
@@ -6227,13 +6280,17 @@ Key concepts:
  - The calculations provided in this document show examples that can broadly be categorised as data requirements for risk management of the built environment. However, the principles are generic, as demonstrated by the variety of methods that have been used to solve them using relatively small amounts of code in freely available software.
  - Moving towards principled, quantitative, replicable engineering decision support is expected to be an important step in integrating computational statistics in data-centric engineering.
 
+This document will exist online, alongside all necessary data in a Github repository. By making the code and data entirely available, based on principles of Open science @TuringWay and accessibility @Dogucu2022, it is hoped that readers will be able to investigate the contents more thoroughly, understand the methods more deeply, and even propose contributions that can be reviewed and incorporated in future revisions. A final proposition of this document is that other engineering standards consider publishing similarly, whenever and however possible.
+
  &lt;!-- - When data is abundant, the benefit of UQ, prior knowledge, and model structure may sometimes diminish, and greater performance may be obtained from *black-box* type models, such as neural networks. These models are still compatible with decision analysis, but quantification of the expected value of additional data collection requires a generative structure that describes what is expected to be measured, and where this prospective data fits in the context of solving the decision problem. --&gt;
  
 Please feel free to contact [Domenic Di Francesco](ddifrancesc@turing.ac.uk), or in the [Github page]() if you have any queries or comments.
 
 # Acknowledgements
 
-list all contributors, reviewers, and funding
+This work was supported by Wave 1 of The UKRI Strategic Priorities Fund under the EPSRC Grant EP/W006022/1, particularly the ‘Ecosystems of Digital Twins’ theme within that grant, and The Alan Turing Institute. 
+
+The following individuals kindly agreed to review this work and provided helpful comments: Andrew Duncan, Jennifer Ding (both Alan Turing Institute), Lawrence Bull (Cambridge University).
 
 ...
 </code></pre>
