@@ -96,7 +96,7 @@ Some notable examples of high consequence spreadsheet errors are recorded by the
 
 ## Some other Published Guidance for Engineers
 
- - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [Health&SafetyExecutive2001]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
+ - The UK Health & Safety Executive produced a guidance document on the use of probabilistic methods in engineering [@Health&SafetyExecutive2001]. This is perhaps the most similar to this document regarding the aim and intended use. It provides an overview of limitations of probabilistic methods, however many of the criticisms can be resolved (at least to some extent) using some of the computational approaches in this document.
  - BS 7910 is a widely used industrial standard for assessing damage in welded steel structures [@BSI2015]. The evolution of this standard over recent decades is an interesting example of how more complex approaches have been gradually introduced to industry, in line with the increasing demands from structures, and increasing availability of computational resources to engineers. A recent addition has been Annex K, which considers probabilistic methods. However, evaluating the reliability of a damaged structure and completing a pass/fail type (deterministic) assessment using conservative inputs are two fundamentally different approaches. There is not currently sufficient guidance in this standard to model uncertainty in a helpful or meaningful way.
  - Similarly, a guidance document for the nuclear industry [@Martin2019] has similar limitations. This document makes reference to Bayesian methods and structural reliability, but does not provide any guidance on how to interpret the analysis. For instance, the use of "*conservative defined distributions*" to calculate a "*conservative failure probability*" is discussed. Conservative modelling assumptions have traditionally be applied instead of quantifying uncertainty, and attempts to combine these two approaches (perhaps as some sort of compromise or stepping stone) can lead to confusion, since they have different use cases. This explanation is detaukled further in [@DiFrancesco2022].
  - The most comprehensive guidance on modelling uncertainty in the built environment can be found in the probabilistic model code, developed by the joint committee of structural safety [@JCSS2001]. This series of documents considers uncertainties in applied loads, material properties, measurements, and model predictions. Much of this guidance was incorporated in the COST Action TU1402 project case studies on quantifying the expected value of structural health monitoring systems [@Straub2017], which has lead to many demonstrations of this approach in scientific literature in recent years.
@@ -135,12 +135,11 @@ There are many established probability distributions, and some reasonable questi
 -   When are they useful, or unhelpful in describing variability in engineering quantities?
 
 One common method of visualising of the Normal distribution is using a [Galton board](https://en.wikipedia.org/wiki/Galton_board). A number of beads hit a series of pegs as they fall to the base of the board. When they arrive at the base, they can be seen to approximate a Normal distribution. This can also be replicated using computer simulations, but in any case, it suggests that distribution functions are not arbitrary. 
-
 A similar example is presented in [@McElreath2019], where the author counts the number of possible arrangements of items that are hidden under buckets. Because there are more ways to hide these items evenly under the buckets, this is considered the most likely outcome (without any additional information). Running simulations (or other experiments) using this example will produce a Uniform distribution.
 
 Both the Galton board and hidden items example show how a distribution can represent the most likely outcome of some event(s). They are said to be *Max*imum *Ent*ropy (MaxEnt) solutions for those problems. Using this principle is often recommended for deciding on a statistical model with very limited information about the problem [@Jaynes2003]. Some mathematical proofs of various MaxEnt models are presented in [@Jordaan2005].
 
-More generally though, engineers may need to impose some additional features and constrains in their models (to represent their knowledge of the system being analysed). Probability distributions can then be considered as helpful tools to represent uncertainty. Prior predictive checks (see Section X) can be used to ensure that the selected distribution are resulting in appropriate results on an intuitive outcome scale. 
+More generally though, engineers may need to impose some additional features and constrains in their models (to represent their knowledge of the system being analysed). Probability distributions can then be considered as helpful tools to represent uncertainty. Prior predictive checks (see Section 3.5) can be used to ensure that the selected distribution are resulting in appropriate results on an intuitive outcome scale. 
 
 ## Working with Probability Distributions
 
@@ -879,7 +878,7 @@ This can be achieved using probabilistic programming, but this may require some 
 
 The `Stan` and `Turing.jl` probabilistic models of yield strength defines a joint distribution of the mean and standard deviation of yield strength. This means that, as well as quantifying the uncertainty in both parameters, the inter-dependencies are also accounted for. 
 
-For instance, consider the samples from the `Stan` model in @fig-MCMC_post_sigmaY. All of the relatively low values of standard deviation (coloured in red) correspond to a narrow range of possible mean values, wheras the relatively high values (coloured in green) were sometimes associated with much higher or lower values for the mean. One way to rationalise this is that, whilst there is some uncertainty in the estimate of the mean value of yield strength, for low or high values to be consistent with the available data, they may need to be associated with a greater variance. A low standard deviation that was associated with a very low mean value would correspond to a narrow distribution that did not greatly overlap with the test data, which us why we do not see this combination in @fig-MCMC_post_sigmaY. 
+For instance, consider the samples from the `Stan` model in @fig-MCMC_post_sigmaY. All of the relatively low values of standard deviation (coloured in green) correspond to a narrow range of possible mean values, wheras the relatively high values (coloured in purple) were sometimes associated with much higher or lower values for the mean. One way to rationalise this is that, whilst there is some uncertainty in the estimate of the mean value of yield strength, for low or high values to be consistent with the available data, they may need to be associated with a greater variance. A low standard deviation that was associated with a very low mean value would correspond to a narrow distribution that did not greatly overlap with the test data, which us why we do not see this combination in @fig-MCMC_post_sigmaY. 
 
 Being able to push these uncertainties and dependencies into predictions, is why modern probabilistic models can provide useful, informative results, even with small amounts of imperfect data.
 
@@ -898,7 +897,7 @@ strength_fit |> DomDF::tidy_mcmc_draws() |>
   )) |>
   ggplot()+
   geom_point(mapping = aes(x = strength_m, y = strength_sd, fill = ind), shape = 21, alpha = 1/2)+
-  scale_fill_manual(values = c("forestgreen", "firebrick", "white"))+
+  scale_fill_viridis_d()+
   scale_x_continuous(name = "Mean Yield Strength, MPa")+
   scale_y_continuous(name = "Standard Deviation of Yield Strength, MPa")+
   ggthemes::theme_base(base_family = "Atkinson Hyperlegible", base_size = 11)+
@@ -1720,7 +1719,7 @@ end
 
 The [DecisionProgramming.jl](https://gamma-opt.github.io/DecisionProgramming.jl/stable/) Julia library includes intuitive syntax for creating an influence diagram, and populating the nodes with the appropriate probability, utility and decision inputs. Expected optimal actions can then be identified using one of many compatible solvers. Note that the [JuMP.jl](https://jump.dev) library used here, was also used to solve the optimisation problem in the energy generation problem. 
 
-::: {#chunk_load_packages .panel-tabset}
+::: {.panel-tabset}
 
 ## Julia (using DecisionProgramming, JuMP, HiGHS)
 
@@ -1814,7 +1813,9 @@ flowchart LR
 
 ```
 
-::: {#chunk_load_packages .panel-tabset}
+::: {.panel-tabset}
+
+## Julia (using DataFrames)
 
 ```{julia}
 #| output: false
@@ -2001,18 +2002,12 @@ end
 
 ```
 
-
-```{julia}
-#| output: false
-
-solve_id(β = 0.8)
-
-```
-
 To consider the additional cost associated with the epistemic uncertainty in the digital twin reliability, a *value of information* calculation can be completed. Since we are quantifying the expected value of a verification that has not yet been completed, we must consider the range of possible results. The prior model of reliability describes what we expect a verification activity to find, and simulating possible results (and evaluating their impact of an expected optimal maintenance decision) can be used to quantify the expected value of verification in this context.
 
 ```{julia}
 #| output: false
+
+prior_df = solve_id(β = mean(reliabilities))
 
 # Simulating many possible outcomes from the verification
 verif_df = DataFrame()
@@ -2022,7 +2017,46 @@ end
 
 ```
 
+```{julia}
+#| echo: false
+@rput(prior_df); @rput(verif_df)
+```
+
 As shown in @fig-voi_results, in instances where a verification study identifies a relatively high reliability of the digital twin, this can be used to justify deferral of a site investigation of a component. Whereas in instances where a relatively low reliability is identified, an investigation is still justified. For this particular scenario, a shut-down was never found to be the expected optimal action, despite the reduced probability of failure due to the high cost of implementation.
+
+```{r}
+#| echo: false
+#| fig-cap: Simulations of Possible Outcomes From a Digital Twin Verification Study, and Associated Expected Optimal Actions
+#| label: fig-voi_results
+
+arrow_df <- tibble(xend = prior_df$u_opt,
+                   x = verif_df$u_opt |> mean(),
+                   y = 2.25, yend = 2.25)
+
+ggplot(data = verif_df |> mutate(a_opt = factor(x = a_opt, levels = c("no_action", "investigate"))), 
+       mapping = aes(x = u_opt, y = a_opt))+
+  geom_jitter(shape = 21, alpha = 1/2, height = 1/3, mapping = aes(fill = β))+
+  geom_vline(mapping = aes(xintercept = prior_df$u_opt, 
+                           lty = "Expected Cost Without Verification"), alpha = 1/2) +
+  geom_vline(mapping = aes(xintercept = verif_df$u_opt |> mean(), 
+                           lty = "Expected Cost With Verification"), alpha = 1/2)+
+  geom_segment(data = arrow_df,
+               mapping = aes(x = x, xend = xend, y = y, yend = yend, col = "EVoPI"), 
+               arrow = arrow(length = unit(0.25, "cm"), ends = "first", type = "closed"))+
+  geom_text(data = arrow_df, 
+            mapping = aes(x = c(x, xend) |> mean(), y = 2.5, label = paste("$", signif(x = (xend - x), digits = 7))),
+            size = 3.5, family = "Atkinson Hyperlegible")+
+  scale_color_manual(values = c("midnightblue"))+
+  scale_fill_viridis_c()+
+  labs(y = "Expected Optimal Action", fill = "DT Reliability", lty = "", col = "")+
+    scale_linetype_manual(values = c(2, 1))+
+  scale_x_continuous(name = "Expected Cost", labels = scales::dollar_format(), breaks = scales::pretty_breaks())+
+  ggthemes::theme_base(base_size = 14, base_family = "Atkinson Hyperlegible")+
+  theme(legend.position = 'top', legend.title = element_text(size = 10), axis.text.y = element_text(angle = 90, hjust = 0.5), 
+        plot.background = element_rect(colour = NA))+
+  guides(linetype = guide_legend(nrow = 2), 
+         fill = guide_colorbar(title.position = 'top', barwidth = 10, barheight = 1/2, order = 3))
+```
 
 ```{julia}
 
@@ -2041,16 +2075,16 @@ In this example, an office building has a ventilation system with multiple setti
 
 Probability of infection $\Pr(inf)$ is predicted using a method developed for calculating the probability of an individual becoming infected by suspended particles in an indoor environment [@DeOliveira2021], as shown below:
 
-\[
+$$
 \Pr(inf) = 1 - \exp \bigg( \dfrac{-n_{inh}}{C_{r}} \bigg)
-\]
+$$
 
 Where $n_{inh}$ is iteratively calculated:
 
-\[
+$$
 n_{inh}[i] = n_{inh}[i-1] + i_{r} \times \Delta{t} \times C[i] \\
 C[i] = \dfrac{N * N_{r}}{Vol \times loss} + \dfrac{C[i-1] - N \times Nᵣ}{(Vol \times loss))} \times \exp(-loss \times Δt)
-\]
+$$
 
 The above equations are detailed in [@Gkantonas2021], but the dependence on the number of individuals using the office, $N$, suggests that knowing this value (by measuring occupancy) will benefit the identification of the expected optimal ventilation rate, each day.
 
@@ -2081,6 +2115,8 @@ The below functions define the probability of infection and, given this, the pro
 
 ## Julia (using Distributions)
 ```{julia}
+#| output: false
+
 venting = [1, 3, 5, 10] ./ 3600; κ = 0.39 / 3600; λ = 0.636 / 3600
 loss_rate = venting .+ κ .+ λ; tₘ = 8 * 3600; n_step = 100
 
@@ -2112,6 +2148,8 @@ A Poisson distribution is proposed as a prior model for occupancy, with a mean v
 
 ## Julia (using Distributions)
 ```{julia}
+#| output: false
+
 occupancy_model = Poisson(30)
 occupancy_samples = occupancy_model |> 
     x -> draw_lhs(x, 1000)
@@ -2228,6 +2266,7 @@ The expected value of measuring occupancy is defined as the difference between t
 
 ## Julia (using DataFrames)
 ```{julia}
+#| output: false
 
 prior_ventilation_decision = exp_opt_venting()
 
@@ -2241,6 +2280,10 @@ prepost_cost = mean(measure_occupancy_df.u_opt)
 
 VoPI = prior_cost - prepost_cost
 
+```
+
+```{julia}
+@printf "VoPI = GBP %.2e" VoPI
 ```
 
 :::
